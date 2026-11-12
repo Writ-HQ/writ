@@ -1,0 +1,313 @@
+openapi: 3.1.0
+info:
+  title: Writ API
+  version: 0.1.0
+  description: |
+    API for Writ, a multi-tenant CRM for political campaigns in Canada.
+
+    This file is the single contract between the Go API and the web app.
+    Change it first, run `make generate`, then implement.
+
+    ## Versioning
+
+    Every API endpoint lives under `/v1`. The only unversioned paths are the
+    infrastructure probes `/healthz` and `/readyz`, which load balancers and
+    the container orchestrator call.
+
+    ## Authentication
+
+    Every endpoint requires authentication and a permission check unless it
+    is marked public with `security: []`.
+
+    ## Errors
+
+    Every error response, on every endpoint, has a body that follows the
+    `Error` schema. `code` is stable and machine-readable; clients use it to
+    choose a translated message. `message` is an English description for
+    developers and must not be shown to end users. Error bodies never contain
+    personal data.
+
+    A resource in a tenant the caller does not belong to returns `404`, not
+    `403`.
+
+    ## Request IDs
+
+    Every response carries an `X-Request-ID` header. A well-formed inbound
+    `X-Request-ID` (at most 64 characters from `A-Z a-z 0-9 - _ .`) is
+    reused; otherwise the server generates one. The same value appears as
+    `request_id` in error bodies and in server logs.
+
+    ## Pagination
+
+    List endpoints use cursor pagination:
+
+    - Request: the `cursor` and `limit` query parameters (see the `Cursor`
+      and `Limit` parameters). Omit `cursor` for the first page.
+    - Response: an object with `data` (the array of items) and `page` (a
+      `PageInfo`). Pass `page.next_cursor` as `cursor` to get the next page.
+      `page.next_cursor` is `null` on the last page.
+    - Cursors are opaque. Clients must not parse, build or store them
+      long-term. A cursor is only valid with the same filters and sort order
+      that produced it; otherwise the API returns `400` with code
+      `invalid_cursor`.
+    - There are no page numbers, offsets or total counts.
+
+    ## Naming
+
+    JSON fields and query parameters use `snake_case`. Timestamps are
+    RFC 3339 in UTC. Identifiers are UUIDs.
+servers:
+  - url: http://localhost:8080
+    description: Local development
+tags:
+  - name: health
+    description: Liveness and readiness probes
+paths:
+  /healthz:
+    get:
+      operationId: getHealthz
+      summary: Liveness probe
+      description: Reports that the process is running. Does not check dependencies.
+      tags: [health]
+      security: []
+      responses:
+        "200":
+          description: The process is alive.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+              example:
+                status: ok
+  /readyz:
+    get:
+      operationId: getReadyz
+      summary: Readiness probe
+      description: >-
+        Reports whether the service can accept traffic. Returns 503 while a
+        dependency check is failing or the service is shutting down.
+      tags: [health]
+      security: []
+      responses:
+        "200":
+          description: The service is ready to accept traffic.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+              example:
+                status: ok
+        "503":
+          description: The service is not ready to accept traffic.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+              example:
+                status: unavailable
+                checks:
+                  database: failed
+components:
+  parameters:
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: >-
+        Opaque cursor from `page.next_cursor` of the previous page. Omit it
+        to get the first page.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 1024
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Maximum number of items to return.
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 25
+  responses:
+    BadRequest:
+      description: The request is malformed or a parameter is invalid.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: invalid_cursor
+            message: The cursor is not valid for this request.
+            request_id: 4f1c2a9e7b3d4c5e8f6a0b1c2d3e4f5a
+    Unauthorized:
+      description: Authentication is missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: unauthenticated
+            message: Authentication is required.
+            request_id: 4f1c2a9e7b3d4c5e8f6a0b1c2d3e4f5a
+    Forbidden:
+      description: >-
+        The caller belongs to the tenant but lacks the permission for this
+        action.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: permission_denied
+            message: The caller is not allowed to perform this action.
+            request_id: 4f1c2a9e7b3d4c5e8f6a0b1c2d3e4f5a
+    NotFound:
+      description: >-
+        The resource does not exist, or it belongs to a tenant the caller is
+        not a member of.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: not_found
+            message: The resource was not found.
+            request_id: 4f1c2a9e7b3d4c5e8f6a0b1c2d3e4f5a
+    Conflict:
+      description: The request conflicts with the current state of the resource.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: conflict
+            message: The resource was changed by another request.
+            request_id: 4f1c2a9e7b3d4c5e8f6a0b1c2d3e4f5a
+    ValidationFailed:
+      description: The request body failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: validation_failed
+            message: The request body is invalid.
+            request_id: 4f1c2a9e7b3d4c5e8f6a0b1c2d3e4f5a
+            details:
+              - field: display_name
+                code: required
+                message: display_name is required.
+    TooManyRequests:
+      description: The caller has sent too many requests.
+      headers:
+        Retry-After:
+          description: Seconds to wait before retrying.
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: rate_limited
+            message: Too many requests.
+            request_id: 4f1c2a9e7b3d4c5e8f6a0b1c2d3e4f5a
+    InternalError:
+      description: An unexpected error occurred on the server.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: internal_error
+            message: An unexpected error occurred.
+            request_id: 4f1c2a9e7b3d4c5e8f6a0b1c2d3e4f5a
+  schemas:
+    Error:
+      type: object
+      description: The body of every error response.
+      required: [code, message, request_id]
+      properties:
+        code:
+          $ref: "#/components/schemas/ErrorCode"
+        message:
+          type: string
+          description: >-
+            English description for developers. Not for display to end users.
+        request_id:
+          type: string
+          description: The request ID, also returned in the `X-Request-ID` header.
+        details:
+          type: array
+          description: Field-level problems, present on validation errors.
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+    ErrorDetail:
+      type: object
+      required: [code, message]
+      properties:
+        field:
+          type: string
+          description: >-
+            Path of the offending field in the request, such as
+            `display_name` or `addresses[0].postal_code`. Absent when the
+            problem is not tied to one field.
+        code:
+          $ref: "#/components/schemas/ErrorDetailCode"
+        message:
+          type: string
+          description: >-
+            English description for developers. Not for display to end users.
+    ErrorCode:
+      type: string
+      description: >-
+        Stable, machine-readable error code. Clients use it to choose a
+        translated message. This list is the complete set the API returns;
+        the Go constants live in `api/internal/apierror/codes.go`. New codes
+        may be added, so clients must handle unknown values.
+      enum:
+        - bad_request
+        - invalid_cursor
+        - unauthenticated
+        - permission_denied
+        - not_found
+        - method_not_allowed
+        - conflict
+        - validation_failed
+        - rate_limited
+        - internal_error
+    ErrorDetailCode:
+      type: string
+      description: >-
+        Stable, machine-readable reason a field or parameter was rejected.
+        New codes may be added, so clients must handle unknown values.
+      enum:
+        - required
+        - invalid
+    PageInfo:
+      type: object
+      description: Pagination state returned as `page` by every list endpoint.
+      required: [next_cursor]
+      properties:
+        next_cursor:
+          type: [string, "null"]
+          description: >-
+            Cursor for the next page, or `null` when this is the last page.
+    HealthStatus:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ok, unavailable]
+        checks:
+          type: object
+          description: Result of each dependency check, keyed by check name.
+          additionalProperties:
+            type: string
+            enum: [ok, failed]

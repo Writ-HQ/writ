@@ -1,0 +1,9 @@
+node_modules/
+bin/
+.env
+.env.*
+!.env.example
+.DS_Store
+*.tfstate
+*.tfstate.*
+.terraform/

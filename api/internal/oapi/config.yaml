@@ -1,0 +1,10 @@
+# oapi-codegen configuration. Run `make generate` from the repo root.
+package: oapi
+output: oapi.gen.go
+generate:
+  models: true
+  chi-server: true
+  strict-server: true
+output-options:
+  # Keep shared components (Error, PageInfo, Cursor, Limit) that no path uses yet.
+  skip-prune: true
