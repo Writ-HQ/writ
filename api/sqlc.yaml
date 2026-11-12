@@ -1,0 +1,66 @@
+# sqlc configuration. Run `make generate` from the repo root.
+#
+# Each module has its own queries and its own generated package, and may
+# only query the tables it owns. The schema is read from the goose
+# migrations.
+version: "2"
+
+overrides:
+  go:
+    overrides:
+      - db_type: uuid
+        go_type: github.com/google/uuid.UUID
+      - db_type: uuid
+        nullable: true
+        go_type: github.com/google/uuid.NullUUID
+      - db_type: timestamptz
+        go_type: time.Time
+      - db_type: timestamptz
+        nullable: true
+        go_type:
+          import: time
+          type: Time
+          pointer: true
+      - db_type: inet
+        nullable: true
+        go_type:
+          import: net/netip
+          type: Addr
+          pointer: true
+      - db_type: jsonb
+        go_type:
+          import: encoding/json
+          type: RawMessage
+
+sql:
+  - engine: postgresql
+    schema: db/migrations
+    queries: internal/tenants/queries
+    gen:
+      go:
+        package: tenantsdb
+        out: internal/tenants/tenantsdb
+        sql_package: pgx/v5
+        emit_empty_slices: true
+        # Only emit structs for the tables this module's queries touch.
+        omit_unused_structs: true
+  - engine: postgresql
+    schema: db/migrations
+    queries: internal/auth/queries
+    gen:
+      go:
+        package: authdb
+        out: internal/auth/authdb
+        sql_package: pgx/v5
+        emit_empty_slices: true
+        omit_unused_structs: true
+  - engine: postgresql
+    schema: db/migrations
+    queries: internal/audit/queries
+    gen:
+      go:
+        package: auditdb
+        out: internal/audit/auditdb
+        sql_package: pgx/v5
+        emit_empty_slices: true
+        omit_unused_structs: true
