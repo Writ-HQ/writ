@@ -1,0 +1,32 @@
+# Local development only. Start with `make db-up`, then `make migrate`.
+#
+# The passwords below are defaults for a database that listens on localhost
+# and holds only fictional data. They are not used anywhere else; deployed
+# environments take theirs from AWS Secrets Manager.
+name: writ
+
+services:
+  postgres:
+    # Keep in step with Image in api/internal/database/dbtest/dbtest.go.
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: writ
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_dev}
+      WRIT_OWNER_PASSWORD: ${WRIT_OWNER_PASSWORD:-writ_owner_dev}
+      WRIT_APP_PASSWORD: ${WRIT_APP_PASSWORD:-writ_app_dev}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-54320}:5432"
+    volumes:
+      # PostgreSQL 18 images keep their data under /var/lib/postgresql.
+      - postgres-data:/var/lib/postgresql
+      # Creates the writ_owner and writ_app roles on first start.
+      - ./api/db/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d writ"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  postgres-data:

@@ -39,8 +39,16 @@ openapi-typescript) are in place. CI (lint, race tests, govulncheck,
 generated-code check, web type-check, Docker build) and Dependabot are
 configured but have not run yet: the repo is not on GitHub. Error codes
 live in /api/internal/apierror/codes.go and must match the ErrorCode enum
-in the spec. /web holds only the generated API client so far. Not yet done:
-sqlc, database, /api/cmd/worker, the Next.js app, /infra.
+in the spec. /web holds only the generated API client so far. PostgreSQL 18
+is in: migrations in /api/db/migrations (tenants, users, memberships,
+audit_log), roles writ_owner and writ_app, sqlc per module, and
+database.WithTenant (sets app.tenant_id and app.user_id) and
+database.WithUser (user only, before a tenant is chosen) as the transaction
+helpers. Every table is under row-level security; users are created only
+through the provision_user database function. Database tests use
+testcontainers via /api/internal/database/dbtest and need Docker.
+Follow-ups are listed in /docs/decisions/0002. Not yet done:
+/api/cmd/worker, auth, the Next.js app, /infra.
 
 ## Stack
 - API: Go, chi, pgx, sqlc, goose, River (jobs), go-playground/validator, slog
@@ -129,8 +137,13 @@ Run from the repo root:
 - make test — run Go tests
 - make lint — run linters
 - make vuln — run govulncheck
+- make db-up / make db-down — start or stop local PostgreSQL (Docker,
+  host port 54320)
+- make migrate / make migrate-status — apply goose migrations to the local
+  database, or list them
 - make generate — regenerate code from OpenAPI (Go into
-  /api/internal/oapi, TypeScript into /web/src/lib/api); sqlc not yet wired
+  /api/internal/oapi, TypeScript into /web/src/lib/api) and from SQL
+  queries with sqlc (into /api/internal/<module>/<module>db)
 - make generate-check — fail if generated code is out of date (CI runs this)
 - npm --prefix web run typecheck — type-check the web API client
 - [add web and infra commands as they are created]

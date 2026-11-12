@@ -14,6 +14,7 @@ import (
 	"syscall"
 
 	"github.com/Writ-HQ/writ/api/internal/config"
+	"github.com/Writ-HQ/writ/api/internal/database"
 	"github.com/Writ-HQ/writ/api/internal/health"
 	"github.com/Writ-HQ/writ/api/internal/httpserver"
 )
@@ -39,7 +40,13 @@ func run(ctx context.Context, getenv func(string) string, logOut io.Writer) erro
 	logger := slog.New(slog.NewJSONHandler(logOut, &slog.HandlerOptions{Level: cfg.LogLevel}))
 	slog.SetDefault(logger)
 
-	hh := health.New(logger)
+	pool, err := database.Open(ctx, cfg.DatabaseURL)
+	if err != nil {
+		return err
+	}
+	defer pool.Close()
+
+	hh := health.New(logger, health.Check{Name: "database", Fn: pool.Ping})
 	srv := httpserver.New(cfg.Addr(), httpserver.NewRouter(logger, hh), logger)
 
 	var lc net.ListenConfig

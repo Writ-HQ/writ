@@ -7,16 +7,18 @@ import (
 	"time"
 )
 
+const testDatabaseURL = "postgres://writ_app@localhost:5432/writ"
+
 func env(m map[string]string) func(string) string {
 	return func(k string) string { return m[k] }
 }
 
 func TestLoadDefaults(t *testing.T) {
-	cfg, err := Load(env(nil))
+	cfg, err := Load(env(map[string]string{"DATABASE_URL": testDatabaseURL}))
 	if err != nil {
 		t.Fatalf("Load() error = %v", err)
 	}
-	if cfg.Port != 8080 || cfg.LogLevel != slog.LevelInfo || cfg.ShutdownTimeout != 15*time.Second {
+	if cfg.DatabaseURL != testDatabaseURL || cfg.Port != 8080 || cfg.LogLevel != slog.LevelInfo || cfg.ShutdownTimeout != 15*time.Second {
 		t.Errorf("unexpected defaults: %+v", cfg)
 	}
 	if got := cfg.Addr(); got != ":8080" {
@@ -26,6 +28,7 @@ func TestLoadDefaults(t *testing.T) {
 
 func TestLoadOverrides(t *testing.T) {
 	cfg, err := Load(env(map[string]string{
+		"DATABASE_URL":     testDatabaseURL,
 		"PORT":             "9090",
 		"LOG_LEVEL":        "debug",
 		"SHUTDOWN_TIMEOUT": "30s",
@@ -47,7 +50,7 @@ func TestLoadReportsAllInvalidValues(t *testing.T) {
 	if err == nil {
 		t.Fatal("Load() error = nil, want error")
 	}
-	for _, name := range []string{"PORT", "LOG_LEVEL", "SHUTDOWN_TIMEOUT"} {
+	for _, name := range []string{"DATABASE_URL", "PORT", "LOG_LEVEL", "SHUTDOWN_TIMEOUT"} {
 		if !strings.Contains(err.Error(), name) {
 			t.Errorf("error %q does not mention %s", err, name)
 		}

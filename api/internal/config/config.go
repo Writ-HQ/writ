@@ -12,6 +12,10 @@ import (
 
 // Config holds the runtime configuration of the API server.
 type Config struct {
+	// DatabaseURL is the PostgreSQL URL the API connects with, as the
+	// writ_app role (DATABASE_URL, required). It contains a password and
+	// must never be logged.
+	DatabaseURL string
 	// Port is the TCP port the HTTP server listens on (PORT, default 8080).
 	Port int
 	// LogLevel is the minimum level that is logged (LOG_LEVEL, default info).
@@ -36,6 +40,11 @@ func Load(getenv func(string) string) (Config, error) {
 		ShutdownTimeout: 15 * time.Second,
 	}
 	var errs []error
+
+	cfg.DatabaseURL = strings.TrimSpace(getenv("DATABASE_URL"))
+	if cfg.DatabaseURL == "" {
+		errs = append(errs, errors.New("DATABASE_URL: is required"))
+	}
 
 	if v := strings.TrimSpace(getenv("PORT")); v != "" {
 		port, err := strconv.Atoi(v)
