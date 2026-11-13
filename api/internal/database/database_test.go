@@ -107,7 +107,7 @@ func provisionUser(t *testing.T) authdb.User {
 	suffix := randomSuffix()
 	user, err := authdb.New(db.App).ProvisionUser(t.Context(), authdb.ProvisionUserParams{
 		ExternalAuthID: "idp|" + suffix,
-		Email:          suffix + "@example.test",
+		Email:          new(suffix + "@example.test"),
 		DisplayName:    "Test Person " + suffix,
 		Locale:         "fr",
 	})
@@ -799,15 +799,17 @@ func TestProvisionUser(t *testing.T) {
 	t.Run("finds the existing user and leaves it unchanged", func(t *testing.T) {
 		again, err := q.ProvisionUser(ctx, authdb.ProvisionUserParams{
 			ExternalAuthID: f.a.user.ExternalAuthID,
-			Email:          "changed@example.test",
+			Email:          new("changed@example.test"),
 			DisplayName:    "Changed",
 			Locale:         "en",
 		})
 		if err != nil {
 			t.Fatal(err)
 		}
-		if again != f.a.user {
-			t.Errorf("second call returned %+v, want the row from the first call", again.ID)
+		if again.ID != f.a.user.ID || *again.Email != *f.a.user.Email ||
+			again.DisplayName != f.a.user.DisplayName || again.Locale != f.a.user.Locale ||
+			!again.UpdatedAt.Equal(f.a.user.UpdatedAt) {
+			t.Errorf("second call returned a changed row for user %s", again.ID)
 		}
 	})
 
@@ -820,7 +822,7 @@ func TestProvisionUser(t *testing.T) {
 			"other casing": strings.ToUpper(f.a.user.ExternalAuthID),
 		} {
 			got, err := q.ProvisionUser(ctx, authdb.ProvisionUserParams{
-				ExternalAuthID: id, Email: randomSuffix() + "@example.test", Locale: "en",
+				ExternalAuthID: id, Email: new(randomSuffix() + "@example.test"), Locale: "en",
 			})
 			if id == "" {
 				if !errors.Is(err, pgx.ErrNoRows) {
@@ -842,7 +844,7 @@ func TestProvisionUser(t *testing.T) {
 	t.Run("calling it opens no access to the users table", func(t *testing.T) {
 		err := pgx.BeginFunc(ctx, db.App, func(tx pgx.Tx) error {
 			if _, err := authdb.New(tx).ProvisionUser(ctx, authdb.ProvisionUserParams{
-				ExternalAuthID: f.a.user.ExternalAuthID, Email: "x@example.test", Locale: "en",
+				ExternalAuthID: f.a.user.ExternalAuthID, Locale: "en",
 			}); err != nil {
 				return err
 			}

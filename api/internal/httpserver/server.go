@@ -8,33 +8,49 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
+	"github.com/Writ-HQ/writ/api/internal/auth"
 	"github.com/Writ-HQ/writ/api/internal/health"
 	"github.com/Writ-HQ/writ/api/internal/oapi"
 )
+
+// Handlers are the modules' implementations of the API operations.
+type Handlers struct {
+	Health  *health.Handler
+	Account *auth.Handler
+}
 
 // api is the single implementation of the generated server interface. Each
 // module contributes its operations by being embedded here.
 type api struct {
 	*health.Handler
+	*accountHandler
 }
+
+// An embedded field is named after its type, and two fields cannot both be
+// called Handler.
+type accountHandler = auth.Handler
 
 var _ oapi.StrictServerInterface = api{}
 
 // NewRouter returns the root router with the shared middleware and every
-// operation in openapi/openapi.yaml mounted.
-func NewRouter(logger *slog.Logger, hh *health.Handler) chi.Router {
+// operation in openapi/openapi.yaml mounted. Every request must be
+// authenticated except those to the public endpoints.
+func NewRouter(logger *slog.Logger, authenticator Authenticator, h Handlers) chi.Router {
 	r := chi.NewRouter()
 
-	// Order matters: the request ID must exist before anything logs, and
-	// Recover sits inside AccessLog so that a panic is logged as a 500.
+	// Order matters: the request ID must exist before anything logs,
+	// Recover sits inside AccessLog so that a panic is logged as a 500,
+	// and Authenticate comes before routing so that an unauthenticated
+	// caller learns nothing about which paths exist or how they validate.
 	r.Use(RequestID)
 	r.Use(AccessLog(logger))
 	r.Use(Recover(logger))
+	r.Use(Authenticate(logger, authenticator))
 
 	r.NotFound(notFound)
 	r.MethodNotAllowed(methodNotAllowed)
 
-	strict := oapi.NewStrictHandlerWithOptions(api{Handler: hh}, nil, oapi.StrictHTTPServerOptions{
+	strict := oapi.NewStrictHandlerWithOptions(api{Handler: h.Health, accountHandler: h.Account}, nil, oapi.StrictHTTPServerOptions{
 		RequestErrorHandlerFunc:  requestError,
 		ResponseErrorHandlerFunc: responseError(logger),
 	})

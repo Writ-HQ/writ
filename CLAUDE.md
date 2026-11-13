@@ -47,8 +47,14 @@ database.WithUser (user only, before a tenant is chosen) as the transaction
 helpers. Every table is under row-level security; users are created only
 through the provision_user database function. Database tests use
 testcontainers via /api/internal/database/dbtest and need Docker.
-Follow-ups are listed in /docs/decisions/0002. Not yet done:
-/api/cmd/worker, auth, the Next.js app, /infra.
+Follow-ups are listed in /docs/decisions/0002. Authentication is in: httpserver.Authenticate verifies the Zitadel JWT
+access token on every request except the public endpoints (which must
+match `security: []` in the spec), auth.Service finds or creates the user,
+and handlers read it with auth.UserFromContext. GET /v1/me is the first
+authenticated endpoint. Tests use the fake identity provider in
+/api/internal/auth/authtest; end-to-end tests are in /api/internal/e2e.
+See /docs/decisions/0004. Not yet done: MFA enforcement, tenant selection
+and permission checks, /api/cmd/worker, the Next.js app, /infra.
 
 ## Stack
 - API: Go, chi, pgx, sqlc, goose, River (jobs), go-playground/validator, slog
@@ -133,7 +139,8 @@ Follow-ups are listed in /docs/decisions/0002. Not yet done:
 
 ## Commands
 Run from the repo root:
-- make run — start API locally
+- make run — start API locally (needs OIDC_ISSUER and OIDC_AUDIENCE to
+  point at Zitadel for anything but the probes to work)
 - make test — run Go tests
 - make lint — run linters
 - make vuln — run govulncheck

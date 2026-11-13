@@ -36,6 +36,9 @@ const (
 	RateLimited Code = oapi.ErrorCodeRateLimited
 	// InternalError: an unexpected server error (500).
 	InternalError Code = oapi.ErrorCodeInternalError
+	// ServiceUnavailable: a dependency is temporarily unavailable and the
+	// request may be retried (503).
+	ServiceUnavailable Code = oapi.ErrorCodeServiceUnavailable
 )
 
 // Codes lists every error code.
@@ -50,6 +53,7 @@ var Codes = []Code{
 	ValidationFailed,
 	RateLimited,
 	InternalError,
+	ServiceUnavailable,
 }
 
 // DetailCode is the value of the `code` field of an error detail: the reason

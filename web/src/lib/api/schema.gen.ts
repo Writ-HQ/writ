@@ -4,6 +4,26 @@
  */
 
 export interface paths {
+    "/v1/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The signed-in user
+         * @description Returns the account of the user the access token belongs to. It needs no tenant, so clients call it first after signing in.
+         */
+        get: operations["getMe"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/healthz": {
         parameters: {
             query?: never;
@@ -48,6 +68,20 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** @description The signed-in user's own account. */
+        CurrentUser: {
+            /** Format: uuid */
+            id: string;
+            /** @description `null` until the identity provider has supplied an address. */
+            email: string | null;
+            /** @description May be empty. */
+            display_name: string;
+            /**
+             * @description The language the user prefers for the interface.
+             * @enum {string}
+             */
+            locale: "en" | "fr";
+        };
         /** @description The body of every error response. */
         Error: {
             code: components["schemas"]["ErrorCode"];
@@ -69,7 +103,7 @@ export interface components {
          * @description Stable, machine-readable error code. Clients use it to choose a translated message. This list is the complete set the API returns; the Go constants live in `api/internal/apierror/codes.go`. New codes may be added, so clients must handle unknown values.
          * @enum {string}
          */
-        ErrorCode: "bad_request" | "invalid_cursor" | "unauthenticated" | "permission_denied" | "not_found" | "method_not_allowed" | "conflict" | "validation_failed" | "rate_limited" | "internal_error";
+        ErrorCode: "bad_request" | "invalid_cursor" | "unauthenticated" | "permission_denied" | "not_found" | "method_not_allowed" | "conflict" | "validation_failed" | "rate_limited" | "internal_error" | "service_unavailable";
         /**
          * @description Stable, machine-readable reason a field or parameter was rejected. New codes may be added, so clients must handle unknown values.
          * @enum {string}
@@ -227,6 +261,22 @@ export interface components {
                 "application/json": components["schemas"]["Error"];
             };
         };
+        /** @description A service the API depends on is temporarily unavailable. The request was not processed and may be retried. */
+        ServiceUnavailable: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                /**
+                 * @example {
+                 *       "code": "service_unavailable",
+                 *       "message": "Authentication is temporarily unavailable.",
+                 *       "request_id": "4f1c2a9e7b3d4c5e8f6a0b1c2d3e4f5a"
+                 *     }
+                 */
+                "application/json": components["schemas"]["Error"];
+            };
+        };
     };
     parameters: {
         /** @description Opaque cursor from `page.next_cursor` of the previous page. Omit it to get the first page. */
@@ -240,6 +290,37 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    getMe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The signed-in user. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": "0192f0c4-7d2a-7b1e-9c3f-5a6b7c8d9e0f",
+                     *       "email": "sam.example@example.test",
+                     *       "display_name": "Sam Example",
+                     *       "locale": "en"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["CurrentUser"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            500: components["responses"]["InternalError"];
+            503: components["responses"]["ServiceUnavailable"];
+        };
+    };
     getHealthz: {
         parameters: {
             query?: never;

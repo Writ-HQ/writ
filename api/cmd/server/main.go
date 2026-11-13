@@ -13,6 +13,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/Writ-HQ/writ/api/internal/auth"
 	"github.com/Writ-HQ/writ/api/internal/config"
 	"github.com/Writ-HQ/writ/api/internal/database"
 	"github.com/Writ-HQ/writ/api/internal/health"
@@ -47,7 +48,16 @@ func run(ctx context.Context, getenv func(string) string, logOut io.Writer) erro
 	defer pool.Close()
 
 	hh := health.New(logger, health.Check{Name: "database", Fn: pool.Ping})
-	srv := httpserver.New(cfg.Addr(), httpserver.NewRouter(logger, hh), logger)
+	authenticator := auth.NewService(auth.NewVerifier(auth.VerifierConfig{
+		Issuer:   cfg.OIDCIssuer,
+		Audience: cfg.OIDCAudience,
+		JWKSURL:  cfg.OIDCJWKSURL,
+	}), pool)
+	router := httpserver.NewRouter(logger, authenticator, httpserver.Handlers{
+		Health:  hh,
+		Account: auth.NewHandler(),
+	})
+	srv := httpserver.New(cfg.Addr(), router, logger)
 
 	var lc net.ListenConfig
 	ln, err := lc.Listen(ctx, "tcp", srv.Addr)

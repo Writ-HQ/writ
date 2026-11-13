@@ -95,6 +95,8 @@ list a user's tenants before a tenant was chosen.
 - **Work with no user.** `WithTenant` requires a user. Background jobs and
   webhooks that act for a tenant with no person behind them have no helper
   yet; decide how they are represented when River is added.
+- **Since migration 00007** `provision_user` reads before it writes, and
+  `users.email` may be NULL (see 0004).
 - **Profile sync at login.** `provision_user` does not update an existing
   user. If email or name should follow the identity provider, the API
   updates the user's own row in `WithUser` after provisioning.

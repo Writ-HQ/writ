@@ -5,11 +5,12 @@
 -- at login. It calls the provision_user database function, the one path
 -- that is not subject to the users policies (see migration 00006), so it
 -- needs no user context. Pass an external_auth_id from a verified token
--- only. An existing user is returned unchanged.
+-- only. An existing user is returned unchanged. email is NULL when the
+-- address is not known.
 -- name: ProvisionUser :one
 SELECT * FROM provision_user(
 	sqlc.arg(external_auth_id),
-	sqlc.arg(email),
+	sqlc.narg(email),
 	sqlc.arg(display_name),
 	sqlc.arg(locale)
 );
