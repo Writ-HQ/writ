@@ -95,9 +95,10 @@ type in step 1.
       same values the claim cannot tell them apart and the check must stay
       off.
 
-- [ ] **Token lifetime.** `exp` minus `iat` on that token was 12 hours.
-      Shorten the access token lifetime in the instance's settings (see
-      step 1) and confirm the difference here is an hour or less.
+- [ ] **Token lifetime.** `exp` minus `iat` on that token was 12 hours,
+      the instance's default. It is being set to one hour. Confirm the
+      difference here is an hour or less; `devtoken` also prints how long
+      its token is valid for.
 
 ## 4. Call the API
 

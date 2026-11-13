@@ -264,7 +264,7 @@ func (s *Service) fetchAndStoreProfile(ctx context.Context, row authdb.User, tok
 		return authdb.User{}, errors.New("auth: the userinfo response is for a different subject")
 	}
 
-	params := authdb.SyncCurrentUserProfileParams{}
+	params := authdb.SyncCurrentUserProfileParams{SyncedAt: s.opts.Now()}
 	if profile.Email != nil {
 		params.Email = emailFromClaim(*profile.Email)
 	}

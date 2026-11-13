@@ -7,6 +7,7 @@ package authdb
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -86,7 +87,7 @@ UPDATE users
 SET email             = COALESCE($1, email),
     display_name      = COALESCE($2, display_name),
     locale            = COALESCE($3, locale),
-    profile_synced_at = now()
+    profile_synced_at = $4::timestamptz
 WHERE id = current_user_id()
 RETURNING id, external_auth_id, email, display_name, locale, created_at, updated_at, profile_synced_at, disabled_at
 `
@@ -95,13 +96,21 @@ type SyncCurrentUserProfileParams struct {
 	Email       *string
 	DisplayName *string
 	Locale      *string
+	SyncedAt    time.Time
 }
 
 // SyncCurrentUserProfile stores what the identity provider's userinfo
 // endpoint returned and marks the profile as fresh. A NULL argument leaves
-// that column as it is. Runs inside database.WithUser.
+// that column as it is. synced_at is the API's clock, the same clock that
+// later decides whether the profile is stale. Runs inside
+// database.WithUser.
 func (q *Queries) SyncCurrentUserProfile(ctx context.Context, arg SyncCurrentUserProfileParams) (User, error) {
-	row := q.db.QueryRow(ctx, syncCurrentUserProfile, arg.Email, arg.DisplayName, arg.Locale)
+	row := q.db.QueryRow(ctx, syncCurrentUserProfile,
+		arg.Email,
+		arg.DisplayName,
+		arg.Locale,
+		arg.SyncedAt,
+	)
 	var i User
 	err := row.Scan(
 		&i.ID,

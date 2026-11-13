@@ -63,13 +63,19 @@ no authentication-method claim (checked 2026-11-13), so MFA is enforced by
 Zitadel's Force MFA policy alone. OIDC_AUDIENCE is the Zitadel project ID.
 Zitadel is the system of record for sign-ins.
 security_events is a user-scoped, append-only table (RLS on app.user_id)
-for user provisioned, email changed and mfa_required rejections.
-ENVIRONMENT (local, staging, production; default production) turns on the
-interactive API docs at /docs outside production. /api/cmd/devtoken gets a
-developer an access token through the device flow. None of this has run
-against a real Zitadel yet: see /docs/runbooks/zitadel-smoke-test.md and
-/docs/decisions/0004. Not yet done: tenant selection and permission
-checks, /api/cmd/worker, the Next.js app, /infra.
+for user provisioned, email changed, account disabled or enabled, and
+mfa_required rejections. users.disabled_at is the app-level kill switch:
+checked on every request (error code account_disabled), not settable by
+the API role, and every change is recorded by a trigger. Access tokens
+live one hour. ENVIRONMENT (local, staging, production; default
+production) turns on the interactive API docs at /docs outside production.
+/api/cmd/devtoken gets a developer an access token through the device
+flow. The real-token test against the development Zitadel passed on
+2026-11-13: see /docs/runbooks/zitadel-smoke-test.md and
+/docs/decisions/0004. Work deferred to before the pilot or launch is
+listed in /docs/before-launch.md; add to it whenever something is
+deferred. Not yet done: tenant selection and permission checks,
+/api/cmd/worker, the Next.js app, /infra.
 
 ## Stack
 - API: Go, chi, pgx, sqlc, goose, River (jobs), go-playground/validator, slog

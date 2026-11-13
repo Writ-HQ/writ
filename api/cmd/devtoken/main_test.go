@@ -118,6 +118,9 @@ func TestPrintsOnlyTheTokenOnStdout(t *testing.T) {
 	if !strings.Contains(stderr, "WXYZ-1234") || !strings.Contains(stderr, p.URL+"/activate") {
 		t.Errorf("stderr does not show the code and URL:\n%s", stderr)
 	}
+	if !strings.Contains(stderr, "valid for 1h0m0s") {
+		t.Errorf("stderr does not say how long the token lasts:\n%s", stderr)
+	}
 	if strings.Contains(stderr, "the-access-token") || strings.Contains(stderr, "device-code-1") {
 		t.Errorf("stderr contains a credential:\n%s", stderr)
 	}

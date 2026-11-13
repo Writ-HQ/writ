@@ -150,6 +150,7 @@ func run(ctx context.Context, args []string, getenv func(string) string, stdout,
 
 		var token struct {
 			AccessToken string `json:"access_token"`
+			ExpiresIn   int    `json:"expires_in"`
 		}
 		oauthErr, err := postForm(ctx, client, meta.TokenEndpoint, url.Values{
 			"grant_type":  {deviceGrantType},
@@ -165,6 +166,12 @@ func run(ctx context.Context, args []string, getenv func(string) string, stdout,
 				return errors.New("the identity provider returned no access token")
 			}
 			_, _ = fmt.Fprintln(stderr, "Signed in.")
+			if token.ExpiresIn > 0 {
+				// Tokens are short-lived on purpose. The API answers 401
+				// once this one expires; run the command again then.
+				_, _ = fmt.Fprintf(stderr, "The token is valid for %s. Run this again when the API starts answering 401.\n",
+					(time.Duration(token.ExpiresIn) * time.Second).Round(time.Minute))
+			}
 			if *showClaims {
 				claims, err := decodeClaims(token.AccessToken)
 				if err != nil {
