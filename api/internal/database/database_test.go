@@ -458,9 +458,9 @@ func TestUserSeesOnlyTheirOwnTenants(t *testing.T) {
 		t.Helper()
 		var ids []uuid.UUID
 		err := inUser(t, userID, func(tx pgx.Tx) error {
-			tenants, err := tenantsdb.New(tx).ListTenantsForCurrentUser(ctx)
-			for _, tenant := range tenants {
-				ids = append(ids, tenant.ID)
+			rows, err := tenantsdb.New(tx).ListTenantsForCurrentUser(ctx, tenantsdb.ListTenantsForCurrentUserParams{PageSize: 100})
+			for _, row := range rows {
+				ids = append(ids, row.Tenant.ID)
 			}
 			if err != nil {
 				return err
@@ -765,11 +765,11 @@ func TestCreateTenantWithFirstOwnerInOneTransaction(t *testing.T) {
 	}
 
 	err = inUser(t, user.ID, func(tx pgx.Tx) error {
-		tenants, err := tenantsdb.New(tx).ListTenantsForCurrentUser(ctx)
+		tenants, err := tenantsdb.New(tx).ListTenantsForCurrentUser(ctx, tenantsdb.ListTenantsForCurrentUserParams{PageSize: 100})
 		if err != nil {
 			return err
 		}
-		if len(tenants) != 1 || tenants[0].ID != tenantID {
+		if len(tenants) != 1 || tenants[0].Tenant.ID != tenantID || tenants[0].Role != "owner" {
 			t.Errorf("the new owner lists %d tenants, want the one just created", len(tenants))
 		}
 		return nil
@@ -1150,6 +1150,89 @@ func TestDisablingAnAccount(t *testing.T) {
 		}
 		if got := eventTypes(t, id); !slices.Equal(got, []string{"user.provisioned"}) {
 			t.Errorf("security events = %v, want only user.provisioned", got)
+		}
+	})
+}
+
+func TestPlatformAdminFlag(t *testing.T) {
+	f := newFixture(t)
+	ctx := t.Context()
+	id := f.a.user.ID
+
+	asOwnerFor := func(userID uuid.UUID, sql string, args ...any) (int64, error) {
+		var n int64
+		err := database.WithUser(ctx, db.Owner, userID, func(tx pgx.Tx) error {
+			tag, err := tx.Exec(ctx, sql, args...)
+			n = tag.RowsAffected()
+			return err
+		})
+		return n, err
+	}
+	eventTypes := func(userID uuid.UUID) []string {
+		var types []string
+		err := inUser(t, userID, func(tx pgx.Tx) error {
+			events, err := authdb.New(tx).ListSecurityEventsForCurrentUser(ctx, 100)
+			for _, e := range events {
+				types = append(types, e.EventType)
+			}
+			return err
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		slices.Reverse(types)
+		return types
+	}
+
+	t.Run("nobody is one by default", func(t *testing.T) {
+		if f.a.user.PlatformAdmin || f.b.user.PlatformAdmin {
+			t.Error("a newly provisioned user is a platform admin")
+		}
+	})
+
+	t.Run("the application role cannot grant it, even to its own user", func(t *testing.T) {
+		err := inUser(t, id, func(tx pgx.Tx) error {
+			_, err := tx.Exec(ctx, "UPDATE users SET platform_admin = true WHERE id = $1", id)
+			return err
+		})
+		requireSQLState(t, err, insufficientPrivilege)
+	})
+
+	t.Run("an operator grants and revokes it, and each change is recorded once", func(t *testing.T) {
+		for _, sql := range []string{
+			"UPDATE users SET platform_admin = true WHERE id = $1",
+			"UPDATE users SET platform_admin = true WHERE id = $1", // no change, no event
+			"UPDATE users SET platform_admin = false WHERE id = $1",
+		} {
+			if n, err := asOwnerFor(id, sql, id); err != nil || n != 1 {
+				t.Fatalf("%s: %d rows, err = %v", sql, n, err)
+			}
+		}
+		want := []string{"user.provisioned", "platform_admin.granted", "platform_admin.revoked"}
+		if got := eventTypes(id); !slices.Equal(got, want) {
+			t.Errorf("security events = %v, want %v", got, want)
+		}
+	})
+
+	// The flag is in no policy: a platform admin with no membership sees
+	// exactly what any other stranger sees of a tenant, which is nothing.
+	t.Run("it gives no access to any tenant", func(t *testing.T) {
+		admin := provisionUser(t)
+		if n, err := asOwnerFor(admin.ID, "UPDATE users SET platform_admin = true WHERE id = $1", admin.ID); err != nil || n != 1 {
+			t.Fatalf("granting: %d rows, err = %v", n, err)
+		}
+		err := inUser(t, admin.ID, func(tx pgx.Tx) error {
+			counts := visibleRows(t, tx)
+			if counts["tenants"] != 0 || counts["memberships"] != 0 || counts["audit_log"] != 0 {
+				t.Errorf("a platform admin with no membership sees %v", counts)
+			}
+			if counts["users"] != 1 {
+				t.Errorf("a platform admin sees %d users, want only themselves", counts["users"])
+			}
+			return nil
+		})
+		if err != nil {
+			t.Fatal(err)
 		}
 	})
 }

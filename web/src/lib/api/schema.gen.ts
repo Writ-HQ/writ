@@ -4,6 +4,57 @@
  */
 
 export interface paths {
+    "/v1/tenants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The signed-in user's tenants
+         * @description Lists the tenants the caller is an active member of, with the caller's role in each, oldest first. Needs no tenant, so clients call it after signing in to let the user choose one.
+         */
+        get: operations["listTenants"];
+        put?: never;
+        /**
+         * Create a tenant
+         * @description Creates a tenant and makes the caller its owner. Unless the deployment allows self-service, only platform administrators may do this; anyone else gets `403`. The slug is generated and always unique, so this request never reports a conflict with another tenant.
+         */
+        post: operations["createTenant"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/tenants/{tenant_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The tenant the request acts in. Every path under `/v1/tenants/{tenant_id}` returns `404` unless the caller is an active member of that tenant: for a tenant that does not exist, one that has been deleted, one the caller was never in, one where their membership is suspended, invited or removed, and for a value that is not a UUID. The response is the same in every case. */
+                tenant_id: components["parameters"]["TenantId"];
+            };
+            cookie?: never;
+        };
+        /**
+         * A tenant
+         * @description The tenant and the caller's role in it.
+         */
+        get: operations["getTenant"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Change a tenant's name or default language
+         * @description Owners and admins only. Send only the fields to change; at least one is required. The slug does not change.
+         */
+        patch: operations["updateTenant"];
+        trace?: never;
+    };
     "/v1/me": {
         parameters: {
             query?: never;
@@ -72,6 +123,8 @@ export interface components {
         CurrentUser: {
             /** Format: uuid */
             id: string;
+            /** @description Whether the user may create tenants when the deployment does not allow self-service. It gives no access to any tenant: that still takes a membership. */
+            platform_admin: boolean;
             /** @description `null` until the identity provider has supplied an address. */
             email: string | null;
             /** @description May be empty. */
@@ -109,6 +162,56 @@ export interface components {
          * @enum {string}
          */
         ErrorDetailCode: "required" | "invalid";
+        /**
+         * @description A member's role in a tenant. `owner` has full control; `admin` manages the team, settings and data; `staff` does day-to-day work; `volunteer` has limited access to what is assigned to them.
+         * @enum {string}
+         */
+        Role: "owner" | "admin" | "staff" | "volunteer";
+        /**
+         * @description A language the interface supports.
+         * @enum {string}
+         */
+        Locale: "en" | "fr";
+        /**
+         * @description A tenant, as seen by one of its members.
+         * @example {
+         *       "id": "0192f0c4-7d2a-7b1e-9c3f-5a6b7c8d9e0f",
+         *       "name": "Example Riding Association",
+         *       "slug": "example-riding-association-k3x9w2ab",
+         *       "default_locale": "fr",
+         *       "role": "owner",
+         *       "created_at": "2026-11-13T15:04:05Z",
+         *       "updated_at": "2026-11-13T15:04:05Z"
+         *     }
+         */
+        Tenant: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            /** @description A short, unique, URL-safe identifier generated from the name when the tenant was created. It does not change when the name does. */
+            slug: string;
+            default_locale: components["schemas"]["Locale"];
+            role: components["schemas"]["Role"];
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            updated_at: string;
+        };
+        TenantList: {
+            data: components["schemas"]["Tenant"][];
+            page: components["schemas"]["PageInfo"];
+        };
+        CreateTenantRequest: {
+            /** @description 1 to 200 characters after trimming spaces. */
+            name: string;
+            default_locale?: components["schemas"]["Locale"];
+        };
+        /** @description At least one field is required. */
+        UpdateTenantRequest: {
+            /** @description 1 to 200 characters after trimming spaces. */
+            name?: string;
+            default_locale?: components["schemas"]["Locale"];
+        };
         /** @description Pagination state returned as `page` by every list endpoint. */
         PageInfo: {
             /** @description Cursor for the next page, or `null` when this is the last page. */
@@ -279,6 +382,8 @@ export interface components {
         };
     };
     parameters: {
+        /** @description The tenant the request acts in. Every path under `/v1/tenants/{tenant_id}` returns `404` unless the caller is an active member of that tenant: for a tenant that does not exist, one that has been deleted, one the caller was never in, one where their membership is suspended, invited or removed, and for a value that is not a UUID. The response is the same in every case. */
+        TenantId: string;
         /** @description Opaque cursor from `page.next_cursor` of the previous page. Omit it to get the first page. */
         Cursor: string;
         /** @description Maximum number of items to return. */
@@ -290,6 +395,137 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    listTenants: {
+        parameters: {
+            query?: {
+                /** @description Opaque cursor from `page.next_cursor` of the previous page. Omit it to get the first page. */
+                cursor?: components["parameters"]["Cursor"];
+                /** @description Maximum number of items to return. */
+                limit?: components["parameters"]["Limit"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description One page of tenants. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TenantList"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            500: components["responses"]["InternalError"];
+            503: components["responses"]["ServiceUnavailable"];
+        };
+    };
+    createTenant: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                /**
+                 * @example {
+                 *       "name": "Example Riding Association",
+                 *       "default_locale": "fr"
+                 *     }
+                 */
+                "application/json": components["schemas"]["CreateTenantRequest"];
+            };
+        };
+        responses: {
+            /** @description The new tenant. The caller's role in it is `owner`. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Tenant"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["ValidationFailed"];
+            500: components["responses"]["InternalError"];
+            503: components["responses"]["ServiceUnavailable"];
+        };
+    };
+    getTenant: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The tenant the request acts in. Every path under `/v1/tenants/{tenant_id}` returns `404` unless the caller is an active member of that tenant: for a tenant that does not exist, one that has been deleted, one the caller was never in, one where their membership is suspended, invited or removed, and for a value that is not a UUID. The response is the same in every case. */
+                tenant_id: components["parameters"]["TenantId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The tenant. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Tenant"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+            500: components["responses"]["InternalError"];
+            503: components["responses"]["ServiceUnavailable"];
+        };
+    };
+    updateTenant: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The tenant the request acts in. Every path under `/v1/tenants/{tenant_id}` returns `404` unless the caller is an active member of that tenant: for a tenant that does not exist, one that has been deleted, one the caller was never in, one where their membership is suspended, invited or removed, and for a value that is not a UUID. The response is the same in every case. */
+                tenant_id: components["parameters"]["TenantId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                /**
+                 * @example {
+                 *       "name": "Example Riding Association"
+                 *     }
+                 */
+                "application/json": components["schemas"]["UpdateTenantRequest"];
+            };
+        };
+        responses: {
+            /** @description The tenant after the change. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Tenant"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["ValidationFailed"];
+            500: components["responses"]["InternalError"];
+            503: components["responses"]["ServiceUnavailable"];
+        };
+    };
     getMe: {
         parameters: {
             query?: never;

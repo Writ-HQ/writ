@@ -26,7 +26,8 @@ type CreateTenantParams struct {
 }
 
 // tenants is under row-level security: a transaction sees the current
-// tenant and the tenants the current user is an active member of.
+// tenant and the tenants the current user is an active member of. Nothing
+// here works around that; each query says which helper it runs inside.
 // CreateTenant must run inside database.WithTenant with the new tenant's
 // id, chosen by the caller, as the tenant. Otherwise the new row is not
 // visible to RETURNING and the first membership cannot be added.
@@ -71,34 +72,49 @@ func (q *Queries) GetTenant(ctx context.Context, id uuid.UUID) (Tenant, error) {
 }
 
 const listTenantsForCurrentUser = `-- name: ListTenantsForCurrentUser :many
-SELECT t.id, t.name, t.slug, t.default_locale, t.created_at, t.updated_at, t.deleted_at FROM tenants t
+SELECT t.id, t.name, t.slug, t.default_locale, t.created_at, t.updated_at, t.deleted_at, m.role
+FROM tenants t
 JOIN memberships m ON m.tenant_id = t.id
 WHERE m.user_id = current_user_id()
   AND m.status = 'active'
   AND m.deleted_at IS NULL
   AND t.deleted_at IS NULL
-ORDER BY t.name, t.id
+  AND t.id > $1
+ORDER BY t.id
+LIMIT $2
 `
 
+type ListTenantsForCurrentUserParams struct {
+	After    uuid.UUID
+	PageSize int32
+}
+
+type ListTenantsForCurrentUserRow struct {
+	Tenant Tenant
+	Role   string
+}
+
 // ListTenantsForCurrentUser runs inside database.WithUser, before a tenant
-// is chosen.
-func (q *Queries) ListTenantsForCurrentUser(ctx context.Context) ([]Tenant, error) {
-	rows, err := q.db.Query(ctx, listTenantsForCurrentUser)
+// is chosen. Oldest first: ids are UUIDv7, so id order is creation order,
+// and the id is the cursor. Pass the zero UUID for the first page.
+func (q *Queries) ListTenantsForCurrentUser(ctx context.Context, arg ListTenantsForCurrentUserParams) ([]ListTenantsForCurrentUserRow, error) {
+	rows, err := q.db.Query(ctx, listTenantsForCurrentUser, arg.After, arg.PageSize)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Tenant{}
+	items := []ListTenantsForCurrentUserRow{}
 	for rows.Next() {
-		var i Tenant
+		var i ListTenantsForCurrentUserRow
 		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.Slug,
-			&i.DefaultLocale,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.DeletedAt,
+			&i.Tenant.ID,
+			&i.Tenant.Name,
+			&i.Tenant.Slug,
+			&i.Tenant.DefaultLocale,
+			&i.Tenant.CreatedAt,
+			&i.Tenant.UpdatedAt,
+			&i.Tenant.DeletedAt,
+			&i.Role,
 		); err != nil {
 			return nil, err
 		}
@@ -108,6 +124,73 @@ func (q *Queries) ListTenantsForCurrentUser(ctx context.Context) ([]Tenant, erro
 		return nil, err
 	}
 	return items, nil
+}
+
+const resolveTenantForCurrentUser = `-- name: ResolveTenantForCurrentUser :one
+SELECT t.id, t.name, t.slug, t.default_locale, t.created_at, t.updated_at, t.deleted_at, m.role
+FROM tenants t
+JOIN memberships m ON m.tenant_id = t.id
+WHERE t.id = $1
+  AND m.user_id = current_user_id()
+  AND m.status = 'active'
+  AND m.deleted_at IS NULL
+  AND t.deleted_at IS NULL
+`
+
+type ResolveTenantForCurrentUserRow struct {
+	Tenant Tenant
+	Role   string
+}
+
+// ResolveTenantForCurrentUser is the membership check behind every
+// tenant-scoped request. It runs inside database.WithUser, before the
+// tenant is trusted, and returns a row only when the current user is an
+// active member of a tenant that has not been deleted. No row means "not
+// found", whatever the reason.
+func (q *Queries) ResolveTenantForCurrentUser(ctx context.Context, id uuid.UUID) (ResolveTenantForCurrentUserRow, error) {
+	row := q.db.QueryRow(ctx, resolveTenantForCurrentUser, id)
+	var i ResolveTenantForCurrentUserRow
+	err := row.Scan(
+		&i.Tenant.ID,
+		&i.Tenant.Name,
+		&i.Tenant.Slug,
+		&i.Tenant.DefaultLocale,
+		&i.Tenant.CreatedAt,
+		&i.Tenant.UpdatedAt,
+		&i.Tenant.DeletedAt,
+		&i.Role,
+	)
+	return i, err
+}
+
+const updateTenant = `-- name: UpdateTenant :one
+UPDATE tenants
+SET name           = COALESCE($1, name),
+    default_locale = COALESCE($2, default_locale)
+WHERE id = current_tenant_id() AND deleted_at IS NULL
+RETURNING id, name, slug, default_locale, created_at, updated_at, deleted_at
+`
+
+type UpdateTenantParams struct {
+	Name          *string
+	DefaultLocale *string
+}
+
+// UpdateTenant runs inside database.WithTenant. A NULL argument leaves
+// that column as it is.
+func (q *Queries) UpdateTenant(ctx context.Context, arg UpdateTenantParams) (Tenant, error) {
+	row := q.db.QueryRow(ctx, updateTenant, arg.Name, arg.DefaultLocale)
+	var i Tenant
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Slug,
+		&i.DefaultLocale,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
 }
 
 const updateTenantName = `-- name: UpdateTenantName :execrows

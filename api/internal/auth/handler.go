@@ -24,9 +24,10 @@ func (h *Handler) GetMe(ctx context.Context, _ oapi.GetMeRequestObject) (oapi.Ge
 		return nil, errors.New("auth: GetMe reached without an authenticated user")
 	}
 	return oapi.GetMe200JSONResponse{
-		Id:          openapi_types.UUID(user.ID),
-		Email:       user.Email,
-		DisplayName: user.DisplayName,
-		Locale:      oapi.CurrentUserLocale(user.Locale),
+		Id:            openapi_types.UUID(user.ID),
+		Email:         user.Email,
+		DisplayName:   user.DisplayName,
+		Locale:        oapi.CurrentUserLocale(user.Locale),
+		PlatformAdmin: user.PlatformAdmin,
 	}, nil
 }

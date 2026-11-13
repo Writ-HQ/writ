@@ -22,13 +22,12 @@ const RequestIDHeader = "X-Request-ID"
 
 const maxRequestIDLen = 64
 
-type requestIDKey struct{}
-
 // RequestIDFromContext returns the request ID stored by the RequestID
 // middleware, or "" when there is none.
 func RequestIDFromContext(ctx context.Context) string {
-	id, _ := ctx.Value(requestIDKey{}).(string)
-	return id
+	// The ID lives under apierror's key so that handlers in any module can
+	// put it in the error bodies they return.
+	return apierror.RequestID(ctx)
 }
 
 // RequestID reuses a well-formed inbound X-Request-ID or generates a new
@@ -40,7 +39,7 @@ func RequestID(next http.Handler) http.Handler {
 			id = newRequestID()
 		}
 		w.Header().Set(RequestIDHeader, id)
-		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), requestIDKey{}, id)))
+		next.ServeHTTP(w, r.WithContext(apierror.WithRequestID(r.Context(), id)))
 	})
 }
 
