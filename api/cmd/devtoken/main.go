@@ -14,11 +14,22 @@
 // standard error. A token is a credential: do not paste it into tickets
 // or chat.
 //
+// With -claims it prints the token's claims as JSON instead of the token,
+// to see what the provider puts in it (audience, authentication methods).
+// The claims are decoded without checking the signature, which is fine
+// for looking and useless for trusting. Claims are not a credential, but
+// they do include personal data such as the subject identifier.
+//
+// Settings come from the environment: OIDC_ISSUER and
+// OIDC_DEVTOKEN_CLIENT_ID.
+//
 // This is a development tool. It is not part of the API image.
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -59,7 +70,9 @@ func sleep(ctx context.Context, d time.Duration) error {
 }
 
 const (
-	defaultScope    = "openid profile email"
+	// offline_access asks for a refresh token as well, which the web app
+	// will need; requesting it here keeps the token the same shape.
+	defaultScope    = "openid profile email offline_access"
 	defaultInterval = 5 * time.Second
 	deviceGrantType = "urn:ietf:params:oauth:grant-type:device_code"
 	maxResponseSize = 1 << 20
@@ -73,6 +86,7 @@ func run(ctx context.Context, args []string, getenv func(string) string, stdout,
 	clientID := flags.String("client-id", getenv("OIDC_DEVTOKEN_CLIENT_ID"),
 		"client ID of an application that allows the device code grant (default $OIDC_DEVTOKEN_CLIENT_ID)")
 	scope := flags.String("scope", defaultScope, "space-separated scopes to request")
+	showClaims := flags.Bool("claims", false, "print the token's decoded claims (unverified) instead of the token")
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
@@ -151,6 +165,15 @@ func run(ctx context.Context, args []string, getenv func(string) string, stdout,
 				return errors.New("the identity provider returned no access token")
 			}
 			_, _ = fmt.Fprintln(stderr, "Signed in.")
+			if *showClaims {
+				claims, err := decodeClaims(token.AccessToken)
+				if err != nil {
+					return err
+				}
+				_, _ = fmt.Fprintln(stderr, "Claims of the access token, NOT verified:")
+				_, err = fmt.Fprintln(stdout, claims)
+				return err
+			}
 			_, err := fmt.Fprintln(stdout, token.AccessToken)
 			return err
 		case "authorization_pending":
@@ -167,6 +190,24 @@ func run(ctx context.Context, args []string, getenv func(string) string, stdout,
 		}
 	}
 	return errors.New("the code expired before the sign-in was finished; run the command again")
+}
+
+// decodeClaims returns the claims of a JWT as indented JSON. It does not
+// verify the signature: it is for reading a token, never for trusting one.
+func decodeClaims(token string) (string, error) {
+	parts := strings.Split(token, ".")
+	if len(parts) != 3 {
+		return "", errors.New("the access token is not a JWT; the application is probably set to issue opaque tokens")
+	}
+	payload, err := base64.RawURLEncoding.DecodeString(parts[1])
+	if err != nil {
+		return "", errors.New("the access token's claims are not valid base64url")
+	}
+	var indented bytes.Buffer
+	if err := json.Indent(&indented, payload, "", "  "); err != nil {
+		return "", errors.New("the access token's claims are not valid JSON")
+	}
+	return indented.String(), nil
 }
 
 // postForm posts a form and decodes a JSON response into out. An OAuth

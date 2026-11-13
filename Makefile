@@ -9,7 +9,7 @@ run test lint vuln migrate migrate-status:
 	$(MAKE) -C api $@
 
 devtoken:
-	@$(MAKE) -s -C api $@
+	@$(MAKE) -s -C api $@ ARGS="$(ARGS)"
 
 # Start the local PostgreSQL and wait until it accepts connections.
 db-up:

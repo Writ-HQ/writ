@@ -1,3 +1,7 @@
+# Local settings (identity provider, MFA) come from ../.env when it
+# exists. Copy ../.env.example to ../.env; it is not committed.
+-include ../.env
+
 # Tools are pinned here and run with `go run`, so they stay out of go.mod.
 # Dependabot does not see these versions; bump them by hand.
 GOLANGCI_LINT_VERSION := v2.15.0
@@ -38,8 +42,9 @@ run:
 
 # Sign in through the browser and print an access token. Needs OIDC_ISSUER
 # and OIDC_DEVTOKEN_CLIENT_ID. Use as: TOKEN=$$(make -s devtoken)
+# To see what is in the token instead: make devtoken ARGS=--claims
 devtoken:
-	@OIDC_ISSUER="$(OIDC_ISSUER)" go run ./cmd/devtoken
+	@OIDC_ISSUER="$(OIDC_ISSUER)" OIDC_DEVTOKEN_CLIENT_ID="$(OIDC_DEVTOKEN_CLIENT_ID)" go run ./cmd/devtoken $(ARGS)
 
 # The database tests start PostgreSQL in Docker. `go test -short ./...`
 # skips them.

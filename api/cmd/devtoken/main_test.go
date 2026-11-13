@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -22,6 +23,8 @@ type fakeProvider struct {
 	// OAuth error code, or "" for success.
 	answers []string
 	polls   int
+	// accessToken is what a successful poll returns.
+	accessToken string
 	// What the endpoints were sent.
 	deviceForm, tokenForm map[string]string
 	noDeviceFlow          bool
@@ -29,7 +32,7 @@ type fakeProvider struct {
 
 func newFakeProvider(t *testing.T, answers ...string) *fakeProvider {
 	t.Helper()
-	p := &fakeProvider{answers: answers}
+	p := &fakeProvider{answers: answers, accessToken: "the-access-token"}
 	mux := http.NewServeMux()
 	writeJSON := func(w http.ResponseWriter, status int, v any) {
 		w.Header().Set("Content-Type", "application/json")
@@ -78,7 +81,7 @@ func newFakeProvider(t *testing.T, answers ...string) *fakeProvider {
 			writeJSON(w, http.StatusBadRequest, map[string]string{"error": answer})
 			return
 		}
-		writeJSON(w, http.StatusOK, map[string]any{"access_token": "the-access-token", "token_type": "Bearer", "expires_in": 3600})
+		writeJSON(w, http.StatusOK, map[string]any{"access_token": p.accessToken, "token_type": "Bearer", "expires_in": 3600})
 	})
 	p.Server = httptest.NewServer(mux)
 	t.Cleanup(p.Close)
@@ -150,6 +153,43 @@ func TestScopeFlag(t *testing.T) {
 	if p.deviceForm["scope"] != "openid extra:scope" {
 		t.Errorf("scope = %q", p.deviceForm["scope"])
 	}
+}
+
+func TestClaimsFlagPrintsTheClaimsInsteadOfTheToken(t *testing.T) {
+	p := newFakeProvider(t, "")
+	b64 := base64.RawURLEncoding.EncodeToString
+	p.accessToken = b64([]byte(`{"alg":"RS256","kid":"key-a"}`)) + "." +
+		b64([]byte(`{"iss":"https://auth.example.test","aud":["one","two"],"amr":["example"],"sub":"idp|sam"}`)) +
+		".c2lnbmF0dXJl"
+
+	stdout, stderr, err := runTool(t, p, &sleeper{}, "--claims")
+	if err != nil {
+		t.Fatalf("run() error = %v", err)
+	}
+	var claims struct {
+		Aud []string `json:"aud"`
+		Amr []string `json:"amr"`
+	}
+	if err := json.Unmarshal([]byte(stdout), &claims); err != nil {
+		t.Fatalf("stdout is not JSON: %q", stdout)
+	}
+	if strings.Join(claims.Aud, ",") != "one,two" || strings.Join(claims.Amr, ",") != "example" {
+		t.Errorf("claims = %+v", claims)
+	}
+	if strings.Contains(stdout+stderr, p.accessToken) || strings.Contains(stdout, "c2lnbmF0dXJl") {
+		t.Errorf("the token itself was printed")
+	}
+	if !strings.Contains(stderr, "NOT verified") {
+		t.Errorf("stderr does not say the claims are unverified: %s", stderr)
+	}
+
+	t.Run("an opaque token has no claims to show", func(t *testing.T) {
+		p := newFakeProvider(t, "")
+		stdout, _, err := runTool(t, p, &sleeper{}, "-claims")
+		if err == nil || !strings.Contains(err.Error(), "not a JWT") || stdout != "" {
+			t.Errorf("run() = %q, %v; want an error saying the token is not a JWT", stdout, err)
+		}
+	})
 }
 
 func TestFailures(t *testing.T) {
