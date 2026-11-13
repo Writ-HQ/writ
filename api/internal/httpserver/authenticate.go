@@ -71,6 +71,14 @@ func Authenticate(logger *slog.Logger, authenticator Authenticator, alsoPublic .
 				w.Header().Set("WWW-Authenticate", `Bearer error="invalid_token"`)
 				WriteError(w, r, http.StatusUnauthorized, apierror.Unauthenticated, "Authentication is required.")
 
+			case errors.Is(err, auth.ErrAccountDisabled):
+				// The token is genuine, so telling its holder why it is
+				// refused reveals nothing to anyone else. Signing in again
+				// will not help, hence no challenge that invites it.
+				logger.InfoContext(r.Context(), "token rejected", requestID, slog.String("reason", err.Error()))
+				w.Header().Set("WWW-Authenticate", "Bearer")
+				WriteError(w, r, http.StatusUnauthorized, apierror.AccountDisabled, "The account is disabled.")
+
 			case errors.Is(err, auth.ErrMFARequired):
 				// The token is genuine; the sign-in behind it was not
 				// strong enough. The challenge follows RFC 9470.

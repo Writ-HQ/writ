@@ -29,12 +29,14 @@ WHERE id = current_user_id();
 
 -- SyncCurrentUserProfile stores what the identity provider's userinfo
 -- endpoint returned and marks the profile as fresh. A NULL argument leaves
--- that column as it is. Runs inside database.WithUser.
+-- that column as it is. synced_at is the API's clock, the same clock that
+-- later decides whether the profile is stale. Runs inside
+-- database.WithUser.
 -- name: SyncCurrentUserProfile :one
 UPDATE users
 SET email             = COALESCE(sqlc.narg(email), email),
     display_name      = COALESCE(sqlc.narg(display_name), display_name),
     locale            = COALESCE(sqlc.narg(locale), locale),
-    profile_synced_at = now()
+    profile_synced_at = sqlc.arg(synced_at)::timestamptz
 WHERE id = current_user_id()
 RETURNING *;

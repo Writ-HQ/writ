@@ -187,6 +187,27 @@ func TestPublicEndpointsMatchTheSpec(t *testing.T) {
 	}
 }
 
+func TestAccountDisabledHasItsOwnCode(t *testing.T) {
+	var logs bytes.Buffer
+	r := newTestRouter(slog.New(slog.NewJSONHandler(&logs, nil)), health.New(discardLogger()))
+
+	rec := request(t, r, http.MethodGet, "/v1/me", "Bearer disabled")
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("status = %d, want 401", rec.Code)
+	}
+	// A plain challenge: signing in again would not help.
+	if got := rec.Header().Get("WWW-Authenticate"); got != "Bearer" {
+		t.Errorf("WWW-Authenticate = %q, want Bearer", got)
+	}
+	body := decodeError(t, rec)
+	if body.Code != apierror.AccountDisabled || body.Message != "The account is disabled." {
+		t.Errorf("body = %+v, want code account_disabled", body)
+	}
+	if !strings.Contains(logs.String(), "disabled") {
+		t.Errorf("the rejection was not logged: %s", logs.String())
+	}
+}
+
 func TestMFARequiredHasItsOwnCode(t *testing.T) {
 	var logs bytes.Buffer
 	r := newTestRouter(slog.New(slog.NewJSONHandler(&logs, nil)), health.New(discardLogger()))

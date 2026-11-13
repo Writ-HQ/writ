@@ -133,8 +133,9 @@ func NewService(verifier TokenVerifier, db DB, opts Options) *Service {
 
 // Authenticate verifies the token and returns the user it belongs to,
 // creating the user on their first request. The error wraps
-// ErrInvalidToken, ErrMFARequired or ErrUnavailable when the token is the
-// problem; any other error is a failure on our side.
+// ErrInvalidToken, ErrAccountDisabled, ErrMFARequired or ErrUnavailable
+// when the token or the account is the problem; any other error is a
+// failure on our side.
 func (s *Service) Authenticate(ctx context.Context, token string) (User, error) {
 	claims, err := s.verifier.Verify(ctx, token)
 	if err != nil {
@@ -144,6 +145,14 @@ func (s *Service) Authenticate(ctx context.Context, token string) (User, error) 
 	row, err := s.provision(ctx, claims.Subject)
 	if err != nil {
 		return User{}, err
+	}
+
+	// The kill switch. A token stays valid until it expires even after the
+	// user is disabled at the identity provider; this is checked on every
+	// request, from the row just read, and takes effect at once. Nothing
+	// else is done for a disabled account: no profile sync, no events.
+	if row.DisabledAt != nil {
+		return User{}, ErrAccountDisabled
 	}
 
 	if s.opts.RequireMFA && !hasAny(claims.AuthMethods, s.opts.MFAMethods) {
@@ -255,7 +264,7 @@ func (s *Service) fetchAndStoreProfile(ctx context.Context, row authdb.User, tok
 		return authdb.User{}, errors.New("auth: the userinfo response is for a different subject")
 	}
 
-	params := authdb.SyncCurrentUserProfileParams{}
+	params := authdb.SyncCurrentUserProfileParams{SyncedAt: s.opts.Now()}
 	if profile.Email != nil {
 		params.Email = emailFromClaim(*profile.Email)
 	}

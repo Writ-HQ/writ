@@ -67,6 +67,7 @@ func newAPI(t *testing.T, opts auth.Options) *testAPI {
 		Issuer:   api.idp.Issuer(),
 		Audience: authtest.Audience,
 		JWKSURL:  api.idp.JWKSURL(),
+		Now:      api.Now,
 	}), db.App, opts)
 	api.Handler = httpserver.NewRouter(logger, authenticator, httpserver.Handlers{
 		Health:  health.New(logger),
@@ -344,6 +345,127 @@ func TestConcurrentFirstRequestsCreateOneUserAndCallUserinfoOnce(t *testing.T) {
 	}
 	if calls := api.idp.UserinfoCalls(); calls != 1 {
 		t.Errorf("20 concurrent first requests called userinfo %d times, want 1", calls)
+	}
+}
+
+// Access tokens live for an hour. A session is therefore a series of
+// tokens for the same user, each refused soon after it expires.
+func TestShortLivedTokens(t *testing.T) {
+	api := newAPI(t, auth.Options{})
+	subject := newSubject()
+	api.idp.SetProfile(subject, samProfile)
+	hourToken := func() string {
+		return api.idp.Sign(t, authtest.Token{Subject: subject, IssuedAt: api.Now(), Expiry: api.Now().Add(time.Hour)})
+	}
+
+	first := hourToken()
+	user := me(t, api, first)
+
+	api.Advance(59 * time.Minute)
+	if got := me(t, api, first); got.Id != user.Id {
+		t.Errorf("at 59 minutes: id = %s, want %s", got.Id, user.Id)
+	}
+
+	// Past the hour, and past the 30 seconds allowed for clock
+	// differences, it is an ordinary 401: the client refreshes the token.
+	api.Advance(2 * time.Minute)
+	rec := getMe(t, api, first)
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("at 61 minutes: status = %d, want 401", rec.Code)
+	}
+	if body := decode[oapi.Error](t, rec); body.Code != apierror.Unauthenticated {
+		t.Errorf("code = %q, want unauthenticated", body.Code)
+	}
+
+	// The next token is the same user, with nothing created or re-fetched.
+	second := hourToken()
+	if got := me(t, api, second); got.Id != user.Id || got.Email == nil || *got.Email != samProfile.Email {
+		t.Errorf("with a fresh token: %+v, want the same user and profile", got)
+	}
+	if n := countUsers(t, subject); n != 1 {
+		t.Errorf("%d users for the subject, want 1", n)
+	}
+	if calls := api.idp.UserinfoCalls(); calls != 1 {
+		t.Errorf("userinfo was called %d times across two tokens, want 1", calls)
+	}
+	if fetches := api.idp.Fetches(); fetches != 2 {
+		// One at the start and one when the keys passed an hour old; a
+		// new token by itself causes none.
+		t.Errorf("the keys were fetched %d times, want 2", fetches)
+	}
+
+	// A day of hourly tokens: the profile is refreshed once, with
+	// whichever token is current when it falls due.
+	for range 25 {
+		api.Advance(time.Hour)
+		me(t, api, hourToken())
+	}
+	if calls := api.idp.UserinfoCalls(); calls != 2 {
+		t.Errorf("userinfo was called %d times over 26 hours, want 2", calls)
+	}
+}
+
+// setDisabled disables or re-enables a user the way an operator does until
+// admin tooling exists: as the owner role, acting for that user.
+func setDisabled(t *testing.T, userID uuid.UUID, disabled bool) {
+	t.Helper()
+	err := database.WithUser(t.Context(), db.Owner, userID, func(tx pgx.Tx) error {
+		sql := "UPDATE users SET disabled_at = NULL WHERE id = $1"
+		if disabled {
+			sql = "UPDATE users SET disabled_at = now() WHERE id = $1"
+		}
+		tag, err := tx.Exec(t.Context(), sql, userID)
+		if err == nil && tag.RowsAffected() != 1 {
+			t.Errorf("changed %d users, want 1", tag.RowsAffected())
+		}
+		return err
+	})
+	if err != nil {
+		t.Fatalf("setting disabled=%v: %v", disabled, err)
+	}
+}
+
+func TestDisabledAccountIsRefusedOnTheNextRequest(t *testing.T) {
+	api := newAPI(t, auth.Options{})
+	subject := newSubject()
+	api.idp.SetProfile(subject, samProfile)
+	// One token throughout: it stays perfectly valid, which is the point.
+	token := api.idp.Sign(t, authtest.Token{Subject: subject, Expiry: time.Now().Add(100 * time.Hour)})
+	user := me(t, api, token)
+
+	setDisabled(t, user.Id, true)
+
+	for range 2 {
+		rec := getMe(t, api, token)
+		if rec.Code != http.StatusUnauthorized {
+			t.Fatalf("status = %d, want 401", rec.Code)
+		}
+		if body := decode[oapi.Error](t, rec); body.Code != apierror.AccountDisabled {
+			t.Errorf("code = %q, want account_disabled", body.Code)
+		}
+	}
+
+	// Nothing is done on behalf of a disabled account: even a profile due
+	// for a refresh is not fetched.
+	api.Advance(25 * time.Hour)
+	if rec := getMe(t, api, token); rec.Code != http.StatusUnauthorized {
+		t.Errorf("status after 25 hours = %d, want 401", rec.Code)
+	}
+	if calls := api.idp.UserinfoCalls(); calls != 1 {
+		t.Errorf("userinfo was called %d times, want only the first sync", calls)
+	}
+
+	// Another user is unaffected.
+	other := newSubject()
+	me(t, api, api.idp.Sign(t, authtest.Token{Subject: other, Expiry: api.Now().Add(time.Hour)}))
+
+	setDisabled(t, user.Id, false)
+	if got := me(t, api, token); got.Id != user.Id {
+		t.Errorf("after re-enabling: id = %s, want %s", got.Id, user.Id)
+	}
+
+	if got := events(t, user.Id); !slices.Equal(got, []string{"user.provisioned", "account.disabled", "account.enabled"}) {
+		t.Errorf("security events = %v, want provisioned, disabled, enabled", got)
 	}
 }
 

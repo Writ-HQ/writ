@@ -60,7 +60,8 @@ Date: 2026-11-13
   security on `app.user_id`; SELECT and INSERT only; triggers reject
   changes from every role). It records `user.provisioned` (written inside
   `provision_user`, in the same transaction as the insert),
-  `profile.email_changed` and `auth.mfa_required` (at most once per user
+  `profile.email_changed`, `account.disabled`, `account.enabled` (see
+  below) and `auth.mfa_required` (at most once per user
   per ten minutes per API instance). Its metadata holds no personal data:
   an email change is recorded without either address. `audit_log` stays
   the per-tenant record; these events happen before a tenant is chosen.
@@ -98,18 +99,49 @@ application issuing JWT access tokens and Force MFA on:
 - **The access token lived 12 hours.** That is the window in which a
   disabled user's token keeps working. Shorten it in Zitadel.
 
-Not yet checked against the real instance: the API accepting that token
-on `/v1/me`, and the profile arriving from userinfo. See
-`docs/runbooks/zitadel-smoke-test.md`, step 4.
+- The API accepted the real token on `/v1/me`, with the profile arriving
+  from userinfo (smoke test step 4, run by hand the same day).
+
+## Decided after that check (2026-11-13)
+
+- **For the pilot, Zitadel's Force MFA policy is the only MFA
+  enforcement.** The API's check stays built, tested and off
+  (`OIDC_REQUIRE_MFA` unset). Before the penetration test, a Zitadel
+  action adds an authentication-method claim to the access token and the
+  check is turned on. Tracked in `docs/before-launch.md`.
+- **Access tokens live one hour.** The client refreshes; the API treats
+  an expired token as any other 401. A session is a series of tokens for
+  the same subject: nothing is created or fetched again when the token
+  changes, the signing keys are refetched hourly regardless of tokens,
+  and the profile refresh uses whichever token is current when it falls
+  due. `cmd/devtoken` says how long its token lasts.
+- **The profile's sync time comes from the API's clock,** the same clock
+  that later judges it stale, not the database's.
+- **A kill switch in Writ itself: `users.disabled_at`.** A token stays
+  valid until it expires whatever happens at the identity provider, so
+  for up to an hour disabling a user in Zitadel does not stop them. The
+  API checks `disabled_at` on every request, on the row it has already
+  read, and answers 401 with code `account_disabled`. Nothing else is
+  done for a disabled account.
+- **The API role cannot set or clear it,** so a user cannot re-enable
+  themselves. Until admin tooling exists an operator does it as
+  `writ_owner`, acting for that user; the SQL is in migration 00009.
+- **Every change of state is recorded** by a trigger, as
+  `account.disabled` or `account.enabled` in `security_events`, in the
+  same transaction. Moving the timestamp of an already disabled account
+  is not a new event.
+- **Zitadel moves to a self-hosted instance in ca-central-1 before
+  launch.** Development uses Zitadel Cloud in a US region, which holds
+  staff names, addresses and sign-in history outside Canada. Tracked in
+  `docs/before-launch.md`.
 
 ## Follow-ups
 
-- **MFA at the API.** Decide whether Zitadel's policy alone is enough. If
-  the API must check too, the token needs to say how the user signed in.
-  Ways to get there, none verified: have Zitadel add a claim to the
-  access token (it supports customising tokens with actions); or have the
-  API ask Zitadel about the session behind the token. The check itself is
-  built and tested and needs only a claim to read.
+- **Admin tooling for the kill switch**: an endpoint, with a permission
+  check and an audit event, and a decision on who may use it.
+- **Disable at the identity provider too.** The kill switch stops the
+  API; the user can still sign in to Zitadel until they are disabled
+  there.
 - **Show security events to the user** (an endpoint and a page), and
   notify them of an email change.
 - **Revocation.** A token stays valid until it expires even if the user is
