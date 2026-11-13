@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"slices"
 	"strings"
 	"sync"
 	"testing"
@@ -77,35 +78,48 @@ func TestVerifyAcceptsAValidToken(t *testing.T) {
 		Subject: "idp|sam",
 		// Zitadel puts several audiences in a token; ours is one of them.
 		Audience: []string{"another-client", authtest.Audience},
-		Extra: map[string]any{
-			"email": "sam.example@example.test", "email_verified": true,
-			"name": "Sam Example", "locale": "fr-CA",
-		},
+		// Profile claims in an access token are ignored: the profile
+		// comes from userinfo.
+		Extra: map[string]any{"email": "sam.example@example.test", "email_verified": true},
 	}))
 	if err != nil {
 		t.Fatalf("Verify() error = %v", err)
 	}
-	want := auth.Claims{Subject: "idp|sam", Email: "sam.example@example.test", Name: "Sam Example", Locale: "fr-CA"}
-	if claims != want {
-		t.Errorf("claims = %+v, want %+v", claims, want)
+	if claims.Subject != "idp|sam" || len(claims.AuthMethods) != 0 {
+		t.Errorf("claims = %+v, want only the subject", claims)
 	}
 }
 
-func TestVerifyIgnoresAnUnverifiedEmail(t *testing.T) {
+func TestVerifyReadsTheAuthenticationMethods(t *testing.T) {
 	idp := authtest.NewProvider(t)
-	v := newVerifier(idp, newClock())
 
-	for name, extra := range map[string]map[string]any{
-		"explicitly unverified": {"email": "sam.example@example.test", "email_verified": false},
-		"verification unstated": {"email": "sam.example@example.test"},
-	} {
-		claims, err := v.Verify(t.Context(), idp.Sign(t, authtest.Token{Subject: "idp|sam", Extra: extra}))
-		if err != nil {
-			t.Fatalf("%s: Verify() error = %v", name, err)
-		}
-		if claims.Email != "" {
-			t.Errorf("%s: Email = %q, want it dropped", name, claims.Email)
-		}
+	tests := []struct {
+		name  string
+		claim string // configured claim name; "" for the default
+		extra map[string]any
+		want  []string
+	}{
+		{"an array", "", map[string]any{"amr": []string{"pwd", "otp"}}, []string{"pwd", "otp"}},
+		{"a single string", "", map[string]any{"amr": "pwd"}, []string{"pwd"}},
+		{"absent", "", nil, nil},
+		{"not strings", "", map[string]any{"amr": []int{1, 2}}, nil},
+		{"an object", "", map[string]any{"amr": map[string]any{"mfa": true}}, nil},
+		{"another claim, as configured", "methods", map[string]any{"methods": []string{"mfa"}, "amr": []string{"pwd"}}, []string{"mfa"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v := auth.NewVerifier(auth.VerifierConfig{
+				Issuer: idp.Issuer(), Audience: authtest.Audience, JWKSURL: idp.JWKSURL(),
+				AuthMethodsClaim: tt.claim,
+			})
+			claims, err := v.Verify(t.Context(), idp.Sign(t, authtest.Token{Subject: "idp|sam", Extra: tt.extra}))
+			if err != nil {
+				t.Fatalf("Verify() error = %v", err)
+			}
+			if !slices.Equal(claims.AuthMethods, tt.want) {
+				t.Errorf("AuthMethods = %v, want %v", claims.AuthMethods, tt.want)
+			}
+		})
 	}
 }
 

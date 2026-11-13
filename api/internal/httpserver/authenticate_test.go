@@ -13,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/Writ-HQ/writ/api/internal/apierror"
+	"github.com/Writ-HQ/writ/api/internal/auth"
 	"github.com/Writ-HQ/writ/api/internal/health"
 	"github.com/Writ-HQ/writ/api/internal/oapi"
 )
@@ -142,7 +143,7 @@ func TestAuthenticationFailuresOnOurSide(t *testing.T) {
 	})
 }
 
-// publicEndpoints must be exactly the operations the spec marks with
+// publicOperations must be exactly the operations the spec marks with
 // `security: []`.
 func TestPublicEndpointsMatchTheSpec(t *testing.T) {
 	spec, err := os.ReadFile("../../../openapi/openapi.yaml")
@@ -178,13 +179,107 @@ func TestPublicEndpointsMatchTheSpec(t *testing.T) {
 		}
 	}
 
-	var configured []string
-	for endpoint := range publicEndpoints {
-		configured = append(configured, endpoint)
-	}
+	configured := slices.Clone(publicOperations)
 	slices.Sort(public)
 	slices.Sort(configured)
 	if len(public) == 0 || !slices.Equal(public, configured) {
-		t.Errorf("public operations in the spec = %v, publicEndpoints = %v", public, configured)
+		t.Errorf("public operations in the spec = %v, publicOperations = %v", public, configured)
 	}
+}
+
+func TestAccountDisabledHasItsOwnCode(t *testing.T) {
+	var logs bytes.Buffer
+	r := newTestRouter(slog.New(slog.NewJSONHandler(&logs, nil)), health.New(discardLogger()))
+
+	rec := request(t, r, http.MethodGet, "/v1/me", "Bearer disabled")
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("status = %d, want 401", rec.Code)
+	}
+	// A plain challenge: signing in again would not help.
+	if got := rec.Header().Get("WWW-Authenticate"); got != "Bearer" {
+		t.Errorf("WWW-Authenticate = %q, want Bearer", got)
+	}
+	body := decodeError(t, rec)
+	if body.Code != apierror.AccountDisabled || body.Message != "The account is disabled." {
+		t.Errorf("body = %+v, want code account_disabled", body)
+	}
+	if !strings.Contains(logs.String(), "disabled") {
+		t.Errorf("the rejection was not logged: %s", logs.String())
+	}
+}
+
+func TestMFARequiredHasItsOwnCode(t *testing.T) {
+	var logs bytes.Buffer
+	r := newTestRouter(slog.New(slog.NewJSONHandler(&logs, nil)), health.New(discardLogger()))
+
+	rec := request(t, r, http.MethodGet, "/v1/me", "Bearer no-mfa")
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("status = %d, want 401", rec.Code)
+	}
+	if got := rec.Header().Get("WWW-Authenticate"); got != `Bearer error="insufficient_user_authentication"` {
+		t.Errorf("WWW-Authenticate = %q", got)
+	}
+	body := decodeError(t, rec)
+	if body.Code != apierror.MFARequired || body.Message != "Multi-factor authentication is required." {
+		t.Errorf("body = %+v, want code mfa_required", body)
+	}
+	if !strings.Contains(logs.String(), "multi-factor") {
+		t.Errorf("the rejection was not logged: %s", logs.String())
+	}
+}
+
+func TestDocs(t *testing.T) {
+	logger := discardLogger()
+	handlers := Handlers{Health: health.New(logger), Account: auth.NewHandler()}
+
+	t.Run("served without a token when enabled", func(t *testing.T) {
+		r := NewRouter(logger, stubAuthenticator{}, handlers, Options{Docs: true})
+
+		page := request(t, r, http.MethodGet, "/docs")
+		if page.Code != http.StatusOK || !strings.HasPrefix(page.Header().Get("Content-Type"), "text/html") {
+			t.Fatalf("GET /docs = %d %q, want an HTML page", page.Code, page.Header().Get("Content-Type"))
+		}
+		// Third-party files are pinned by version and integrity hash.
+		for _, want := range []string{"swagger-ui-dist@" + swaggerUIVersion, swaggerUIJSHash, swaggerUICSSHash, `src="/docs/init.js"`} {
+			if !strings.Contains(page.Body.String(), want) {
+				t.Errorf("the page does not contain %q", want)
+			}
+		}
+		if csp := page.Header().Get("Content-Security-Policy"); !strings.Contains(csp, "default-src 'none'") || strings.Contains(csp, "script-src 'unsafe-inline'") {
+			t.Errorf("Content-Security-Policy = %q", csp)
+		}
+
+		spec := request(t, r, http.MethodGet, "/docs/openapi.yaml")
+		onDisk, err := os.ReadFile("../../../openapi/openapi.yaml")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if spec.Code != http.StatusOK || !bytes.Equal(spec.Body.Bytes(), onDisk) {
+			t.Errorf("GET /docs/openapi.yaml = %d, and the body is not openapi/openapi.yaml; run make generate", spec.Code)
+		}
+
+		if js := request(t, r, http.MethodGet, "/docs/init.js"); js.Code != http.StatusOK || !strings.Contains(js.Body.String(), "/docs/openapi.yaml") {
+			t.Errorf("GET /docs/init.js = %d", js.Code)
+		}
+
+		// Only those exact routes are exempt.
+		for _, path := range []string{"/docs/", "/docs/other", "/v1/me"} {
+			if rec := request(t, r, http.MethodGet, path); rec.Code != http.StatusUnauthorized {
+				t.Errorf("GET %s without a token = %d, want 401", path, rec.Code)
+			}
+		}
+	})
+
+	t.Run("absent when disabled", func(t *testing.T) {
+		r := NewRouter(logger, stubAuthenticator{}, handlers, Options{})
+		for _, endpoint := range docsEndpoints {
+			path := strings.TrimPrefix(endpoint, "GET ")
+			if rec := request(t, r, http.MethodGet, path); rec.Code != http.StatusUnauthorized {
+				t.Errorf("GET %s without a token = %d, want 401", path, rec.Code)
+			}
+			if rec := request(t, r, http.MethodGet, path, "Bearer "+stubToken); rec.Code != http.StatusNotFound {
+				t.Errorf("GET %s with a token = %d, want 404", path, rec.Code)
+			}
+		}
+	})
 }

@@ -163,7 +163,7 @@ func inUserAndTenant(t *testing.T, tenantID, userID uuid.UUID, fn func(tx pgx.Tx
 
 // allTables is every application table. TestEveryTableEnforcesRLS fails if
 // a table is added without being listed here.
-var allTables = []string{"audit_log", "memberships", "tenants", "users"}
+var allTables = []string{"audit_log", "memberships", "security_events", "tenants", "users"}
 
 // visibleRows counts the rows each table shows to q.
 func visibleRows(t *testing.T, q interface {
@@ -956,6 +956,202 @@ func TestAuditLogIsAppendOnly(t *testing.T) {
 	if action != "membership.created" {
 		t.Errorf("the audit event was changed: action = %q", action)
 	}
+}
+
+func TestSecurityEventsBelongToOneUserAndAreAppendOnly(t *testing.T) {
+	f := newFixture(t)
+	ctx := t.Context()
+
+	// Provisioning recorded one event for each user.
+	var eventA uuid.UUID
+	err := inUser(t, f.a.user.ID, func(tx pgx.Tx) error {
+		events, err := authdb.New(tx).ListSecurityEventsForCurrentUser(ctx, 100)
+		if err != nil {
+			return err
+		}
+		if len(events) != 1 || events[0].UserID != f.a.user.ID || events[0].EventType != "user.provisioned" {
+			t.Fatalf("user A sees %d events, want their own user.provisioned", len(events))
+		}
+		eventA = events[0].ID
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("a user cannot read another user's events, even in a shared tenant", func(t *testing.T) {
+		addMembership(t, f.a, f.b.user.ID, "active")
+		err := inUserAndTenant(t, f.a.tenant.ID, f.b.user.ID, func(tx pgx.Tx) error {
+			var n int
+			if err := tx.QueryRow(ctx, "SELECT count(*) FROM security_events WHERE id = $1 OR user_id = $2", eventA, f.a.user.ID).Scan(&n); err != nil {
+				return err
+			}
+			if n != 0 {
+				t.Errorf("user B can see user A's security events")
+			}
+			return nil
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
+
+	t.Run("a user cannot write an event for another user", func(t *testing.T) {
+		err := inUser(t, f.b.user.ID, func(tx pgx.Tx) error {
+			_, err := tx.Exec(ctx, "INSERT INTO security_events (user_id, event_type) VALUES ($1, 'profile.email_changed')", f.a.user.ID)
+			return err
+		})
+		requireSQLState(t, err, insufficientPrivilege)
+	})
+
+	t.Run("a user can record an event for themselves", func(t *testing.T) {
+		err := inUser(t, f.b.user.ID, func(tx pgx.Tx) error {
+			event, err := authdb.New(tx).InsertSecurityEvent(ctx, authdb.InsertSecurityEventParams{
+				EventType: "auth.mfa_required", Metadata: []byte(`{}`),
+			})
+			if err == nil && event.UserID != f.b.user.ID {
+				t.Errorf("the event belongs to %s, want the current user", event.UserID)
+			}
+			return err
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
+
+	t.Run("unknown event types are refused", func(t *testing.T) {
+		err := inUser(t, f.a.user.ID, func(tx pgx.Tx) error {
+			_, err := authdb.New(tx).InsertSecurityEvent(ctx, authdb.InsertSecurityEventParams{
+				EventType: "something.else", Metadata: []byte(`{}`),
+			})
+			return err
+		})
+		requireSQLState(t, err, "23514") // check_violation
+	})
+
+	for name, sql := range map[string]string{
+		"update": "UPDATE security_events SET event_type = 'auth.mfa_required' WHERE id = $1",
+		"delete": "DELETE FROM security_events WHERE id = $1",
+	} {
+		t.Run("the user cannot "+name+" their own event", func(t *testing.T) {
+			err := inUser(t, f.a.user.ID, func(tx pgx.Tx) error {
+				_, err := tx.Exec(ctx, sql, eventA)
+				return err
+			})
+			requireSQLState(t, err, insufficientPrivilege)
+		})
+		t.Run("a superuser cannot "+name, func(t *testing.T) {
+			_, err := db.Superuser.Exec(ctx, sql, eventA)
+			requireSQLState(t, err, insufficientPrivilege)
+		})
+	}
+	_, err = db.Superuser.Exec(ctx, "TRUNCATE security_events")
+	requireSQLState(t, err, insufficientPrivilege)
+}
+
+func TestDisablingAnAccount(t *testing.T) {
+	f := newFixture(t)
+	ctx := t.Context()
+
+	eventTypes := func(t *testing.T, userID uuid.UUID) []string {
+		t.Helper()
+		var types []string
+		err := inUser(t, userID, func(tx pgx.Tx) error {
+			events, err := authdb.New(tx).ListSecurityEventsForCurrentUser(ctx, 100)
+			for _, e := range events {
+				types = append(types, e.EventType)
+			}
+			return err
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		slices.Reverse(types)
+		return types
+	}
+	asOwnerFor := func(userID uuid.UUID, sql string, args ...any) (int64, error) {
+		var n int64
+		err := database.WithUser(ctx, db.Owner, userID, func(tx pgx.Tx) error {
+			tag, err := tx.Exec(ctx, sql, args...)
+			n = tag.RowsAffected()
+			return err
+		})
+		return n, err
+	}
+
+	t.Run("the application role cannot set or clear it, even on its own row", func(t *testing.T) {
+		for _, sql := range []string{
+			"UPDATE users SET disabled_at = now() WHERE id = $1",
+			"UPDATE users SET disabled_at = NULL WHERE id = $1",
+		} {
+			err := inUser(t, f.a.user.ID, func(tx pgx.Tx) error {
+				_, err := tx.Exec(ctx, sql, f.a.user.ID)
+				return err
+			})
+			requireSQLState(t, err, insufficientPrivilege)
+		}
+	})
+
+	t.Run("an operator can only change the user they act for", func(t *testing.T) {
+		n, err := asOwnerFor(f.a.user.ID, "UPDATE users SET disabled_at = now() WHERE id = $1", f.b.user.ID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if n != 0 {
+			t.Errorf("disabled %d other users", n)
+		}
+		// With no user context at all, nothing matches either.
+		tag, err := db.Owner.Exec(ctx, "UPDATE users SET disabled_at = now()")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if tag.RowsAffected() != 0 {
+			t.Errorf("disabled %d users with no context", tag.RowsAffected())
+		}
+	})
+
+	t.Run("each change of state records one event", func(t *testing.T) {
+		id := f.a.user.ID
+		steps := []string{
+			"UPDATE users SET disabled_at = now() WHERE id = $1",
+			// Already disabled: moving the timestamp is not a new event.
+			"UPDATE users SET disabled_at = now() + interval '1 hour' WHERE id = $1",
+			// Another column: not an event.
+			"UPDATE users SET locale = 'en' WHERE id = $1",
+			"UPDATE users SET disabled_at = NULL WHERE id = $1",
+			// Already enabled.
+			"UPDATE users SET disabled_at = NULL WHERE id = $1",
+		}
+		for _, sql := range steps {
+			if n, err := asOwnerFor(id, sql, id); err != nil || n != 1 {
+				t.Fatalf("%s: %d rows, err = %v", sql, n, err)
+			}
+		}
+		want := []string{"user.provisioned", "account.disabled", "account.enabled"}
+		if got := eventTypes(t, id); !slices.Equal(got, want) {
+			t.Errorf("security events = %v, want %v", got, want)
+		}
+		if got := eventTypes(t, f.b.user.ID); !slices.Equal(got, []string{"user.provisioned"}) {
+			t.Errorf("another user's events = %v, want only user.provisioned", got)
+		}
+	})
+
+	t.Run("a change that is rolled back leaves no event", func(t *testing.T) {
+		id := f.b.user.ID
+		boom := errors.New("boom")
+		err := database.WithUser(ctx, db.Owner, id, func(tx pgx.Tx) error {
+			if _, err := tx.Exec(ctx, "UPDATE users SET disabled_at = now() WHERE id = $1", id); err != nil {
+				return err
+			}
+			return boom
+		})
+		if !errors.Is(err, boom) {
+			t.Fatal(err)
+		}
+		if got := eventTypes(t, id); !slices.Equal(got, []string{"user.provisioned"}) {
+			t.Errorf("security events = %v, want only user.provisioned", got)
+		}
+	})
 }
 
 func TestApplicationRoleCannotHardDelete(t *testing.T) {

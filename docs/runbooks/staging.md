@@ -104,8 +104,13 @@ workflow cannot run it.
 
 ```sh
 gh variable set AWS_DEPLOY_ROLE_ARN --body "$(terraform output -raw github_deploy_role_arn)"
+gh variable set DEPLOY_ENABLED --body true
 gh workflow run deploy-staging.yml --ref main
 ```
+
+The deploy workflow does nothing until `DEPLOY_ENABLED` is exactly
+`true`; before that every run is skipped. To stop deploys at any time,
+`gh variable delete DEPLOY_ENABLED`.
 
 The workflow pushes the image, runs migrations and updates the service,
 which still has zero tasks.

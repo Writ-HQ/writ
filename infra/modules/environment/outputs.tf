@@ -23,7 +23,7 @@ output "ecr_repository_urls" {
 }
 
 output "github_deploy_role_arn" {
-  description = "Set as the GitHub Actions variable AWS_DEPLOY_ROLE_ARN."
+  description = "Set as the GitHub Actions variable AWS_DEPLOY_ROLE_ARN. Deploys also need DEPLOY_ENABLED set to true."
   value       = module.github_deploy.role_arn
 }
 

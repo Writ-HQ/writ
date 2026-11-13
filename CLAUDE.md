@@ -47,21 +47,42 @@ database.WithUser (user only, before a tenant is chosen) as the transaction
 helpers. Every table is under row-level security; users are created only
 through the provision_user database function. Database tests use
 testcontainers via /api/internal/database/dbtest and need Docker.
-Follow-ups are listed in /docs/decisions/0002. /infra holds Terraform for
-staging (modules network, database, ecs-service, github-deploy,
-environment; instantiated in /infra/environments/staging; state bucket in
-/infra/bootstrap). It is validated and plan-tested but has never been
-applied. /api/cmd/migrate applies migrations and ships in the API image.
-.github/workflows/deploy-staging.yml deploys on merge to main through
-OIDC. See /docs/runbooks/staging.md and /docs/decisions/0003.
-Authentication is in: httpserver.Authenticate verifies the Zitadel JWT
+Follow-ups are listed in /docs/decisions/0002. Authentication is in: httpserver.Authenticate verifies the Zitadel JWT
 access token on every request except the public endpoints (which must
 match `security: []` in the spec), auth.Service finds or creates the user,
 and handlers read it with auth.UserFromContext. GET /v1/me is the first
 authenticated endpoint. Tests use the fake identity provider in
 /api/internal/auth/authtest; end-to-end tests are in /api/internal/e2e.
-See /docs/decisions/0004. Not yet done: MFA enforcement, tenant selection
-and permission checks, /api/cmd/worker, the Next.js app.
+Profile data (email only if verified, name, locale) comes from the
+provider's userinfo endpoint, on first sight and when older than 24 hours,
+never from access token claims. OIDC_REQUIRE_MFA adds an optional check of
+the authentication-method claim (error code mfa_required); its accepted
+values (OIDC_MFA_METHODS) have no default and must be read from a real
+Zitadel token. Keep it off: the development instance's access tokens carry
+no authentication-method claim (checked 2026-11-13), so MFA is enforced by
+Zitadel's Force MFA policy alone. OIDC_AUDIENCE is the Zitadel project ID.
+Zitadel is the system of record for sign-ins.
+security_events is a user-scoped, append-only table (RLS on app.user_id)
+for user provisioned, email changed, account disabled or enabled, and
+mfa_required rejections. users.disabled_at is the app-level kill switch:
+checked on every request (error code account_disabled), not settable by
+the API role, and every change is recorded by a trigger. Access tokens
+live one hour. ENVIRONMENT (local, staging, production; default
+production) turns on the interactive API docs at /docs outside production.
+/api/cmd/devtoken gets a developer an access token through the device
+flow. The real-token test against the development Zitadel passed on
+2026-11-13: see /docs/runbooks/zitadel-smoke-test.md and
+/docs/decisions/0004. Work deferred to before the pilot or launch is
+listed in /docs/before-launch.md; add to it whenever something is
+deferred. /infra holds Terraform for staging (modules network, database,
+ecs-service, github-deploy, environment; instantiated in
+/infra/environments/staging; state bucket in /infra/bootstrap). It is
+validated and plan-tested but has never been applied. /api/cmd/migrate
+applies migrations and ships in the API image.
+.github/workflows/deploy-staging.yml deploys on merge to main through
+OIDC, but only when the repository variable DEPLOY_ENABLED is true. See
+/docs/runbooks/staging.md and /docs/decisions/0003. Not yet done: tenant
+selection and permission checks, /api/cmd/worker, the Next.js app.
 
 ## Stack
 - API: Go, chi, pgx, sqlc, goose, River (jobs), go-playground/validator, slog
@@ -102,6 +123,9 @@ and permission checks, /api/cmd/worker, the Next.js app.
 ## Data rules
 - Every tenant-scoped table has tenant_id NOT NULL, row-level security
   enabled and forced, and a policy using current_setting('app.tenant_id').
+- Tables that belong to a user rather than a tenant (users,
+  security_events) are under forced row-level security keyed on
+  current_setting('app.user_id').
 - All tenant queries run through the tenant transaction helper, which sets
   app.tenant_id with SET LOCAL. Never query tenant tables outside it.
 - The application database role has no superuser or BYPASSRLS rights.
@@ -137,6 +161,9 @@ and permission checks, /api/cmd/worker, the Next.js app.
 - Every new tenant-scoped table needs a test proving cross-tenant reads
   and writes fail.
 - Small, focused changes. Do not refactor unrelated code.
+- Start each task on a new branch from an up-to-date main. Commit as you go
+  and open a pull request when the task is done. Never leave finished work
+  uncommitted.
 - For large tasks, propose a plan and wait for approval before coding.
 - Check current official documentation for library versions and APIs
   rather than assuming.
@@ -148,6 +175,8 @@ and permission checks, /api/cmd/worker, the Next.js app.
 Run from the repo root:
 - make run — start API locally (needs OIDC_ISSUER and OIDC_AUDIENCE to
   point at Zitadel for anything but the probes to work)
+- make devtoken — sign in through the browser and print an access token
+  (needs OIDC_ISSUER and OIDC_DEVTOKEN_CLIENT_ID)
 - make test — run Go tests
 - make lint — run linters
 - make vuln — run govulncheck

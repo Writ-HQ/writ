@@ -2,7 +2,7 @@
 GENERATED := api/internal/oapi web/src/lib/api \
 	api/internal/tenants/tenantsdb api/internal/auth/authdb api/internal/audit/auditdb
 
-.PHONY: run test lint vuln migrate migrate-status db-up db-down \
+.PHONY: run test lint vuln migrate migrate-status devtoken db-up db-down \
 	generate generate-api generate-web generate-check infra-check
 
 # Every Terraform directory: the two that are applied and the modules.
@@ -12,6 +12,9 @@ INFRA_DIRS := infra/bootstrap infra/environments/staging \
 
 run test lint vuln migrate migrate-status:
 	$(MAKE) -C api $@
+
+devtoken:
+	@$(MAKE) -s -C api $@ ARGS="$(ARGS)"
 
 # Start the local PostgreSQL and wait until it accepts connections.
 db-up:

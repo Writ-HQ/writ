@@ -49,14 +49,20 @@ func run(ctx context.Context, getenv func(string) string, logOut io.Writer) erro
 
 	hh := health.New(logger, health.Check{Name: "database", Fn: pool.Ping})
 	authenticator := auth.NewService(auth.NewVerifier(auth.VerifierConfig{
-		Issuer:   cfg.OIDCIssuer,
-		Audience: cfg.OIDCAudience,
-		JWKSURL:  cfg.OIDCJWKSURL,
-	}), pool)
+		Issuer:           cfg.OIDCIssuer,
+		Audience:         cfg.OIDCAudience,
+		JWKSURL:          cfg.OIDCJWKSURL,
+		AuthMethodsClaim: cfg.OIDCMFAClaim,
+	}), pool, auth.Options{
+		Profiles:   auth.NewUserinfoClient(cfg.OIDCIssuer, nil, nil),
+		RequireMFA: cfg.OIDCRequireMFA,
+		MFAMethods: cfg.OIDCMFAMethods,
+		Logger:     logger,
+	})
 	router := httpserver.NewRouter(logger, authenticator, httpserver.Handlers{
 		Health:  hh,
 		Account: auth.NewHandler(),
-	})
+	}, httpserver.Options{Docs: cfg.DocsEnabled()})
 	srv := httpserver.New(cfg.Addr(), router, logger)
 
 	var lc net.ListenConfig
@@ -67,7 +73,8 @@ func run(ctx context.Context, getenv func(string) string, logOut io.Writer) erro
 
 	serveErr := make(chan error, 1)
 	go func() { serveErr <- srv.Serve(ln) }()
-	logger.Info("server started", "addr", ln.Addr().String())
+	logger.Info("server started", "addr", ln.Addr().String(),
+		"environment", cfg.Environment, "mfa_required", cfg.OIDCRequireMFA, "docs", cfg.DocsEnabled())
 
 	select {
 	case err := <-serveErr:

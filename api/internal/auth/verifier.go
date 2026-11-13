@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -16,6 +17,12 @@ var (
 	// ErrInvalidToken means the bearer token was rejected. The wrapped
 	// reason is for logs only and must not be sent to the client.
 	ErrInvalidToken = errors.New("auth: invalid token")
+	// ErrMFARequired means the token is valid but was not obtained with
+	// multi-factor authentication, which this deployment requires.
+	ErrMFARequired = errors.New("auth: multi-factor authentication is required")
+	// ErrAccountDisabled means the token is valid but the account it
+	// belongs to has been disabled in Writ (users.disabled_at).
+	ErrAccountDisabled = errors.New("auth: the account is disabled")
 	// ErrUnavailable means the token could be neither accepted nor
 	// rejected because the identity provider's keys could not be fetched.
 	ErrUnavailable = errors.New("auth: identity provider keys are unavailable")
@@ -37,17 +44,21 @@ const (
 	maxTokenBytes = 16 << 10
 )
 
-// Claims is what the API takes from a verified access token.
+// Claims is what the API takes from a verified access token. Profile data
+// (email, name, locale) is deliberately not among it: access tokens often
+// do not carry it, so it comes from the userinfo endpoint instead.
 type Claims struct {
 	// Subject is the identity provider's stable identifier for the user.
 	Subject string
-	// Email is set only when the token carries an address the provider
-	// has verified.
-	Email string
-	// Name and Locale are empty when the token does not carry them.
-	Name   string
-	Locale string
+	// AuthMethods are the values of the authentication-method claim: how
+	// the user proved who they are. Empty when the token has no such
+	// claim.
+	AuthMethods []string
 }
+
+// DefaultAuthMethodsClaim is the standard claim for authentication methods
+// (RFC 8176).
+const DefaultAuthMethodsClaim = "amr"
 
 // VerifierConfig configures a Verifier.
 type VerifierConfig struct {
@@ -57,6 +68,9 @@ type VerifierConfig struct {
 	Audience string
 	// JWKSURL is where the issuer publishes its signing keys.
 	JWKSURL string
+	// AuthMethodsClaim names the claim read into Claims.AuthMethods.
+	// Defaults to DefaultAuthMethodsClaim.
+	AuthMethodsClaim string
 	// HTTPClient fetches the keys. Defaults to a client with a timeout.
 	HTTPClient *http.Client
 	// Now is the clock. Defaults to time.Now.
@@ -65,10 +79,11 @@ type VerifierConfig struct {
 
 // Verifier checks access tokens issued by one OpenID Connect provider.
 type Verifier struct {
-	issuer   string
-	audience string
-	keys     *keySet
-	now      func() time.Time
+	issuer           string
+	audience         string
+	authMethodsClaim string
+	keys             *keySet
+	now              func() time.Time
 }
 
 // NewVerifier returns a Verifier. It makes no network call: keys are
@@ -81,11 +96,15 @@ func NewVerifier(cfg VerifierConfig) *Verifier {
 	if cfg.Now == nil {
 		cfg.Now = time.Now
 	}
+	if cfg.AuthMethodsClaim == "" {
+		cfg.AuthMethodsClaim = DefaultAuthMethodsClaim
+	}
 	return &Verifier{
-		issuer:   cfg.Issuer,
-		audience: cfg.Audience,
-		keys:     newKeySet(cfg.JWKSURL, cfg.HTTPClient, cfg.Now),
-		now:      cfg.Now,
+		issuer:           cfg.Issuer,
+		audience:         cfg.Audience,
+		authMethodsClaim: cfg.AuthMethodsClaim,
+		keys:             newKeySet(cfg.JWKSURL, cfg.HTTPClient, cfg.Now),
+		now:              cfg.Now,
 	}
 }
 
@@ -115,15 +134,10 @@ func (v *Verifier) Verify(ctx context.Context, raw string) (Claims, error) {
 
 	var (
 		registered jwt.Claims
-		profile    struct {
-			Email         string `json:"email"`
-			EmailVerified bool   `json:"email_verified"`
-			Name          string `json:"name"`
-			Locale        string `json:"locale"`
-		}
+		all        map[string]json.RawMessage
 	)
 	// Claims verifies the signature before it decodes anything.
-	if err := token.Claims(key.Key, &registered, &profile); err != nil {
+	if err := token.Claims(key.Key, &registered, &all); err != nil {
 		return Claims{}, invalid("the signature does not verify")
 	}
 
@@ -144,11 +158,24 @@ func (v *Verifier) Verify(ctx context.Context, raw string) (Claims, error) {
 		return Claims{}, invalid(strings.TrimPrefix(err.Error(), "go-jose/go-jose/jwt: "))
 	}
 
-	claims := Claims{Subject: registered.Subject, Name: profile.Name, Locale: profile.Locale}
-	if profile.EmailVerified {
-		claims.Email = profile.Email
+	return Claims{
+		Subject:     registered.Subject,
+		AuthMethods: stringValues(all[v.authMethodsClaim]),
+	}, nil
+}
+
+// stringValues reads a claim that is either an array of strings or a
+// single string. Anything else, including a missing claim, is no values.
+func stringValues(raw json.RawMessage) []string {
+	var many []string
+	if json.Unmarshal(raw, &many) == nil {
+		return many
 	}
-	return claims, nil
+	var one string
+	if json.Unmarshal(raw, &one) == nil && one != "" {
+		return []string{one}
+	}
+	return nil
 }
 
 func invalid(reason string) error {

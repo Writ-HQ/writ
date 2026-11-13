@@ -29,8 +29,11 @@ module "api" {
 
   container_port = local.api_port
   environment = {
-    PORT          = tostring(local.api_port)
-    LOG_LEVEL     = var.log_level
+    PORT      = tostring(local.api_port)
+    LOG_LEVEL = var.log_level
+    # staging or production. Outside production the API serves its
+    # interactive documentation at /docs.
+    ENVIRONMENT   = var.environment
     OIDC_ISSUER   = var.oidc_issuer
     OIDC_AUDIENCE = var.oidc_audience
   }

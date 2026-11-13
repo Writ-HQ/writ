@@ -29,7 +29,7 @@ func discardLogger() *slog.Logger {
 // fixed token, so that these tests exercise routing and middleware rather
 // than token verification.
 func newTestRouter(logger *slog.Logger, hh *health.Handler) chi.Router {
-	return NewRouter(logger, stubAuthenticator{}, Handlers{Health: hh, Account: auth.NewHandler()})
+	return NewRouter(logger, stubAuthenticator{}, Handlers{Health: hh, Account: auth.NewHandler()}, Options{})
 }
 
 const stubToken = "stub-token"
@@ -44,6 +44,10 @@ func (stubAuthenticator) Authenticate(_ context.Context, token string) (auth.Use
 	switch token {
 	case stubToken:
 		return stubUser, nil
+	case "disabled":
+		return auth.User{}, auth.ErrAccountDisabled
+	case "no-mfa":
+		return auth.User{}, auth.ErrMFARequired
 	case "idp-down":
 		return auth.User{}, auth.ErrUnavailable
 	case "db-down":

@@ -8,8 +8,11 @@ name: Deploy staging
 # exchanges a short-lived GitHub token for temporary credentials for a role
 # that only this repository's main branch can assume.
 #
-# Setup: set the repository variable AWS_DEPLOY_ROLE_ARN to the Terraform
-# output github_deploy_role_arn. Until it is set the job is skipped.
+# Off by default. The job is skipped, and touches nothing, unless the
+# repository variable DEPLOY_ENABLED is exactly "true". Turn it on only
+# once the staging infrastructure exists, after setting the variable
+# AWS_DEPLOY_ROLE_ARN to the Terraform output github_deploy_role_arn. To
+# stop deploys again, set DEPLOY_ENABLED to anything else or delete it.
 
 on:
   push:
@@ -43,10 +46,18 @@ env:
 jobs:
   deploy:
     name: Build, migrate and deploy
-    if: github.ref == 'refs/heads/main' && vars.AWS_DEPLOY_ROLE_ARN != ''
+    if: github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+      # Enabled but not configured is a mistake worth a clear failure,
+      # before anything is built.
+      - name: Check the deploy role is configured
+        if: vars.AWS_DEPLOY_ROLE_ARN == ''
+        run: |
+          echo "::error::DEPLOY_ENABLED is true but AWS_DEPLOY_ROLE_ARN is not set."
+          exit 1
+
       - uses: actions/checkout@v7
 
       - name: Assume the deploy role

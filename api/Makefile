@@ -1,3 +1,7 @@
+# Local settings (identity provider, MFA) come from ../.env when it
+# exists. Copy ../.env.example to ../.env; it is not committed.
+-include ../.env
+
 # Tools are pinned here and run with `go run`, so they stay out of go.mod.
 # Dependabot does not see these versions; bump them by hand.
 GOLANGCI_LINT_VERSION := v2.15.0
@@ -25,10 +29,22 @@ MIGRATE_DATABASE_URL ?= postgres://writ_owner:writ_owner_dev@localhost:$(POSTGRE
 OIDC_ISSUER ?= http://localhost:8082
 OIDC_AUDIENCE ?= writ-local
 
-.PHONY: run test lint vuln generate migrate migrate-status
+# local turns on the interactive API docs at /docs. The MFA variables are
+# passed through when set; see docs/runbooks/zitadel-smoke-test.md.
+ENVIRONMENT ?= local
+export OIDC_REQUIRE_MFA OIDC_MFA_CLAIM OIDC_MFA_METHODS OIDC_JWKS_URL
+
+.PHONY: run test lint vuln generate migrate migrate-status devtoken
 
 run:
-	DATABASE_URL="$(DATABASE_URL)" OIDC_ISSUER="$(OIDC_ISSUER)" OIDC_AUDIENCE="$(OIDC_AUDIENCE)" go run ./cmd/server
+	DATABASE_URL="$(DATABASE_URL)" OIDC_ISSUER="$(OIDC_ISSUER)" OIDC_AUDIENCE="$(OIDC_AUDIENCE)" \
+		ENVIRONMENT="$(ENVIRONMENT)" go run ./cmd/server
+
+# Sign in through the browser and print an access token. Needs OIDC_ISSUER
+# and OIDC_DEVTOKEN_CLIENT_ID. Use as: TOKEN=$$(make -s devtoken)
+# To see what is in the token instead: make devtoken ARGS=--claims
+devtoken:
+	@OIDC_ISSUER="$(OIDC_ISSUER)" OIDC_DEVTOKEN_CLIENT_ID="$(OIDC_DEVTOKEN_CLIENT_ID)" go run ./cmd/devtoken $(ARGS)
 
 # The database tests start PostgreSQL in Docker. `go test -short ./...`
 # skips them.
