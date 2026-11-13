@@ -2,11 +2,14 @@
 GENERATED := api/internal/oapi web/src/lib/api \
 	api/internal/tenants/tenantsdb api/internal/auth/authdb api/internal/audit/auditdb
 
-.PHONY: run test lint vuln migrate migrate-status db-up db-down \
+.PHONY: run test lint vuln migrate migrate-status devtoken db-up db-down \
 	generate generate-api generate-web generate-check
 
 run test lint vuln migrate migrate-status:
 	$(MAKE) -C api $@
+
+devtoken:
+	@$(MAKE) -s -C api $@
 
 # Start the local PostgreSQL and wait until it accepts connections.
 db-up:

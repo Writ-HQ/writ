@@ -74,7 +74,7 @@ func NewProvider(t testing.TB) *Provider {
 	return p
 }
 
-func (p *Provider) serveKeys(w http.ResponseWriter, r *http.Request) {
+func (p *Provider) serveKeys(w http.ResponseWriter, _ *http.Request) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	p.fetches++

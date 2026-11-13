@@ -25,10 +25,21 @@ MIGRATE_DATABASE_URL ?= postgres://writ_owner:writ_owner_dev@localhost:$(POSTGRE
 OIDC_ISSUER ?= http://localhost:8082
 OIDC_AUDIENCE ?= writ-local
 
-.PHONY: run test lint vuln generate migrate migrate-status
+# local turns on the interactive API docs at /docs. The MFA variables are
+# passed through when set; see docs/runbooks/zitadel-smoke-test.md.
+ENVIRONMENT ?= local
+export OIDC_REQUIRE_MFA OIDC_MFA_CLAIM OIDC_MFA_METHODS OIDC_JWKS_URL
+
+.PHONY: run test lint vuln generate migrate migrate-status devtoken
 
 run:
-	DATABASE_URL="$(DATABASE_URL)" OIDC_ISSUER="$(OIDC_ISSUER)" OIDC_AUDIENCE="$(OIDC_AUDIENCE)" go run ./cmd/server
+	DATABASE_URL="$(DATABASE_URL)" OIDC_ISSUER="$(OIDC_ISSUER)" OIDC_AUDIENCE="$(OIDC_AUDIENCE)" \
+		ENVIRONMENT="$(ENVIRONMENT)" go run ./cmd/server
+
+# Sign in through the browser and print an access token. Needs OIDC_ISSUER
+# and OIDC_DEVTOKEN_CLIENT_ID. Use as: TOKEN=$$(make -s devtoken)
+devtoken:
+	@OIDC_ISSUER="$(OIDC_ISSUER)" go run ./cmd/devtoken
 
 # The database tests start PostgreSQL in Docker. `go test -short ./...`
 # skips them.

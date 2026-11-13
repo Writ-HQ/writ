@@ -32,32 +32,69 @@ Date: 2026-11-13
   request ID. Neither the token nor its claims are ever logged.
 - **The user row is found or created on each request** through
   `provision_user` (see 0002), keyed on the token's subject. That function
-  now reads before it writes, so a request from an existing user writes
+  reads before it writes, so a request from an existing user writes
   nothing.
-- **Email may be unknown.** Access tokens often carry no email claim, and
-  an address is stored only when the token says the provider verified it
+- **Profile data comes from the userinfo endpoint, not the access token.**
+  Access tokens often carry no profile claims. On first sight of a user,
+  and when the stored profile is older than 24 hours, the API calls the
+  provider's userinfo endpoint (found through OIDC discovery) with the
+  user's own token and stores name, locale and email. A response for a
+  different subject is discarded.
+- **A userinfo failure never fails the request.** The stored profile is
+  kept and the sync is retried after a minute. Concurrent requests from
+  one user share a single call.
+- **Email is stored only when the provider says it is verified**
   (`email_verified`), because email will later be used to match
-  invitations. `users.email` is therefore nullable.
+  invitations. An unverified address never replaces a verified one.
+  `users.email` is nullable: a user may have none yet.
+- **Optional MFA check.** With `OIDC_REQUIRE_MFA=true` a token is rejected
+  with 401 and code `mfa_required` unless its authentication-method claim
+  (`OIDC_MFA_CLAIM`, default `amr`) has one of `OIDC_MFA_METHODS`. The
+  accepted values have no default and the API refuses to start without
+  them: what a provider puts in that claim must be read from a real
+  token. Zitadel's login policy remains the place MFA is enforced; this
+  check is a second line of defence.
+- **Zitadel is the system of record for sign-ins.** The API sees
+  requests, not sign-ins, and does not log them as such.
+- **`security_events`** is a user-scoped, append-only table (row-level
+  security on `app.user_id`; SELECT and INSERT only; triggers reject
+  changes from every role). It records `user.provisioned` (written inside
+  `provision_user`, in the same transaction as the insert),
+  `profile.email_changed` and `auth.mfa_required` (at most once per user
+  per ten minutes per API instance). Its metadata holds no personal data:
+  an email change is recorded without either address. `audit_log` stays
+  the per-tenant record; these events happen before a tenant is chosen.
+- **Interactive API docs at `/docs`, outside production only.**
+  `ENVIRONMENT` is `local`, `staging` or `production` and defaults to
+  `production`. The three docs routes are exempt from authentication
+  because they serve only the contract. The viewer is loaded from a CDN
+  at a pinned version with integrity hashes, under a strict content
+  security policy.
+- **`cmd/devtoken`** gets a developer an access token through the device
+  authorization flow, so no password or client secret is involved. It is
+  not in the API image.
 - **Signing keys must be fetched over HTTPS.** Plain HTTP is accepted only
   for a loopback address, for local development and tests.
 - **`go-jose` rather than a higher-level OIDC library**, so that the key
   cache and the distinction between "invalid" and "cannot tell" are ours
   and tested.
 
+## Not verified yet
+
+Nothing here has run against a real Zitadel. Work through
+`docs/runbooks/zitadel-smoke-test.md` and record the result below. In
+particular, to be confirmed from a real token: the audience to use for
+`OIDC_AUDIENCE`, and the claim and values for the MFA check.
+
 ## Follow-ups
 
-- **Profile sync.** An existing user's email, name and locale are not
-  updated from later tokens. Fetch them from the provider's userinfo
-  endpoint at sign-in, or sync with a Zitadel action.
-- **MFA is required by the project but not yet checked by the API.**
-  Enforce it in Zitadel's login policy, and decide whether the API should
-  also require the `amr` claim.
+- **Turn the MFA check on** in staging once its values are confirmed.
+- **Show security events to the user** (an endpoint and a page), and
+  notify them of an email change.
 - **Revocation.** A token stays valid until it expires even if the user is
   disabled in Zitadel. Keep access tokens short-lived; add introspection
   only if that is not enough.
-- **Audit of sign-ins.** `audit_log` is per tenant and a request is not a
-  sign-in. Decide where sign-in events are recorded: Zitadel's own log, or
-  a global table.
-- **A local Zitadel** in docker-compose, so the whole flow can be run by
-  hand.
+- **A local Zitadel** in docker-compose, so the whole flow can be run
+  without a hosted instance.
+- **Retention** of `security_events`, with the privacy purge path in 0002.
 - **Rate limiting** of unauthenticated requests (Redis), before the pilot.

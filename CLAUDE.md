@@ -53,8 +53,20 @@ match `security: []` in the spec), auth.Service finds or creates the user,
 and handlers read it with auth.UserFromContext. GET /v1/me is the first
 authenticated endpoint. Tests use the fake identity provider in
 /api/internal/auth/authtest; end-to-end tests are in /api/internal/e2e.
-See /docs/decisions/0004. Not yet done: MFA enforcement, tenant selection
-and permission checks, /api/cmd/worker, the Next.js app, /infra.
+Profile data (email only if verified, name, locale) comes from the
+provider's userinfo endpoint, on first sight and when older than 24 hours,
+never from access token claims. OIDC_REQUIRE_MFA adds an optional check of
+the authentication-method claim (error code mfa_required); its accepted
+values (OIDC_MFA_METHODS) have no default and must be read from a real
+Zitadel token. Zitadel is the system of record for sign-ins.
+security_events is a user-scoped, append-only table (RLS on app.user_id)
+for user provisioned, email changed and mfa_required rejections.
+ENVIRONMENT (local, staging, production; default production) turns on the
+interactive API docs at /docs outside production. /api/cmd/devtoken gets a
+developer an access token through the device flow. None of this has run
+against a real Zitadel yet: see /docs/runbooks/zitadel-smoke-test.md and
+/docs/decisions/0004. Not yet done: tenant selection and permission
+checks, /api/cmd/worker, the Next.js app, /infra.
 
 ## Stack
 - API: Go, chi, pgx, sqlc, goose, River (jobs), go-playground/validator, slog
@@ -95,6 +107,9 @@ and permission checks, /api/cmd/worker, the Next.js app, /infra.
 ## Data rules
 - Every tenant-scoped table has tenant_id NOT NULL, row-level security
   enabled and forced, and a policy using current_setting('app.tenant_id').
+- Tables that belong to a user rather than a tenant (users,
+  security_events) are under forced row-level security keyed on
+  current_setting('app.user_id').
 - All tenant queries run through the tenant transaction helper, which sets
   app.tenant_id with SET LOCAL. Never query tenant tables outside it.
 - The application database role has no superuser or BYPASSRLS rights.
@@ -130,6 +145,9 @@ and permission checks, /api/cmd/worker, the Next.js app, /infra.
 - Every new tenant-scoped table needs a test proving cross-tenant reads
   and writes fail.
 - Small, focused changes. Do not refactor unrelated code.
+- Start each task on a new branch from an up-to-date main. Commit as you go
+  and open a pull request when the task is done. Never leave finished work
+  uncommitted.
 - For large tasks, propose a plan and wait for approval before coding.
 - Check current official documentation for library versions and APIs
   rather than assuming.
@@ -141,6 +159,8 @@ and permission checks, /api/cmd/worker, the Next.js app, /infra.
 Run from the repo root:
 - make run — start API locally (needs OIDC_ISSUER and OIDC_AUDIENCE to
   point at Zitadel for anything but the probes to work)
+- make devtoken — sign in through the browser and print an access token
+  (needs OIDC_ISSUER and OIDC_DEVTOKEN_CLIENT_ID)
 - make test — run Go tests
 - make lint — run linters
 - make vuln — run govulncheck
