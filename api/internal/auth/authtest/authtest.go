@@ -1,7 +1,8 @@
 // Package authtest is a fake OpenID Connect identity provider for tests:
-// an HTTP server that publishes signing keys as a JWKS document, and a way
-// to mint access tokens signed with them. Everything about a token can be
-// overridden, to build tokens that should be rejected.
+// an HTTP server that publishes a discovery document, signing keys (JWKS)
+// and a userinfo endpoint, and a way to mint access tokens. Everything
+// about a token can be overridden, to build tokens that should be
+// rejected.
 package authtest
 
 import (
@@ -11,6 +12,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -22,8 +24,21 @@ import (
 // Audience is the audience the fake provider issues tokens for.
 const Audience = "writ-api-test"
 
-// JWKSPath is where the keys are served, as on Zitadel.
-const JWKSPath = "/oauth/v2/keys"
+// Paths the provider serves, as on Zitadel.
+const (
+	JWKSPath      = "/oauth/v2/keys"
+	UserinfoPath  = "/oidc/v1/userinfo"
+	discoveryPath = "/.well-known/openid-configuration"
+)
+
+// Profile is what the userinfo endpoint returns for one subject. Empty
+// fields are left out of the response.
+type Profile struct {
+	Email         string
+	EmailVerified bool
+	Name          string
+	Locale        string
+}
 
 // Provider is a running fake identity provider.
 type Provider struct {
@@ -35,26 +50,33 @@ type Provider struct {
 	keys    []jose.JSONWebKey // every key published, current last
 	down    bool
 	fetches int
+
+	profiles      map[string]Profile
+	userinfoDown  bool
+	userinfoCalls int
+	// userinfoDelay makes each userinfo call slow, to widen the window in
+	// which concurrent requests overlap.
+	userinfoDelay time.Duration
 }
 
 // NewProvider starts a provider with one signing key. It stops when the
 // test ends.
 func NewProvider(t testing.TB) *Provider {
 	t.Helper()
-	p := &Provider{}
+	p := &Provider{profiles: map[string]Profile{}}
 	p.Rotate(t)
-	p.server = httptest.NewServer(http.HandlerFunc(p.serveKeys))
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET "+JWKSPath, p.serveKeys)
+	mux.HandleFunc("GET "+discoveryPath, p.serveDiscovery)
+	mux.HandleFunc("GET "+UserinfoPath, p.serveUserinfo)
+	p.server = httptest.NewServer(mux)
 	t.Cleanup(p.server.Close)
 	return p
 }
 
-func (p *Provider) serveKeys(w http.ResponseWriter, r *http.Request) {
+func (p *Provider) serveKeys(w http.ResponseWriter, _ *http.Request) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	if r.URL.Path != JWKSPath {
-		http.NotFound(w, r)
-		return
-	}
 	p.fetches++
 	if p.down {
 		http.Error(w, "unavailable", http.StatusServiceUnavailable)
@@ -62,6 +84,82 @@ func (p *Provider) serveKeys(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(jose.JSONWebKeySet{Keys: p.keys})
+}
+
+func (p *Provider) serveDiscovery(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(map[string]string{
+		"issuer":            p.Issuer(),
+		"jwks_uri":          p.JWKSURL(),
+		"userinfo_endpoint": p.Issuer() + UserinfoPath,
+	})
+}
+
+// serveUserinfo answers for the subject of the presented token. Being a
+// fake, it reads the subject without verifying the signature.
+func (p *Provider) serveUserinfo(w http.ResponseWriter, r *http.Request) {
+	p.mu.Lock()
+	p.userinfoCalls++
+	down, delay := p.userinfoDown, p.userinfoDelay
+	p.mu.Unlock()
+
+	time.Sleep(delay)
+	if down {
+		http.Error(w, "unavailable", http.StatusServiceUnavailable)
+		return
+	}
+	raw, ok := strings.CutPrefix(r.Header.Get("Authorization"), "Bearer ")
+	token, err := jwt.ParseSigned(raw, []jose.SignatureAlgorithm{jose.RS256})
+	var claims jwt.Claims
+	if !ok || err != nil || token.UnsafeClaimsWithoutVerification(&claims) != nil {
+		http.Error(w, "invalid token", http.StatusUnauthorized)
+		return
+	}
+
+	p.mu.Lock()
+	profile := p.profiles[claims.Subject]
+	p.mu.Unlock()
+	body := map[string]any{"sub": claims.Subject}
+	if profile.Email != "" {
+		body["email"] = profile.Email
+		body["email_verified"] = profile.EmailVerified
+	}
+	if profile.Name != "" {
+		body["name"] = profile.Name
+	}
+	if profile.Locale != "" {
+		body["locale"] = profile.Locale
+	}
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(body)
+}
+
+// SetProfile sets what userinfo returns for a subject.
+func (p *Provider) SetProfile(subject string, profile Profile) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.profiles[subject] = profile
+}
+
+// SetUserinfoDown makes the userinfo endpoint fail, or work again.
+func (p *Provider) SetUserinfoDown(down bool) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.userinfoDown = down
+}
+
+// SetUserinfoDelay makes every userinfo call take at least d.
+func (p *Provider) SetUserinfoDelay(d time.Duration) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.userinfoDelay = d
+}
+
+// UserinfoCalls reports how many times userinfo has been called.
+func (p *Provider) UserinfoCalls() int {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return p.userinfoCalls
 }
 
 // Issuer is the provider's issuer URL.
@@ -118,7 +216,7 @@ type Token struct {
 	IssuedAt time.Time
 	// NoExpiry leaves the exp claim out.
 	NoExpiry bool
-	// Extra claims, for example email, email_verified, name, locale.
+	// Extra claims, for example amr.
 	Extra map[string]any
 
 	// Key and KeyID default to the provider's current signing key. Set Key

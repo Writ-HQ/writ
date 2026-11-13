@@ -4,6 +4,7 @@ bin/
 .env.*
 !.env.example
 .DS_Store
+.vscode/
 *.tfstate
 *.tfstate.*
 .terraform/

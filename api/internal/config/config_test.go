@@ -110,3 +110,59 @@ func TestLoadIdentityProviderURLs(t *testing.T) {
 		})
 	}
 }
+
+func TestLoadMFA(t *testing.T) {
+	t.Run("off by default, with the standard claim", func(t *testing.T) {
+		cfg, err := Load(required(nil))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if cfg.OIDCRequireMFA || cfg.OIDCMFAClaim != "amr" || len(cfg.OIDCMFAMethods) != 0 {
+			t.Errorf("unexpected MFA defaults: %+v", cfg)
+		}
+	})
+
+	t.Run("requiring MFA needs the accepted methods spelled out", func(t *testing.T) {
+		_, err := Load(required(map[string]string{"OIDC_REQUIRE_MFA": "true"}))
+		if err == nil || !strings.Contains(err.Error(), "OIDC_MFA_METHODS") {
+			t.Errorf("Load() error = %v, want one naming OIDC_MFA_METHODS", err)
+		}
+	})
+
+	t.Run("methods are a comma-separated list", func(t *testing.T) {
+		cfg, err := Load(required(map[string]string{
+			"OIDC_REQUIRE_MFA": "true", "OIDC_MFA_METHODS": " one, two ,,three ", "OIDC_MFA_CLAIM": "methods",
+		}))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !cfg.OIDCRequireMFA || cfg.OIDCMFAClaim != "methods" || strings.Join(cfg.OIDCMFAMethods, "|") != "one|two|three" {
+			t.Errorf("unexpected MFA settings: %+v", cfg)
+		}
+	})
+
+	t.Run("a value that is not a boolean is an error, not false", func(t *testing.T) {
+		_, err := Load(required(map[string]string{"OIDC_REQUIRE_MFA": "yes please"}))
+		if err == nil || !strings.Contains(err.Error(), "OIDC_REQUIRE_MFA") {
+			t.Errorf("Load() error = %v, want one naming OIDC_REQUIRE_MFA", err)
+		}
+	})
+}
+
+func TestLoadEnvironment(t *testing.T) {
+	for env, wantDocs := range map[string]bool{"": false, "production": false, "staging": true, "local": true} {
+		cfg, err := Load(required(map[string]string{"ENVIRONMENT": env}))
+		if err != nil {
+			t.Fatalf("ENVIRONMENT=%q: %v", env, err)
+		}
+		if cfg.DocsEnabled() != wantDocs {
+			t.Errorf("ENVIRONMENT=%q: DocsEnabled() = %v, want %v", env, cfg.DocsEnabled(), wantDocs)
+		}
+	}
+	if cfg, _ := Load(required(nil)); cfg.Environment != EnvProduction {
+		t.Errorf("default environment = %q, want production", cfg.Environment)
+	}
+	if _, err := Load(required(map[string]string{"ENVIRONMENT": "prod"})); err == nil || !strings.Contains(err.Error(), "ENVIRONMENT") {
+		t.Errorf("Load() error = %v, want one naming ENVIRONMENT", err)
+	}
+}
