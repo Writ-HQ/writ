@@ -19,6 +19,18 @@ info:
     Every endpoint requires authentication and a permission check unless it
     is marked public with `security: []`.
 
+    Clients sign in with the identity provider (OpenID Connect) and send the
+    access token it issues as `Authorization: Bearer <token>`. The token
+    must be a signed JWT. The API checks its signature against the
+    provider's published keys, its issuer, its audience and its expiry. A
+    missing or invalid token returns `401` with code `unauthenticated`;
+    the response does not say which check failed. If the API cannot reach
+    the provider to fetch its keys it returns `503` with code
+    `service_unavailable`, and the client should retry rather than sign
+    the user out.
+
+    The first valid request from a new user creates their account.
+
     ## Errors
 
     Every error response, on every endpoint, has a body that follows the
@@ -62,7 +74,37 @@ servers:
 tags:
   - name: health
     description: Liveness and readiness probes
+  - name: account
+    description: The signed-in user
+security:
+  - bearerAuth: []
 paths:
+  /v1/me:
+    get:
+      operationId: getMe
+      summary: The signed-in user
+      description: >-
+        Returns the account of the user the access token belongs to. It needs
+        no tenant, so clients call it first after signing in.
+      tags: [account]
+      responses:
+        "200":
+          description: The signed-in user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrentUser"
+              example:
+                id: 0192f0c4-7d2a-7b1e-9c3f-5a6b7c8d9e0f
+                email: sam.example@example.test
+                display_name: Sam Example
+                locale: en
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
   /healthz:
     get:
       operationId: getHealthz
@@ -108,6 +150,12 @@ paths:
                 checks:
                   database: failed
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: An access token issued by the identity provider.
   parameters:
     Cursor:
       name: cursor
@@ -227,7 +275,38 @@ components:
             code: internal_error
             message: An unexpected error occurred.
             request_id: 4f1c2a9e7b3d4c5e8f6a0b1c2d3e4f5a
+    ServiceUnavailable:
+      description: >-
+        A service the API depends on is temporarily unavailable. The request
+        was not processed and may be retried.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: service_unavailable
+            message: Authentication is temporarily unavailable.
+            request_id: 4f1c2a9e7b3d4c5e8f6a0b1c2d3e4f5a
   schemas:
+    CurrentUser:
+      type: object
+      description: The signed-in user's own account.
+      required: [id, email, display_name, locale]
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: [string, "null"]
+          description: >-
+            `null` until the identity provider has supplied an address.
+        display_name:
+          type: string
+          description: May be empty.
+        locale:
+          type: string
+          enum: [en, fr]
+          description: The language the user prefers for the interface.
     Error:
       type: object
       description: The body of every error response.
@@ -281,6 +360,7 @@ components:
         - validation_failed
         - rate_limited
         - internal_error
+        - service_unavailable
     ErrorDetailCode:
       type: string
       description: >-

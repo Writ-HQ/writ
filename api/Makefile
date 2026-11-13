@@ -18,10 +18,17 @@ POSTGRES_PORT ?= 54320
 DATABASE_URL ?= postgres://writ_app:writ_app_dev@localhost:$(POSTGRES_PORT)/writ?sslmode=disable
 MIGRATE_DATABASE_URL ?= postgres://writ_owner:writ_owner_dev@localhost:$(POSTGRES_PORT)/writ?sslmode=disable
 
+# The identity provider. These defaults only let the API start locally:
+# until they point at a real Zitadel instance, the probes work and every
+# other endpoint answers 503. The audience is the Zitadel project ID or
+# the application's client ID.
+OIDC_ISSUER ?= http://localhost:8082
+OIDC_AUDIENCE ?= writ-local
+
 .PHONY: run test lint vuln generate migrate migrate-status
 
 run:
-	DATABASE_URL="$(DATABASE_URL)" go run ./cmd/server
+	DATABASE_URL="$(DATABASE_URL)" OIDC_ISSUER="$(OIDC_ISSUER)" OIDC_AUDIENCE="$(OIDC_AUDIENCE)" go run ./cmd/server
 
 # The database tests start PostgreSQL in Docker. `go test -short ./...`
 # skips them.

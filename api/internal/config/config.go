@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"net"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -16,6 +18,16 @@ type Config struct {
 	// writ_app role (DATABASE_URL, required). It contains a password and
 	// must never be logged.
 	DatabaseURL string
+	// OIDCIssuer is the identity provider's issuer URL, which every access
+	// token must name exactly in its iss claim (OIDC_ISSUER, required).
+	OIDCIssuer string
+	// OIDCAudience must be among each access token's aud values. With
+	// Zitadel it is the project ID or the application's client ID
+	// (OIDC_AUDIENCE, required).
+	OIDCAudience string
+	// OIDCJWKSURL is where the issuer publishes its signing keys
+	// (OIDC_JWKS_URL, default <issuer>/oauth/v2/keys, Zitadel's path).
+	OIDCJWKSURL string
 	// Port is the TCP port the HTTP server listens on (PORT, default 8080).
 	Port int
 	// LogLevel is the minimum level that is logged (LOG_LEVEL, default info).
@@ -46,6 +58,21 @@ func Load(getenv func(string) string) (Config, error) {
 		errs = append(errs, errors.New("DATABASE_URL: is required"))
 	}
 
+	cfg.OIDCIssuer = strings.TrimSpace(getenv("OIDC_ISSUER"))
+	if err := checkIdentityProviderURL(cfg.OIDCIssuer); err != nil {
+		errs = append(errs, fmt.Errorf("OIDC_ISSUER: %w", err))
+	}
+	cfg.OIDCAudience = strings.TrimSpace(getenv("OIDC_AUDIENCE"))
+	if cfg.OIDCAudience == "" {
+		errs = append(errs, errors.New("OIDC_AUDIENCE: is required"))
+	}
+	cfg.OIDCJWKSURL = strings.TrimSpace(getenv("OIDC_JWKS_URL"))
+	if cfg.OIDCJWKSURL == "" {
+		cfg.OIDCJWKSURL = strings.TrimRight(cfg.OIDCIssuer, "/") + "/oauth/v2/keys"
+	} else if err := checkIdentityProviderURL(cfg.OIDCJWKSURL); err != nil {
+		errs = append(errs, fmt.Errorf("OIDC_JWKS_URL: %w", err))
+	}
+
 	if v := strings.TrimSpace(getenv("PORT")); v != "" {
 		port, err := strconv.Atoi(v)
 		if err != nil || port < 1 || port > 65535 {
@@ -74,4 +101,27 @@ func Load(getenv func(string) string) (Config, error) {
 		return Config{}, fmt.Errorf("invalid configuration: %w", errors.Join(errs...))
 	}
 	return cfg, nil
+}
+
+// checkIdentityProviderURL requires HTTPS, because tokens are only as
+// trustworthy as the connection the signing keys were fetched over. Plain
+// HTTP is accepted for a loopback address only, for local development and
+// tests.
+func checkIdentityProviderURL(v string) error {
+	if v == "" {
+		return errors.New("is required")
+	}
+	u, err := url.Parse(v)
+	if err != nil || u.Host == "" || u.User != nil || u.RawQuery != "" || u.Fragment != "" {
+		return errors.New("is not a plain URL such as https://auth.example.ca")
+	}
+	switch u.Scheme {
+	case "https":
+		return nil
+	case "http":
+		if ip := net.ParseIP(u.Hostname()); u.Hostname() == "localhost" || (ip != nil && ip.IsLoopback()) {
+			return nil
+		}
+	}
+	return errors.New("must use https")
 }

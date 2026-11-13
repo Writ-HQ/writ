@@ -44,7 +44,7 @@ SELECT id, external_auth_id, email, display_name, locale, created_at, updated_at
 
 type ProvisionUserParams struct {
 	ExternalAuthID string
-	Email          string
+	Email          *string
 	DisplayName    string
 	Locale         string
 }
@@ -55,7 +55,8 @@ type ProvisionUserParams struct {
 // at login. It calls the provision_user database function, the one path
 // that is not subject to the users policies (see migration 00006), so it
 // needs no user context. Pass an external_auth_id from a verified token
-// only. An existing user is returned unchanged.
+// only. An existing user is returned unchanged. email is NULL when the
+// address is not known.
 func (q *Queries) ProvisionUser(ctx context.Context, arg ProvisionUserParams) (User, error) {
 	row := q.db.QueryRow(ctx, provisionUser,
 		arg.ExternalAuthID,

@@ -13,7 +13,7 @@ import (
 type User struct {
 	ID             uuid.UUID
 	ExternalAuthID string
-	Email          string
+	Email          *string
 	DisplayName    string
 	Locale         string
 	CreatedAt      time.Time

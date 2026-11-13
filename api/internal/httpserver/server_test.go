@@ -5,13 +5,18 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
+
 	"github.com/Writ-HQ/writ/api/internal/apierror"
+	"github.com/Writ-HQ/writ/api/internal/auth"
 	"github.com/Writ-HQ/writ/api/internal/health"
 	"github.com/Writ-HQ/writ/api/internal/oapi"
 )
@@ -20,9 +25,39 @@ func discardLogger() *slog.Logger {
 	return slog.New(slog.DiscardHandler)
 }
 
+// newTestRouter builds the router with an authenticator that accepts one
+// fixed token, so that these tests exercise routing and middleware rather
+// than token verification.
+func newTestRouter(logger *slog.Logger, hh *health.Handler) chi.Router {
+	return NewRouter(logger, stubAuthenticator{}, Handlers{Health: hh, Account: auth.NewHandler()})
+}
+
+const stubToken = "stub-token"
+
+var stubUser = auth.User{ID: uuid.MustParse("0192f0c4-7d2a-7b1e-9c3f-5a6b7c8d9e0f"), DisplayName: "Sam Example", Locale: "fr"}
+
+// stubAuthenticator maps a few fixed tokens to each outcome an
+// Authenticator can have.
+type stubAuthenticator struct{}
+
+func (stubAuthenticator) Authenticate(_ context.Context, token string) (auth.User, error) {
+	switch token {
+	case stubToken:
+		return stubUser, nil
+	case "idp-down":
+		return auth.User{}, auth.ErrUnavailable
+	case "db-down":
+		return auth.User{}, errors.New("provisioning: connection refused")
+	default:
+		return auth.User{}, fmt.Errorf("%w: test reason", auth.ErrInvalidToken)
+	}
+}
+
+// get sends an authenticated GET.
 func get(t *testing.T, h http.Handler, path string, header http.Header) *httptest.ResponseRecorder {
 	t.Helper()
 	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, path, nil)
+	req.Header.Set("Authorization", "Bearer "+stubToken)
 	for k, v := range header {
 		// Set canonicalises the key, as a real client request would.
 		req.Header.Set(k, v[0])
@@ -44,7 +79,7 @@ func status(t *testing.T, rec *httptest.ResponseRecorder) string {
 }
 
 func TestHealthz(t *testing.T) {
-	r := NewRouter(discardLogger(), health.New(discardLogger()))
+	r := newTestRouter(discardLogger(), health.New(discardLogger()))
 	rec := get(t, r, "/healthz", nil)
 	if rec.Code != http.StatusOK || status(t, rec) != "ok" {
 		t.Errorf("GET /healthz = %d %s, want 200 ok", rec.Code, rec.Body.String())
@@ -52,7 +87,7 @@ func TestHealthz(t *testing.T) {
 }
 
 func TestReadyz(t *testing.T) {
-	r := NewRouter(discardLogger(), health.New(discardLogger()))
+	r := newTestRouter(discardLogger(), health.New(discardLogger()))
 	rec := get(t, r, "/readyz", nil)
 	if rec.Code != http.StatusOK || status(t, rec) != "ok" {
 		t.Errorf("GET /readyz = %d %s, want 200 ok", rec.Code, rec.Body.String())
@@ -64,7 +99,7 @@ func TestReadyzFailingCheck(t *testing.T) {
 		Name: "database",
 		Fn:   func(context.Context) error { return errors.New("down") },
 	})
-	rec := get(t, NewRouter(discardLogger(), hh), "/readyz", nil)
+	rec := get(t, newTestRouter(discardLogger(), hh), "/readyz", nil)
 	if rec.Code != http.StatusServiceUnavailable || status(t, rec) != "unavailable" {
 		t.Errorf("GET /readyz = %d %s, want 503 unavailable", rec.Code, rec.Body.String())
 	}
@@ -72,7 +107,7 @@ func TestReadyzFailingCheck(t *testing.T) {
 
 func TestReadyzWhileShuttingDown(t *testing.T) {
 	hh := health.New(discardLogger())
-	r := NewRouter(discardLogger(), hh)
+	r := newTestRouter(discardLogger(), hh)
 	hh.SetShuttingDown()
 
 	if rec := get(t, r, "/readyz", nil); rec.Code != http.StatusServiceUnavailable {
@@ -84,10 +119,12 @@ func TestReadyzWhileShuttingDown(t *testing.T) {
 }
 
 func TestHealthEndpointsRejectOtherMethods(t *testing.T) {
-	r := NewRouter(discardLogger(), health.New(discardLogger()))
+	r := newTestRouter(discardLogger(), health.New(discardLogger()))
 	for _, path := range []string{"/healthz", "/readyz"} {
 		rec := httptest.NewRecorder()
-		r.ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodPost, path, nil))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, path, nil)
+		req.Header.Set("Authorization", "Bearer "+stubToken)
+		r.ServeHTTP(rec, req)
 		if rec.Code != http.StatusMethodNotAllowed {
 			t.Errorf("POST %s = %d, want 405", path, rec.Code)
 		}
@@ -95,7 +132,7 @@ func TestHealthEndpointsRejectOtherMethods(t *testing.T) {
 }
 
 func TestRequestIDGenerated(t *testing.T) {
-	r := NewRouter(discardLogger(), health.New(discardLogger()))
+	r := newTestRouter(discardLogger(), health.New(discardLogger()))
 	first := get(t, r, "/healthz", nil).Header().Get(RequestIDHeader)
 	second := get(t, r, "/healthz", nil).Header().Get(RequestIDHeader)
 	if len(first) != 32 {
@@ -107,7 +144,7 @@ func TestRequestIDGenerated(t *testing.T) {
 }
 
 func TestRequestIDInbound(t *testing.T) {
-	r := NewRouter(discardLogger(), health.New(discardLogger()))
+	r := newTestRouter(discardLogger(), health.New(discardLogger()))
 	tests := []struct {
 		name, inbound string
 		wantEchoed    bool
@@ -133,7 +170,7 @@ func TestRequestIDInbound(t *testing.T) {
 func TestRecoverReturns500AndLogs(t *testing.T) {
 	var logs bytes.Buffer
 	logger := slog.New(slog.NewJSONHandler(&logs, nil))
-	r := NewRouter(logger, health.New(logger))
+	r := newTestRouter(logger, health.New(logger))
 	r.Get("/boom", func(http.ResponseWriter, *http.Request) { panic("kaboom") })
 
 	rec := get(t, r, "/boom", http.Header{RequestIDHeader: {"req-1"}})
@@ -168,7 +205,7 @@ func TestRecoverReturns500AndLogs(t *testing.T) {
 func TestAccessLogOmitsRawPathAndQuery(t *testing.T) {
 	var logs bytes.Buffer
 	logger := slog.New(slog.NewJSONHandler(&logs, nil))
-	r := NewRouter(logger, health.New(logger))
+	r := newTestRouter(logger, health.New(logger))
 	r.Get("/people/{id}", func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusNoContent) })
 
 	get(t, r, "/people/jane-doe?email=jane@example.com", nil)
@@ -197,7 +234,7 @@ func decodeError(t *testing.T, rec *httptest.ResponseRecorder) oapi.Error {
 }
 
 func TestErrorsFollowTheErrorSchema(t *testing.T) {
-	r := NewRouter(discardLogger(), health.New(discardLogger()))
+	r := newTestRouter(discardLogger(), health.New(discardLogger()))
 	r.Get("/boom", func(http.ResponseWriter, *http.Request) { panic("kaboom") })
 
 	tests := []struct {
@@ -213,6 +250,7 @@ func TestErrorsFollowTheErrorSchema(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			req := httptest.NewRequestWithContext(t.Context(), tt.method, tt.path, nil)
 			req.Header.Set(RequestIDHeader, "req-42")
+			req.Header.Set("Authorization", "Bearer "+stubToken)
 			rec := httptest.NewRecorder()
 			r.ServeHTTP(rec, req)
 

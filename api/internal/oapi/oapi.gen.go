@@ -11,20 +11,40 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
+
+// Defines values for CurrentUserLocale.
+const (
+	En CurrentUserLocale = "en"
+	Fr CurrentUserLocale = "fr"
+)
+
+// Valid indicates whether the value is a known member of the CurrentUserLocale enum.
+func (e CurrentUserLocale) Valid() bool {
+	switch e {
+	case En:
+		return true
+	case Fr:
+		return true
+	default:
+		return false
+	}
+}
 
 // Defines values for ErrorCode.
 const (
-	ErrorCodeBadRequest       ErrorCode = "bad_request"
-	ErrorCodeConflict         ErrorCode = "conflict"
-	ErrorCodeInternalError    ErrorCode = "internal_error"
-	ErrorCodeInvalidCursor    ErrorCode = "invalid_cursor"
-	ErrorCodeMethodNotAllowed ErrorCode = "method_not_allowed"
-	ErrorCodeNotFound         ErrorCode = "not_found"
-	ErrorCodePermissionDenied ErrorCode = "permission_denied"
-	ErrorCodeRateLimited      ErrorCode = "rate_limited"
-	ErrorCodeUnauthenticated  ErrorCode = "unauthenticated"
-	ErrorCodeValidationFailed ErrorCode = "validation_failed"
+	ErrorCodeBadRequest         ErrorCode = "bad_request"
+	ErrorCodeConflict           ErrorCode = "conflict"
+	ErrorCodeInternalError      ErrorCode = "internal_error"
+	ErrorCodeInvalidCursor      ErrorCode = "invalid_cursor"
+	ErrorCodeMethodNotAllowed   ErrorCode = "method_not_allowed"
+	ErrorCodeNotFound           ErrorCode = "not_found"
+	ErrorCodePermissionDenied   ErrorCode = "permission_denied"
+	ErrorCodeRateLimited        ErrorCode = "rate_limited"
+	ErrorCodeServiceUnavailable ErrorCode = "service_unavailable"
+	ErrorCodeUnauthenticated    ErrorCode = "unauthenticated"
+	ErrorCodeValidationFailed   ErrorCode = "validation_failed"
 )
 
 // Valid indicates whether the value is a known member of the ErrorCode enum.
@@ -45,6 +65,8 @@ func (e ErrorCode) Valid() bool {
 	case ErrorCodePermissionDenied:
 		return true
 	case ErrorCodeRateLimited:
+		return true
+	case ErrorCodeServiceUnavailable:
 		return true
 	case ErrorCodeUnauthenticated:
 		return true
@@ -108,6 +130,22 @@ func (e HealthStatusStatus) Valid() bool {
 		return false
 	}
 }
+
+// CurrentUser The signed-in user's own account.
+type CurrentUser struct {
+	// DisplayName May be empty.
+	DisplayName string `json:"display_name"`
+
+	// Email `null` until the identity provider has supplied an address.
+	Email *string            `json:"email"`
+	Id    openapi_types.UUID `json:"id"`
+
+	// Locale The language the user prefers for the interface.
+	Locale CurrentUserLocale `json:"locale"`
+}
+
+// CurrentUserLocale The language the user prefers for the interface.
+type CurrentUserLocale string
 
 // Error The body of every error response.
 type Error struct {
@@ -182,6 +220,9 @@ type InternalError = Error
 // NotFound The body of every error response.
 type NotFound = Error
 
+// ServiceUnavailable The body of every error response.
+type ServiceUnavailable = Error
+
 // TooManyRequests The body of every error response.
 type TooManyRequests = Error
 
@@ -199,6 +240,9 @@ type ServerInterface interface {
 	// GetReadyz Readiness probe
 	// (GET /readyz)
 	GetReadyz(w http.ResponseWriter, r *http.Request)
+	// GetMe The signed-in user
+	// (GET /v1/me)
+	GetMe(w http.ResponseWriter, r *http.Request)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -214,6 +258,12 @@ func (_ Unimplemented) GetHealthz(w http.ResponseWriter, r *http.Request) {
 // GetReadyz Readiness probe
 // (GET /readyz)
 func (_ Unimplemented) GetReadyz(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// GetMe The signed-in user
+// (GET /v1/me)
+func (_ Unimplemented) GetMe(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -245,6 +295,20 @@ func (siw *ServerInterfaceWrapper) GetReadyz(w http.ResponseWriter, r *http.Requ
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetReadyz(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetMe operation middleware
+func (siw *ServerInterfaceWrapper) GetMe(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetMe(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -368,6 +432,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/v1/me", wrapper.GetMe)
+	})
+	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/healthz", wrapper.GetHealthz)
 	})
 	r.Group(func(r chi.Router) {
@@ -386,6 +453,8 @@ type ForbiddenJSONResponse Error
 type InternalErrorJSONResponse Error
 
 type NotFoundJSONResponse Error
+
+type ServiceUnavailableJSONResponse Error
 
 type TooManyRequestsResponseHeaders struct {
 	RetryAfter *int32
@@ -456,6 +525,69 @@ func (response GetReadyz503JSONResponse) VisitGetReadyzResponse(w http.ResponseW
 	return err
 }
 
+type GetMeRequestObject struct {
+}
+
+type GetMeResponseObject interface {
+	VisitGetMeResponse(w http.ResponseWriter) error
+}
+
+type GetMe200JSONResponse CurrentUser
+
+func (response GetMe200JSONResponse) VisitGetMeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMe401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetMe401JSONResponse) VisitGetMeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMe500JSONResponse struct{ InternalErrorJSONResponse }
+
+func (response GetMe500JSONResponse) VisitGetMeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMe503JSONResponse struct{ ServiceUnavailableJSONResponse }
+
+func (response GetMe503JSONResponse) VisitGetMeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 	// GetHealthz Liveness probe
@@ -464,6 +596,9 @@ type StrictServerInterface interface {
 	// GetReadyz Readiness probe
 	// (GET /readyz)
 	GetReadyz(ctx context.Context, request GetReadyzRequestObject) (GetReadyzResponseObject, error)
+	// GetMe The signed-in user
+	// (GET /v1/me)
+	GetMe(ctx context.Context, request GetMeRequestObject) (GetMeResponseObject, error)
 }
 
 type StrictHandlerFunc func(ctx context.Context, w http.ResponseWriter, r *http.Request, request any) (any, error)
@@ -546,6 +681,30 @@ func (sh *strictHandler) GetReadyz(w http.ResponseWriter, r *http.Request) {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(GetReadyzResponseObject); ok {
 		if err := validResponse.VisitGetReadyzResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetMe operation middleware
+func (sh *strictHandler) GetMe(w http.ResponseWriter, r *http.Request) {
+	var request GetMeRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetMe(ctx, request.(GetMeRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetMe")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetMeResponseObject); ok {
+		if err := validResponse.VisitGetMeResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
