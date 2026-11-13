@@ -21,6 +21,9 @@ const (
 	InvalidCursor Code = oapi.ErrorCodeInvalidCursor
 	// Unauthenticated: authentication is missing or invalid (401).
 	Unauthenticated Code = oapi.ErrorCodeUnauthenticated
+	// AccountDisabled: the token is valid but the account has been disabled
+	// in Writ (401).
+	AccountDisabled Code = oapi.ErrorCodeAccountDisabled
 	// MFARequired: the token is valid but was not obtained with a second
 	// factor, and this deployment requires one (401).
 	MFARequired Code = oapi.ErrorCodeMfaRequired
@@ -49,6 +52,7 @@ var Codes = []Code{
 	BadRequest,
 	InvalidCursor,
 	Unauthenticated,
+	AccountDisabled,
 	MFARequired,
 	PermissionDenied,
 	NotFound,

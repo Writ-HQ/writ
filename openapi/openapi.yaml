@@ -38,6 +38,11 @@ info:
     code `mfa_required`; the client should send the user to sign in again
     with a second factor.
 
+    An account can be disabled in Writ itself. A valid token for a disabled
+    account returns `401` with code `account_disabled`. Signing in again
+    does not help; the client should tell the user their account is
+    disabled.
+
     ## Errors
 
     Every error response, on every endpoint, has a body that follows the
@@ -203,7 +208,8 @@ components:
       description: >-
         Authentication is missing or invalid (code `unauthenticated`), or the
         token is valid but multi-factor authentication is required and was
-        not used (code `mfa_required`).
+        not used (code `mfa_required`), or the token is valid but the
+        account has been disabled (code `account_disabled`).
       content:
         application/json:
           schema:
@@ -365,6 +371,7 @@ components:
         - bad_request
         - invalid_cursor
         - unauthenticated
+        - account_disabled
         - mfa_required
         - permission_denied
         - not_found

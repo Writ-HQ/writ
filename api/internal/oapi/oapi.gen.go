@@ -34,6 +34,7 @@ func (e CurrentUserLocale) Valid() bool {
 
 // Defines values for ErrorCode.
 const (
+	ErrorCodeAccountDisabled    ErrorCode = "account_disabled"
 	ErrorCodeBadRequest         ErrorCode = "bad_request"
 	ErrorCodeConflict           ErrorCode = "conflict"
 	ErrorCodeInternalError      ErrorCode = "internal_error"
@@ -51,6 +52,8 @@ const (
 // Valid indicates whether the value is a known member of the ErrorCode enum.
 func (e ErrorCode) Valid() bool {
 	switch e {
+	case ErrorCodeAccountDisabled:
+		return true
 	case ErrorCodeBadRequest:
 		return true
 	case ErrorCodeConflict:

@@ -28,4 +28,5 @@ type User struct {
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
 	ProfileSyncedAt *time.Time
+	DisabledAt      *time.Time
 }

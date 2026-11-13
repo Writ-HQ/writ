@@ -347,6 +347,70 @@ func TestConcurrentFirstRequestsCreateOneUserAndCallUserinfoOnce(t *testing.T) {
 	}
 }
 
+// setDisabled disables or re-enables a user the way an operator does until
+// admin tooling exists: as the owner role, acting for that user.
+func setDisabled(t *testing.T, userID uuid.UUID, disabled bool) {
+	t.Helper()
+	err := database.WithUser(t.Context(), db.Owner, userID, func(tx pgx.Tx) error {
+		sql := "UPDATE users SET disabled_at = NULL WHERE id = $1"
+		if disabled {
+			sql = "UPDATE users SET disabled_at = now() WHERE id = $1"
+		}
+		tag, err := tx.Exec(t.Context(), sql, userID)
+		if err == nil && tag.RowsAffected() != 1 {
+			t.Errorf("changed %d users, want 1", tag.RowsAffected())
+		}
+		return err
+	})
+	if err != nil {
+		t.Fatalf("setting disabled=%v: %v", disabled, err)
+	}
+}
+
+func TestDisabledAccountIsRefusedOnTheNextRequest(t *testing.T) {
+	api := newAPI(t, auth.Options{})
+	subject := newSubject()
+	api.idp.SetProfile(subject, samProfile)
+	// One token throughout: it stays perfectly valid, which is the point.
+	token := api.idp.Sign(t, authtest.Token{Subject: subject, Expiry: time.Now().Add(100 * time.Hour)})
+	user := me(t, api, token)
+
+	setDisabled(t, user.Id, true)
+
+	for range 2 {
+		rec := getMe(t, api, token)
+		if rec.Code != http.StatusUnauthorized {
+			t.Fatalf("status = %d, want 401", rec.Code)
+		}
+		if body := decode[oapi.Error](t, rec); body.Code != apierror.AccountDisabled {
+			t.Errorf("code = %q, want account_disabled", body.Code)
+		}
+	}
+
+	// Nothing is done on behalf of a disabled account: even a profile due
+	// for a refresh is not fetched.
+	api.Advance(25 * time.Hour)
+	if rec := getMe(t, api, token); rec.Code != http.StatusUnauthorized {
+		t.Errorf("status after 25 hours = %d, want 401", rec.Code)
+	}
+	if calls := api.idp.UserinfoCalls(); calls != 1 {
+		t.Errorf("userinfo was called %d times, want only the first sync", calls)
+	}
+
+	// Another user is unaffected.
+	other := newSubject()
+	me(t, api, api.idp.Sign(t, authtest.Token{Subject: other}))
+
+	setDisabled(t, user.Id, false)
+	if got := me(t, api, token); got.Id != user.Id {
+		t.Errorf("after re-enabling: id = %s, want %s", got.Id, user.Id)
+	}
+
+	if got := events(t, user.Id); !slices.Equal(got, []string{"user.provisioned", "account.disabled", "account.enabled"}) {
+		t.Errorf("security events = %v, want provisioned, disabled, enabled", got)
+	}
+}
+
 func TestMFA(t *testing.T) {
 	// The method values here are this test's own. What a real provider
 	// puts in the claim must be read from one of its tokens.

@@ -20,6 +20,9 @@ var (
 	// ErrMFARequired means the token is valid but was not obtained with
 	// multi-factor authentication, which this deployment requires.
 	ErrMFARequired = errors.New("auth: multi-factor authentication is required")
+	// ErrAccountDisabled means the token is valid but the account it
+	// belongs to has been disabled in Writ (users.disabled_at).
+	ErrAccountDisabled = errors.New("auth: the account is disabled")
 	// ErrUnavailable means the token could be neither accepted nor
 	// rejected because the identity provider's keys could not be fetched.
 	ErrUnavailable = errors.New("auth: identity provider keys are unavailable")

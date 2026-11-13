@@ -44,6 +44,8 @@ func (stubAuthenticator) Authenticate(_ context.Context, token string) (auth.Use
 	switch token {
 	case stubToken:
 		return stubUser, nil
+	case "disabled":
+		return auth.User{}, auth.ErrAccountDisabled
 	case "no-mfa":
 		return auth.User{}, auth.ErrMFARequired
 	case "idp-down":
