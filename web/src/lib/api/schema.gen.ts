@@ -103,7 +103,7 @@ export interface components {
          * @description Stable, machine-readable error code. Clients use it to choose a translated message. This list is the complete set the API returns; the Go constants live in `api/internal/apierror/codes.go`. New codes may be added, so clients must handle unknown values.
          * @enum {string}
          */
-        ErrorCode: "bad_request" | "invalid_cursor" | "unauthenticated" | "permission_denied" | "not_found" | "method_not_allowed" | "conflict" | "validation_failed" | "rate_limited" | "internal_error" | "service_unavailable";
+        ErrorCode: "bad_request" | "invalid_cursor" | "unauthenticated" | "mfa_required" | "permission_denied" | "not_found" | "method_not_allowed" | "conflict" | "validation_failed" | "rate_limited" | "internal_error" | "service_unavailable";
         /**
          * @description Stable, machine-readable reason a field or parameter was rejected. New codes may be added, so clients must handle unknown values.
          * @enum {string}
@@ -140,7 +140,7 @@ export interface components {
                 "application/json": components["schemas"]["Error"];
             };
         };
-        /** @description Authentication is missing or invalid. */
+        /** @description Authentication is missing or invalid (code `unauthenticated`), or the token is valid but multi-factor authentication is required and was not used (code `mfa_required`). */
         Unauthorized: {
             headers: {
                 [name: string]: unknown;

@@ -5,11 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"net"
-	"net/url"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Writ-HQ/writ/api/internal/auth"
 )
 
 // Config holds the runtime configuration of the API server.
@@ -28,6 +29,21 @@ type Config struct {
 	// OIDCJWKSURL is where the issuer publishes its signing keys
 	// (OIDC_JWKS_URL, default <issuer>/oauth/v2/keys, Zitadel's path).
 	OIDCJWKSURL string
+	// OIDCRequireMFA rejects access tokens that were not obtained with
+	// multi-factor authentication (OIDC_REQUIRE_MFA, default false).
+	OIDCRequireMFA bool
+	// OIDCMFAClaim is the token claim that lists how the user
+	// authenticated (OIDC_MFA_CLAIM, default "amr").
+	OIDCMFAClaim string
+	// OIDCMFAMethods are the values of that claim that count as
+	// multi-factor; a token needs at least one (OIDC_MFA_METHODS,
+	// comma-separated, required when OIDC_REQUIRE_MFA is true). There is
+	// no default on purpose: the values a provider issues must be read
+	// from one of its real tokens, not assumed.
+	OIDCMFAMethods []string
+	// Environment names where the API is running: local, staging or
+	// production (ENVIRONMENT, default production, the strictest).
+	Environment string
 	// Port is the TCP port the HTTP server listens on (PORT, default 8080).
 	Port int
 	// LogLevel is the minimum level that is logged (LOG_LEVEL, default info).
@@ -35,6 +51,19 @@ type Config struct {
 	// ShutdownTimeout bounds how long in-flight requests may take to finish
 	// after a shutdown signal (SHUTDOWN_TIMEOUT, default 15s).
 	ShutdownTimeout time.Duration
+}
+
+// Values of Config.Environment.
+const (
+	EnvLocal      = "local"
+	EnvStaging    = "staging"
+	EnvProduction = "production"
+)
+
+// DocsEnabled reports whether the interactive API documentation is served.
+// It never is in production.
+func (c Config) DocsEnabled() bool {
+	return c.Environment != EnvProduction
 }
 
 // Addr returns the listen address for the HTTP server.
@@ -47,6 +76,8 @@ func (c Config) Addr() string {
 // invalid values are reported together.
 func Load(getenv func(string) string) (Config, error) {
 	cfg := Config{
+		Environment:     EnvProduction,
+		OIDCMFAClaim:    auth.DefaultAuthMethodsClaim,
 		Port:            8080,
 		LogLevel:        slog.LevelInfo,
 		ShutdownTimeout: 15 * time.Second,
@@ -59,7 +90,7 @@ func Load(getenv func(string) string) (Config, error) {
 	}
 
 	cfg.OIDCIssuer = strings.TrimSpace(getenv("OIDC_ISSUER"))
-	if err := checkIdentityProviderURL(cfg.OIDCIssuer); err != nil {
+	if err := auth.CheckProviderURL(cfg.OIDCIssuer); err != nil {
 		errs = append(errs, fmt.Errorf("OIDC_ISSUER: %w", err))
 	}
 	cfg.OIDCAudience = strings.TrimSpace(getenv("OIDC_AUDIENCE"))
@@ -69,8 +100,34 @@ func Load(getenv func(string) string) (Config, error) {
 	cfg.OIDCJWKSURL = strings.TrimSpace(getenv("OIDC_JWKS_URL"))
 	if cfg.OIDCJWKSURL == "" {
 		cfg.OIDCJWKSURL = strings.TrimRight(cfg.OIDCIssuer, "/") + "/oauth/v2/keys"
-	} else if err := checkIdentityProviderURL(cfg.OIDCJWKSURL); err != nil {
+	} else if err := auth.CheckProviderURL(cfg.OIDCJWKSURL); err != nil {
 		errs = append(errs, fmt.Errorf("OIDC_JWKS_URL: %w", err))
+	}
+
+	if v := strings.TrimSpace(getenv("OIDC_REQUIRE_MFA")); v != "" {
+		require, err := strconv.ParseBool(v)
+		if err != nil {
+			errs = append(errs, fmt.Errorf("OIDC_REQUIRE_MFA: %q is not true or false", v))
+		}
+		cfg.OIDCRequireMFA = require
+	}
+	if v := strings.TrimSpace(getenv("OIDC_MFA_CLAIM")); v != "" {
+		cfg.OIDCMFAClaim = v
+	}
+	for _, method := range strings.Split(getenv("OIDC_MFA_METHODS"), ",") {
+		if method = strings.TrimSpace(method); method != "" {
+			cfg.OIDCMFAMethods = append(cfg.OIDCMFAMethods, method)
+		}
+	}
+	if cfg.OIDCRequireMFA && len(cfg.OIDCMFAMethods) == 0 {
+		errs = append(errs, errors.New("OIDC_MFA_METHODS: is required when OIDC_REQUIRE_MFA is true"))
+	}
+
+	if v := strings.TrimSpace(getenv("ENVIRONMENT")); v != "" {
+		if !slices.Contains([]string{EnvLocal, EnvStaging, EnvProduction}, v) {
+			errs = append(errs, fmt.Errorf("ENVIRONMENT: %q is not one of local, staging, production", v))
+		}
+		cfg.Environment = v
 	}
 
 	if v := strings.TrimSpace(getenv("PORT")); v != "" {
@@ -101,27 +158,4 @@ func Load(getenv func(string) string) (Config, error) {
 		return Config{}, fmt.Errorf("invalid configuration: %w", errors.Join(errs...))
 	}
 	return cfg, nil
-}
-
-// checkIdentityProviderURL requires HTTPS, because tokens are only as
-// trustworthy as the connection the signing keys were fetched over. Plain
-// HTTP is accepted for a loopback address only, for local development and
-// tests.
-func checkIdentityProviderURL(v string) error {
-	if v == "" {
-		return errors.New("is required")
-	}
-	u, err := url.Parse(v)
-	if err != nil || u.Host == "" || u.User != nil || u.RawQuery != "" || u.Fragment != "" {
-		return errors.New("is not a plain URL such as https://auth.example.ca")
-	}
-	switch u.Scheme {
-	case "https":
-		return nil
-	case "http":
-		if ip := net.ParseIP(u.Hostname()); u.Hostname() == "localhost" || (ip != nil && ip.IsLoopback()) {
-			return nil
-		}
-	}
-	return errors.New("must use https")
 }

@@ -39,6 +39,7 @@ const (
 	ErrorCodeInternalError      ErrorCode = "internal_error"
 	ErrorCodeInvalidCursor      ErrorCode = "invalid_cursor"
 	ErrorCodeMethodNotAllowed   ErrorCode = "method_not_allowed"
+	ErrorCodeMfaRequired        ErrorCode = "mfa_required"
 	ErrorCodeNotFound           ErrorCode = "not_found"
 	ErrorCodePermissionDenied   ErrorCode = "permission_denied"
 	ErrorCodeRateLimited        ErrorCode = "rate_limited"
@@ -59,6 +60,8 @@ func (e ErrorCode) Valid() bool {
 	case ErrorCodeInvalidCursor:
 		return true
 	case ErrorCodeMethodNotAllowed:
+		return true
+	case ErrorCodeMfaRequired:
 		return true
 	case ErrorCodeNotFound:
 		return true

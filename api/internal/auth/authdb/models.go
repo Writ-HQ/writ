@@ -5,17 +5,27 @@
 package authdb
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/google/uuid"
 )
 
+type SecurityEvent struct {
+	ID        uuid.UUID
+	UserID    uuid.UUID
+	EventType string
+	Metadata  json.RawMessage
+	CreatedAt time.Time
+}
+
 type User struct {
-	ID             uuid.UUID
-	ExternalAuthID string
-	Email          *string
-	DisplayName    string
-	Locale         string
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	ID              uuid.UUID
+	ExternalAuthID  string
+	Email           *string
+	DisplayName     string
+	Locale          string
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+	ProfileSyncedAt *time.Time
 }

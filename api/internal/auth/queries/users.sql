@@ -26,3 +26,15 @@ WHERE id = $1;
 UPDATE users
 SET display_name = $1, locale = $2
 WHERE id = current_user_id();
+
+-- SyncCurrentUserProfile stores what the identity provider's userinfo
+-- endpoint returned and marks the profile as fresh. A NULL argument leaves
+-- that column as it is. Runs inside database.WithUser.
+-- name: SyncCurrentUserProfile :one
+UPDATE users
+SET email             = COALESCE(sqlc.narg(email), email),
+    display_name      = COALESCE(sqlc.narg(display_name), display_name),
+    locale            = COALESCE(sqlc.narg(locale), locale),
+    profile_synced_at = now()
+WHERE id = current_user_id()
+RETURNING *;

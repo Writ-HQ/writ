@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"slices"
 	"strings"
 
 	"github.com/Writ-HQ/writ/api/internal/apierror"
@@ -17,28 +18,35 @@ type Authenticator interface {
 	Authenticate(ctx context.Context, token string) (auth.User, error)
 }
 
-// publicEndpoints are the only requests served without authentication.
+// publicOperations are the API operations served without authentication.
 // They must be exactly the operations marked `security: []` in
-// openapi/openapi.yaml; a test fails if the two disagree. Anything not
-// listed here, including a path that does not exist, requires a valid
-// token.
-var publicEndpoints = map[string]bool{
-	"GET /healthz": true,
-	"GET /readyz":  true,
+// openapi/openapi.yaml; a test fails if the two disagree. Anything else,
+// including a path that does not exist, requires a valid token.
+var publicOperations = []string{
+	"GET /healthz",
+	"GET /readyz",
 }
 
 // Authenticate requires a valid bearer access token on every request that
 // is not to a public endpoint, and stores the authenticated user in the
 // request context (auth.UserFromContext).
 //
+// The public endpoints are publicOperations plus alsoPublic, which is for
+// routes that are not API operations: the documentation pages. Each entry
+// is a method and an exact path, such as "GET /docs".
+//
 // A missing or rejected token gets 401. The response never says which
 // check failed; the reason is logged. If the identity provider's keys
 // cannot be fetched the response is 503, so that clients retry instead of
 // signing the user out.
-func Authenticate(logger *slog.Logger, authenticator Authenticator) func(http.Handler) http.Handler {
+func Authenticate(logger *slog.Logger, authenticator Authenticator, alsoPublic ...string) func(http.Handler) http.Handler {
+	public := map[string]bool{}
+	for _, endpoint := range append(slices.Clone(publicOperations), alsoPublic...) {
+		public[endpoint] = true
+	}
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if publicEndpoints[r.Method+" "+r.URL.Path] {
+			if public[r.Method+" "+r.URL.Path] {
 				next.ServeHTTP(w, r)
 				return
 			}
@@ -62,6 +70,13 @@ func Authenticate(logger *slog.Logger, authenticator Authenticator) func(http.Ha
 				logger.InfoContext(r.Context(), "token rejected", requestID, slog.String("reason", err.Error()))
 				w.Header().Set("WWW-Authenticate", `Bearer error="invalid_token"`)
 				WriteError(w, r, http.StatusUnauthorized, apierror.Unauthenticated, "Authentication is required.")
+
+			case errors.Is(err, auth.ErrMFARequired):
+				// The token is genuine; the sign-in behind it was not
+				// strong enough. The challenge follows RFC 9470.
+				logger.InfoContext(r.Context(), "token rejected", requestID, slog.String("reason", err.Error()))
+				w.Header().Set("WWW-Authenticate", `Bearer error="insufficient_user_authentication"`)
+				WriteError(w, r, http.StatusUnauthorized, apierror.MFARequired, "Multi-factor authentication is required.")
 
 			case errors.Is(err, auth.ErrUnavailable):
 				logger.WarnContext(r.Context(), "identity provider keys unavailable", requestID)
