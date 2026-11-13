@@ -3,7 +3,12 @@ GENERATED := api/internal/oapi web/src/lib/api \
 	api/internal/tenants/tenantsdb api/internal/auth/authdb api/internal/audit/auditdb
 
 .PHONY: run test lint vuln migrate migrate-status db-up db-down \
-	generate generate-api generate-web generate-check
+	generate generate-api generate-web generate-check infra-check
+
+# Every Terraform directory: the two that are applied and the modules.
+INFRA_DIRS := infra/bootstrap infra/environments/staging \
+	infra/modules/network infra/modules/database infra/modules/ecs-service \
+	infra/modules/github-deploy infra/modules/environment
 
 run test lint vuln migrate migrate-status:
 	$(MAKE) -C api $@
@@ -38,3 +43,15 @@ generate-check: generate
 		exit 1; \
 	fi
 	@echo "Generated code is up to date."
+
+# Format check, validation and plan tests for the Terraform code. Needs no
+# AWS credentials and never touches AWS: the tests plan against a mocked
+# provider. This is not `terraform plan` and never applies anything.
+infra-check:
+	terraform fmt -check -recursive infra
+	@set -e; for dir in $(INFRA_DIRS); do \
+		echo "== $$dir"; \
+		terraform -chdir=$$dir init -backend=false -input=false >/dev/null; \
+		terraform -chdir=$$dir validate; \
+		if [ -d $$dir/tests ]; then terraform -chdir=$$dir test; fi; \
+	done

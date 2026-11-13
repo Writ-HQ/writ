@@ -1,0 +1,162 @@
+name: Deploy staging
+
+# Builds the API image, pushes it, applies database migrations and rolls
+# the new image out to staging. It never changes infrastructure: Terraform
+# is applied by a person (docs/runbooks/staging.md).
+#
+# Authentication is OIDC. There are no AWS keys in GitHub: the job
+# exchanges a short-lived GitHub token for temporary credentials for a role
+# that only this repository's main branch can assume.
+#
+# Setup: set the repository variable AWS_DEPLOY_ROLE_ARN to the Terraform
+# output github_deploy_role_arn. Until it is set the job is skipped.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "api/**"
+      - ".github/workflows/deploy-staging.yml"
+  # Run by hand, from main, to redeploy or to pick up a Terraform change
+  # to the task definitions.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # to request the OIDC token
+
+# One deploy at a time, in order. A running deploy is never cancelled
+# halfway through a migration.
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ca-central-1
+  CLUSTER: writ-staging
+  API_SERVICE: writ-staging-api
+  API_FAMILY: writ-staging-api
+  MIGRATE_FAMILY: writ-staging-migrate
+  API_REPOSITORY: writ-staging-api
+  TAGS: key=project,value=writ key=environment,value=staging
+
+jobs:
+  deploy:
+    name: Build, migrate and deploy
+    if: github.ref == 'refs/heads/main' && vars.AWS_DEPLOY_ROLE_ARN != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Assume the deploy role
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: deploy-staging-${{ github.run_id }}
+
+      - name: Log in to ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Decide the image name
+        id: image
+        env:
+          REGISTRY: ${{ steps.ecr.outputs.registry }}
+        run: |
+          echo "ref=$REGISTRY/$API_REPOSITORY:$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+          # Tags are immutable. If this commit was already pushed (a
+          # re-run), reuse the image instead of failing on the push.
+          if aws ecr describe-images --repository-name "$API_REPOSITORY" \
+              --image-ids imageTag="$GITHUB_SHA" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: docker/setup-buildx-action@v4
+        if: steps.image.outputs.exists == 'false'
+
+      - name: Build and push the API image
+        if: steps.image.outputs.exists == 'false'
+        uses: docker/build-push-action@v7
+        with:
+          context: api
+          push: true
+          tags: ${{ steps.image.outputs.ref }}
+          provenance: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # A new revision of each task definition: the latest one, which
+      # carries whatever Terraform last set, with only the image changed.
+      - name: Register task definitions
+        id: register
+        env:
+          IMAGE: ${{ steps.image.outputs.ref }}
+        run: |
+          register() {
+            aws ecs describe-task-definition --task-definition "$1" \
+              --query taskDefinition --output json |
+              jq --arg image "$IMAGE" '
+                .containerDefinitions[0].image = $image
+                | {family, taskRoleArn, executionRoleArn, networkMode,
+                   containerDefinitions, requiresCompatibilities, cpu,
+                   memory, runtimePlatform}' > "$RUNNER_TEMP/$1.json"
+            # shellcheck disable=SC2086 # TAGS is a list of arguments
+            aws ecs register-task-definition \
+              --cli-input-json "file://$RUNNER_TEMP/$1.json" --tags $TAGS \
+              --query taskDefinition.taskDefinitionArn --output text
+          }
+          echo "migrate=$(register "$MIGRATE_FAMILY")" >> "$GITHUB_OUTPUT"
+          echo "api=$(register "$API_FAMILY")" >> "$GITHUB_OUTPUT"
+
+      # Migrations run first, with the new image, in the private subnets.
+      # They must be compatible with the version still serving traffic.
+      - name: Run database migrations
+        env:
+          TASK_DEFINITION: ${{ steps.register.outputs.migrate }}
+        run: |
+          network=$(aws ecs describe-services --cluster "$CLUSTER" \
+            --services "$API_SERVICE" \
+            --query 'services[0].networkConfiguration' --output json)
+          task=$(aws ecs run-task --cluster "$CLUSTER" \
+            --task-definition "$TASK_DEFINITION" --launch-type FARGATE \
+            --network-configuration "$network" \
+            --propagate-tags TASK_DEFINITION \
+            --started-by "github-$GITHUB_RUN_ID" \
+            --query 'tasks[0].taskArn' --output text)
+          if [ -z "$task" ] || [ "$task" = "None" ]; then
+            echo "::error::The migration task could not be started."
+            exit 1
+          fi
+          echo "Migration task: $task"
+          aws ecs wait tasks-stopped --cluster "$CLUSTER" --tasks "$task"
+          code=$(aws ecs describe-tasks --cluster "$CLUSTER" --tasks "$task" \
+            --query 'tasks[0].containers[0].exitCode' --output text)
+          if [ "$code" != "0" ]; then
+            aws ecs describe-tasks --cluster "$CLUSTER" --tasks "$task" \
+              --query 'tasks[0].{stopped:stoppedReason,container:containers[0].reason}'
+            echo "::error::Migrations failed (exit code $code). Nothing was deployed. See the log group /writ/staging/migrate."
+            exit 1
+          fi
+
+      - name: Deploy the API
+        env:
+          TASK_DEFINITION: ${{ steps.register.outputs.api }}
+        run: |
+          aws ecs update-service --cluster "$CLUSTER" --service "$API_SERVICE" \
+            --task-definition "$TASK_DEFINITION" >/dev/null
+          aws ecs wait services-stable --cluster "$CLUSTER" --services "$API_SERVICE"
+          # If the new tasks never became healthy, ECS has already gone
+          # back to the previous revision. That is a failed deploy.
+          running=$(aws ecs describe-services --cluster "$CLUSTER" \
+            --services "$API_SERVICE" \
+            --query 'services[0].deployments[?status==`PRIMARY`] | [0].taskDefinition' \
+            --output text)
+          if [ "$running" != "$TASK_DEFINITION" ]; then
+            echo "::error::The deploy was rolled back; the service is running $running."
+            exit 1
+          fi
+          echo "Deployed $TASK_DEFINITION"

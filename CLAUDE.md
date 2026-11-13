@@ -47,14 +47,21 @@ database.WithUser (user only, before a tenant is chosen) as the transaction
 helpers. Every table is under row-level security; users are created only
 through the provision_user database function. Database tests use
 testcontainers via /api/internal/database/dbtest and need Docker.
-Follow-ups are listed in /docs/decisions/0002. Authentication is in: httpserver.Authenticate verifies the Zitadel JWT
+Follow-ups are listed in /docs/decisions/0002. /infra holds Terraform for
+staging (modules network, database, ecs-service, github-deploy,
+environment; instantiated in /infra/environments/staging; state bucket in
+/infra/bootstrap). It is validated and plan-tested but has never been
+applied. /api/cmd/migrate applies migrations and ships in the API image.
+.github/workflows/deploy-staging.yml deploys on merge to main through
+OIDC. See /docs/runbooks/staging.md and /docs/decisions/0003.
+Authentication is in: httpserver.Authenticate verifies the Zitadel JWT
 access token on every request except the public endpoints (which must
 match `security: []` in the spec), auth.Service finds or creates the user,
 and handlers read it with auth.UserFromContext. GET /v1/me is the first
 authenticated endpoint. Tests use the fake identity provider in
 /api/internal/auth/authtest; end-to-end tests are in /api/internal/e2e.
 See /docs/decisions/0004. Not yet done: MFA enforcement, tenant selection
-and permission checks, /api/cmd/worker, the Next.js app, /infra.
+and permission checks, /api/cmd/worker, the Next.js app.
 
 ## Stack
 - API: Go, chi, pgx, sqlc, goose, River (jobs), go-playground/validator, slog
@@ -153,4 +160,6 @@ Run from the repo root:
   queries with sqlc (into /api/internal/<module>/<module>db)
 - make generate-check — fail if generated code is out of date (CI runs this)
 - npm --prefix web run typecheck — type-check the web API client
-- [add web and infra commands as they are created]
+- make infra-check — format-check, validate and plan-test the Terraform
+  code against a mocked provider (no AWS access, applies nothing)
+- [add web commands as they are created]

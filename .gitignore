@@ -7,3 +7,12 @@ bin/
 *.tfstate
 *.tfstate.*
 .terraform/
+
+# Terraform. Variable and backend files can name accounts and addresses;
+# commit only the .example versions.
+*.tfvars
+!*.tfvars.example
+backend.hcl
+# Lock files are kept for the configurations that are applied, not for
+# modules, which are only initialised to run their tests.
+infra/modules/**/.terraform.lock.hcl
