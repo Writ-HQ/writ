@@ -19,6 +19,13 @@ WHERE id = $1 AND deleted_at IS NULL;
 -- tenant is trusted, and returns a row only when the current user is an
 -- active member of a tenant that has not been deleted. No row means "not
 -- found", whatever the reason.
+--
+-- The membership conditions repeat what the tenants_member_select policy
+-- already enforces: a user-only transaction cannot see a tenant without an
+-- active, undeleted membership. They are written out so that this check
+-- does not rest on the policy alone, and the policy does not rest on it.
+-- The deleted-tenant condition is not in any policy and is enforced here
+-- only.
 -- name: ResolveTenantForCurrentUser :one
 SELECT sqlc.embed(t), m.role
 FROM tenants t
