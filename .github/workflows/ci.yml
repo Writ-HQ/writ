@@ -96,3 +96,15 @@ jobs:
           tags: writ-api:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  infra:
+    name: Terraform format, validate and plan tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: "~1.17.0"
+          terraform_wrapper: false
+      # No AWS credentials: the tests plan against a mocked provider.
+      - run: make infra-check

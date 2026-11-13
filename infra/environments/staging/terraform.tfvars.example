@@ -1,0 +1,14 @@
+# Copy to terraform.tfvars (which is not committed) and fill in.
+
+domain_name = "api.staging.example.ca"
+
+# The Route 53 hosted zone for the domain. Leave out if DNS is hosted
+# elsewhere; the records to add by hand are then printed as outputs.
+# route53_zone_id = "Z0123456789ABCDEFGHIJ"
+
+budget_alert_emails = ["alerts@example.ca"]
+
+# The staging Zitadel instance, and the project ID (or client ID) its
+# access tokens carry as audience.
+oidc_issuer   = "https://auth.staging.example.ca"
+oidc_audience = "123456789012345678"
