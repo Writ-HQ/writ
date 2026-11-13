@@ -62,31 +62,42 @@ type in step 1.
       character for character, so a trailing slash on one side only is a
       mismatch.
 - [ ] `exp` is present and less than about an hour away.
-- [ ] **confirm — `OIDC_AUDIENCE`.** Look at `aud`. The API requires its
-      configured audience to be one of these values. Choose the one that
-      identifies *this API* and will be in every token meant for it. Prefer
-      the **project ID** over a client ID, so that a second application in
-      the same project (the web app, then a mobile app) needs no change
-      here. If the project ID is not in `aud`, the token was requested
-      without the scope that adds it; Zitadel has a reserved scope for
-      this (`urn:zitadel:iam:org:project:id:<project id>:aud` — confirm
-      the exact form in your version's documentation) which you pass with
-      `go run ./cmd/devtoken -scope "openid profile email <that scope>"`.
+- [ ] **`OIDC_AUDIENCE` is the project ID.** Look at `aud`. On the
+      development instance (Zitadel Cloud, checked 2026-11-13) a token
+      requested with `openid profile email offline_access` carries two
+      audiences: the client ID of the application that requested it, and
+      the ID of the project that application belongs to. No extra scope
+      was needed. Set `OIDC_AUDIENCE` to the **project ID**: it identifies
+      this API and is in the token whichever application of the project
+      requested it, so adding the web app, then a mobile app, changes
+      nothing here. A client ID would accept tokens from that one
+      application only.
 
-      Chosen audience: `____________________`
+      Confirm that the project ID is in `aud`. If only the client ID is
+      there, stop and find out why before using the client ID instead.
 
-- [ ] **confirm — the MFA claim.** Find the claim that lists how the user
-      signed in. The standard name is `amr`. Sign in once **with** the
-      second factor and once, with a user allowed to, **without**, and
-      compare:
+- [ ] **The MFA claim: absent, so the API's MFA check stays off.** On the
+      same instance the access token has no `amr` claim and no other claim
+      describing how the user signed in. Its claims were `iss`, `sub`,
+      `aud`, `exp`, `iat`, `nbf`, `client_id` and `jti`, after a sign-in
+      with a second factor. `OIDC_REQUIRE_MFA=true` would therefore reject
+      every request.
+
+      Check whether that is still so. If a claim listing the
+      authentication methods has appeared, sign in once with the second
+      factor and once, with a user allowed to, without, and note:
 
       - claim name (for `OIDC_MFA_CLAIM`): `__________`
       - values present only when a second factor was used (for
         `OIDC_MFA_METHODS`, comma-separated): `__________`
 
-      Do not take these from documentation or from this file. If the two
-      tokens carry the same values, the claim cannot tell them apart and
-      `OIDC_REQUIRE_MFA` must stay off until it can.
+      Do not take these from documentation. If the two tokens carry the
+      same values the claim cannot tell them apart and the check must stay
+      off.
+
+- [ ] **Token lifetime.** `exp` minus `iat` on that token was 12 hours.
+      Shorten the access token lifetime in the instance's settings (see
+      step 1) and confirm the difference here is an hour or less.
 
 ## 4. Call the API
 
@@ -94,8 +105,11 @@ Start the API against the instance:
 
 ```sh
 make db-up && make migrate
-OIDC_ISSUER=$OIDC_ISSUER OIDC_AUDIENCE=<chosen audience> make run
+OIDC_ISSUER=$OIDC_ISSUER OIDC_AUDIENCE=<project id> make run
 ```
+
+With the values in `.env` (copy `.env.example`), plain `make run` and
+`TOKEN=$(make -s devtoken)` do the same.
 
 In another terminal:
 
@@ -134,7 +148,9 @@ The same calls can be made from the interactive documentation at
 
 ## 5. The MFA check
 
-Only after step 3 has given you real values:
+Skip this section while the access token has no authentication-method
+claim (step 3). Until then MFA is enforced by Zitadel's login policy
+alone. Only once step 3 has given you a real claim and real values:
 
 ```sh
 OIDC_ISSUER=$OIDC_ISSUER OIDC_AUDIENCE=<chosen audience> \

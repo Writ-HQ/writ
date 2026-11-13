@@ -79,16 +79,37 @@ Date: 2026-11-13
   cache and the distinction between "invalid" and "cannot tell" are ours
   and tested.
 
-## Not verified yet
+## Checked against a real Zitadel (2026-11-13)
 
-Nothing here has run against a real Zitadel. Work through
-`docs/runbooks/zitadel-smoke-test.md` and record the result below. In
-particular, to be confirmed from a real token: the audience to use for
-`OIDC_AUDIENCE`, and the claim and values for the MFA check.
+Against the development instance on Zitadel Cloud, with a Native
+application issuing JWT access tokens and Force MFA on:
+
+- The discovery document names the exact issuer and has userinfo and
+  device authorization endpoints; the keys are at the default path.
+- `cmd/devtoken` completed the device flow and received a JWT.
+- **Audience.** `aud` held the application's client ID and the project
+  ID, with no extra scope requested. `OIDC_AUDIENCE` is the project ID.
+- **The access token has no authentication-method claim.** After a
+  sign-in with a second factor it carried only `iss`, `sub`, `aud`, `exp`,
+  `iat`, `nbf`, `client_id` and `jti`: no `amr`. The API's MFA check
+  therefore cannot be turned on as things stand; it would reject every
+  request. `OIDC_REQUIRE_MFA` stays off, and MFA is enforced by Zitadel's
+  login policy alone.
+- **The access token lived 12 hours.** That is the window in which a
+  disabled user's token keeps working. Shorten it in Zitadel.
+
+Not yet checked against the real instance: the API accepting that token
+on `/v1/me`, and the profile arriving from userinfo. See
+`docs/runbooks/zitadel-smoke-test.md`, step 4.
 
 ## Follow-ups
 
-- **Turn the MFA check on** in staging once its values are confirmed.
+- **MFA at the API.** Decide whether Zitadel's policy alone is enough. If
+  the API must check too, the token needs to say how the user signed in.
+  Ways to get there, none verified: have Zitadel add a claim to the
+  access token (it supports customising tokens with actions); or have the
+  API ask Zitadel about the session behind the token. The check itself is
+  built and tested and needs only a claim to read.
 - **Show security events to the user** (an endpoint and a page), and
   notify them of an email change.
 - **Revocation.** A token stays valid until it expires even if the user is

@@ -58,7 +58,10 @@ provider's userinfo endpoint, on first sight and when older than 24 hours,
 never from access token claims. OIDC_REQUIRE_MFA adds an optional check of
 the authentication-method claim (error code mfa_required); its accepted
 values (OIDC_MFA_METHODS) have no default and must be read from a real
-Zitadel token. Zitadel is the system of record for sign-ins.
+Zitadel token. Keep it off: the development instance's access tokens carry
+no authentication-method claim (checked 2026-11-13), so MFA is enforced by
+Zitadel's Force MFA policy alone. OIDC_AUDIENCE is the Zitadel project ID.
+Zitadel is the system of record for sign-ins.
 security_events is a user-scoped, append-only table (RLS on app.user_id)
 for user provisioned, email changed and mfa_required rejections.
 ENVIRONMENT (local, staging, production; default production) turns on the
