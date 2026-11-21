@@ -25,6 +25,14 @@ and verified, with the date.
       URL, so every token and the `OIDC_ISSUER` setting change with it;
       users are matched by subject identifier, so plan how existing
       accounts carry over. See decisions/0004.
+- [ ] **Platform admins must hand over ownership and remove their own
+      membership after onboarding a campaign.** Creating a tenant makes
+      the creator its owner, so whoever onboards a campaign can read
+      everything in it until they leave. There is no way to do the
+      hand-over through the API yet; it comes with member management.
+      Until then, keep a list of tenants a platform admin still owns and
+      clear it before any real campaign data goes in.
+      See decisions/0005.
 - [ ] **Access token lifetime is an hour or less** in the production
       Zitadel, and the kill switch (`users.disabled_at`) has admin
       tooling, so that shutting an account out does not need database

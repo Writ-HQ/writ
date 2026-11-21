@@ -13,7 +13,6 @@ import (
 	"testing"
 
 	"github.com/Writ-HQ/writ/api/internal/apierror"
-	"github.com/Writ-HQ/writ/api/internal/auth"
 	"github.com/Writ-HQ/writ/api/internal/health"
 	"github.com/Writ-HQ/writ/api/internal/oapi"
 )
@@ -230,10 +229,10 @@ func TestMFARequiredHasItsOwnCode(t *testing.T) {
 
 func TestDocs(t *testing.T) {
 	logger := discardLogger()
-	handlers := Handlers{Health: health.New(logger), Account: auth.NewHandler()}
+	handlers := stubHandlers(health.New(logger))
 
 	t.Run("served without a token when enabled", func(t *testing.T) {
-		r := NewRouter(logger, stubAuthenticator{}, handlers, Options{Docs: true})
+		r := NewRouter(logger, stubAuthenticator{}, stubResolver{}, handlers, Options{Docs: true})
 
 		page := request(t, r, http.MethodGet, "/docs")
 		if page.Code != http.StatusOK || !strings.HasPrefix(page.Header().Get("Content-Type"), "text/html") {
@@ -271,7 +270,7 @@ func TestDocs(t *testing.T) {
 	})
 
 	t.Run("absent when disabled", func(t *testing.T) {
-		r := NewRouter(logger, stubAuthenticator{}, handlers, Options{})
+		r := NewRouter(logger, stubAuthenticator{}, stubResolver{}, handlers, Options{})
 		for _, endpoint := range docsEndpoints {
 			path := strings.TrimPrefix(endpoint, "GET ")
 			if rec := request(t, r, http.MethodGet, path); rec.Code != http.StatusUnauthorized {

@@ -41,6 +41,9 @@ type Config struct {
 	// no default on purpose: the values a provider issues must be read
 	// from one of its real tokens, not assumed.
 	OIDCMFAMethods []string
+	// TenantSelfServe lets any signed-in user create a tenant. When false,
+	// only platform administrators may (TENANT_SELF_SERVE, default false).
+	TenantSelfServe bool
 	// Environment names where the API is running: local, staging or
 	// production (ENVIRONMENT, default production, the strictest).
 	Environment string
@@ -121,6 +124,14 @@ func Load(getenv func(string) string) (Config, error) {
 	}
 	if cfg.OIDCRequireMFA && len(cfg.OIDCMFAMethods) == 0 {
 		errs = append(errs, errors.New("OIDC_MFA_METHODS: is required when OIDC_REQUIRE_MFA is true"))
+	}
+
+	if v := strings.TrimSpace(getenv("TENANT_SELF_SERVE")); v != "" {
+		selfServe, err := strconv.ParseBool(v)
+		if err != nil {
+			errs = append(errs, fmt.Errorf("TENANT_SELF_SERVE: %q is not true or false", v))
+		}
+		cfg.TenantSelfServe = selfServe
 	}
 
 	if v := strings.TrimSpace(getenv("ENVIRONMENT")); v != "" {

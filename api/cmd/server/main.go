@@ -18,6 +18,7 @@ import (
 	"github.com/Writ-HQ/writ/api/internal/database"
 	"github.com/Writ-HQ/writ/api/internal/health"
 	"github.com/Writ-HQ/writ/api/internal/httpserver"
+	"github.com/Writ-HQ/writ/api/internal/tenants"
 )
 
 func main() {
@@ -59,9 +60,11 @@ func run(ctx context.Context, getenv func(string) string, logOut io.Writer) erro
 		MFAMethods: cfg.OIDCMFAMethods,
 		Logger:     logger,
 	})
-	router := httpserver.NewRouter(logger, authenticator, httpserver.Handlers{
+	tenantService := tenants.NewService(pool, tenants.Options{SelfServe: cfg.TenantSelfServe})
+	router := httpserver.NewRouter(logger, authenticator, tenantService, httpserver.Handlers{
 		Health:  hh,
 		Account: auth.NewHandler(),
+		Tenants: tenants.NewHandler(tenantService),
 	}, httpserver.Options{Docs: cfg.DocsEnabled()})
 	srv := httpserver.New(cfg.Addr(), router, logger)
 
@@ -74,7 +77,8 @@ func run(ctx context.Context, getenv func(string) string, logOut io.Writer) erro
 	serveErr := make(chan error, 1)
 	go func() { serveErr <- srv.Serve(ln) }()
 	logger.Info("server started", "addr", ln.Addr().String(),
-		"environment", cfg.Environment, "mfa_required", cfg.OIDCRequireMFA, "docs", cfg.DocsEnabled())
+		"environment", cfg.Environment, "mfa_required", cfg.OIDCRequireMFA, "docs", cfg.DocsEnabled(),
+		"tenant_self_serve", cfg.TenantSelfServe)
 
 	select {
 	case err := <-serveErr:

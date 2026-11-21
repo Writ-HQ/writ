@@ -28,6 +28,7 @@ import (
 	"github.com/Writ-HQ/writ/api/internal/health"
 	"github.com/Writ-HQ/writ/api/internal/httpserver"
 	"github.com/Writ-HQ/writ/api/internal/oapi"
+	"github.com/Writ-HQ/writ/api/internal/tenants"
 )
 
 var db *dbtest.DB
@@ -58,6 +59,11 @@ func (a *testAPI) Advance(d time.Duration) {
 
 func newAPI(t *testing.T, opts auth.Options) *testAPI {
 	t.Helper()
+	return newAPIWith(t, opts, tenants.Options{})
+}
+
+func newAPIWith(t *testing.T, opts auth.Options, tenantOpts tenants.Options) *testAPI {
+	t.Helper()
 	api := &testAPI{idp: authtest.NewProvider(t), now: time.Now()}
 	logger := slog.New(slog.DiscardHandler)
 
@@ -69,9 +75,11 @@ func newAPI(t *testing.T, opts auth.Options) *testAPI {
 		JWKSURL:  api.idp.JWKSURL(),
 		Now:      api.Now,
 	}), db.App, opts)
-	api.Handler = httpserver.NewRouter(logger, authenticator, httpserver.Handlers{
+	tenantService := tenants.NewService(db.App, tenantOpts)
+	api.Handler = httpserver.NewRouter(logger, authenticator, tenantService, httpserver.Handlers{
 		Health:  health.New(logger),
 		Account: auth.NewHandler(),
+		Tenants: tenants.NewHandler(tenantService),
 	}, httpserver.Options{})
 	return api
 }

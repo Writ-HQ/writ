@@ -90,9 +90,135 @@ tags:
     description: Liveness and readiness probes
   - name: account
     description: The signed-in user
+  - name: tenants
+    description: Tenants and the caller's membership of them
 security:
   - bearerAuth: []
 paths:
+  /v1/tenants:
+    get:
+      operationId: listTenants
+      summary: The signed-in user's tenants
+      description: >-
+        Lists the tenants the caller is an active member of, with the
+        caller's role in each, oldest first. Needs no tenant, so clients call
+        it after signing in to let the user choose one.
+      tags: [tenants]
+      parameters:
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Limit"
+      responses:
+        "200":
+          description: One page of tenants.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+    post:
+      operationId: createTenant
+      summary: Create a tenant
+      description: >-
+        Creates a tenant and makes the caller its owner. Unless the
+        deployment allows self-service, only platform administrators may do
+        this; anyone else gets `403`. The slug is generated and always
+        unique, so this request never reports a conflict with another
+        tenant.
+      tags: [tenants]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTenantRequest"
+            example:
+              name: Example Riding Association
+              default_locale: fr
+      responses:
+        "201":
+          description: The new tenant. The caller's role in it is `owner`.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tenant"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/tenants/{tenant_id}:
+    parameters:
+      - $ref: "#/components/parameters/TenantId"
+    get:
+      operationId: getTenant
+      summary: A tenant
+      description: The tenant and the caller's role in it.
+      tags: [tenants]
+      responses:
+        "200":
+          description: The tenant.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tenant"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+    patch:
+      operationId: updateTenant
+      summary: Change a tenant's name or default language
+      description: >-
+        Owners and admins only. Send only the fields to change; at least one
+        is required. The slug does not change.
+      tags: [tenants]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTenantRequest"
+            example:
+              name: Example Riding Association
+      responses:
+        "200":
+          description: The tenant after the change.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tenant"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
   /v1/me:
     get:
       operationId: getMe
@@ -171,6 +297,20 @@ components:
       bearerFormat: JWT
       description: An access token issued by the identity provider.
   parameters:
+    TenantId:
+      name: tenant_id
+      in: path
+      required: true
+      description: >-
+        The tenant the request acts in. Every path under
+        `/v1/tenants/{tenant_id}` returns `404` unless the caller is an active
+        member of that tenant: for a tenant that does not exist, one that
+        has been deleted, one the caller was never in, one where their
+        membership is suspended, invited or removed, and for a value that is
+        not a UUID. The response is the same in every case.
+      schema:
+        type: string
+        format: uuid
     Cursor:
       name: cursor
       in: query
@@ -309,11 +449,17 @@ components:
     CurrentUser:
       type: object
       description: The signed-in user's own account.
-      required: [id, email, display_name, locale]
+      required: [id, email, display_name, locale, platform_admin]
       properties:
         id:
           type: string
           format: uuid
+        platform_admin:
+          type: boolean
+          description: >-
+            Whether the user may create tenants when the deployment does not
+            allow self-service. It gives no access to any tenant: that still
+            takes a membership.
         email:
           type: [string, "null"]
           description: >-
@@ -389,6 +535,78 @@ components:
       enum:
         - required
         - invalid
+    Role:
+      type: string
+      description: >-
+        A member's role in a tenant. `owner` has full control; `admin`
+        manages the team, settings and data; `staff` does day-to-day work;
+        `volunteer` has limited access to what is assigned to them.
+      enum: [owner, admin, staff, volunteer]
+    Locale:
+      type: string
+      description: A language the interface supports.
+      enum: [en, fr]
+    Tenant:
+      type: object
+      description: A tenant, as seen by one of its members.
+      required: [id, name, slug, default_locale, role, created_at, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+          description: >-
+            A short, unique, URL-safe identifier generated from the name when
+            the tenant was created. It does not change when the name does.
+        default_locale:
+          $ref: "#/components/schemas/Locale"
+        role:
+          $ref: "#/components/schemas/Role"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      example:
+        id: 0192f0c4-7d2a-7b1e-9c3f-5a6b7c8d9e0f
+        name: Example Riding Association
+        slug: example-riding-association-k3x9w2ab
+        default_locale: fr
+        role: owner
+        created_at: "2026-11-13T15:04:05Z"
+        updated_at: "2026-11-13T15:04:05Z"
+    TenantList:
+      type: object
+      required: [data, page]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tenant"
+        page:
+          $ref: "#/components/schemas/PageInfo"
+    CreateTenantRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          description: 1 to 200 characters after trimming spaces.
+        default_locale:
+          $ref: "#/components/schemas/Locale"
+    UpdateTenantRequest:
+      type: object
+      description: At least one field is required.
+      properties:
+        name:
+          type: string
+          description: 1 to 200 characters after trimming spaces.
+        default_locale:
+          $ref: "#/components/schemas/Locale"
     PageInfo:
       type: object
       description: Pagination state returned as `page` by every list endpoint.

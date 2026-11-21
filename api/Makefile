@@ -32,7 +32,7 @@ OIDC_AUDIENCE ?= writ-local
 # local turns on the interactive API docs at /docs. The MFA variables are
 # passed through when set; see docs/runbooks/zitadel-smoke-test.md.
 ENVIRONMENT ?= local
-export OIDC_REQUIRE_MFA OIDC_MFA_CLAIM OIDC_MFA_METHODS OIDC_JWKS_URL
+export OIDC_REQUIRE_MFA OIDC_MFA_CLAIM OIDC_MFA_METHODS OIDC_JWKS_URL TENANT_SELF_SERVE
 
 .PHONY: run test lint vuln generate migrate migrate-status devtoken
 

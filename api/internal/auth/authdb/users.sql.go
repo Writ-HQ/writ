@@ -13,7 +13,7 @@ import (
 )
 
 const getUser = `-- name: GetUser :one
-SELECT id, external_auth_id, email, display_name, locale, created_at, updated_at, profile_synced_at, disabled_at FROM users
+SELECT id, external_auth_id, email, display_name, locale, created_at, updated_at, profile_synced_at, disabled_at, platform_admin FROM users
 WHERE id = $1
 `
 
@@ -31,13 +31,14 @@ func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (User, error) {
 		&i.UpdatedAt,
 		&i.ProfileSyncedAt,
 		&i.DisabledAt,
+		&i.PlatformAdmin,
 	)
 	return i, err
 }
 
 const provisionUser = `-- name: ProvisionUser :one
 
-SELECT id, external_auth_id, email, display_name, locale, created_at, updated_at, profile_synced_at, disabled_at FROM provision_user(
+SELECT id, external_auth_id, email, display_name, locale, created_at, updated_at, profile_synced_at, disabled_at, platform_admin FROM provision_user(
 	$1,
 	$2,
 	$3,
@@ -78,6 +79,7 @@ func (q *Queries) ProvisionUser(ctx context.Context, arg ProvisionUserParams) (U
 		&i.UpdatedAt,
 		&i.ProfileSyncedAt,
 		&i.DisabledAt,
+		&i.PlatformAdmin,
 	)
 	return i, err
 }
@@ -89,7 +91,7 @@ SET email             = COALESCE($1, email),
     locale            = COALESCE($3, locale),
     profile_synced_at = $4::timestamptz
 WHERE id = current_user_id()
-RETURNING id, external_auth_id, email, display_name, locale, created_at, updated_at, profile_synced_at, disabled_at
+RETURNING id, external_auth_id, email, display_name, locale, created_at, updated_at, profile_synced_at, disabled_at, platform_admin
 `
 
 type SyncCurrentUserProfileParams struct {
@@ -122,6 +124,7 @@ func (q *Queries) SyncCurrentUserProfile(ctx context.Context, arg SyncCurrentUse
 		&i.UpdatedAt,
 		&i.ProfileSyncedAt,
 		&i.DisabledAt,
+		&i.PlatformAdmin,
 	)
 	return i, err
 }
