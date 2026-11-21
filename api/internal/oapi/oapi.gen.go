@@ -7,25 +7,28 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/oapi-codegen/runtime"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 // Defines values for CurrentUserLocale.
 const (
-	En CurrentUserLocale = "en"
-	Fr CurrentUserLocale = "fr"
+	CurrentUserLocaleEn CurrentUserLocale = "en"
+	CurrentUserLocaleFr CurrentUserLocale = "fr"
 )
 
 // Valid indicates whether the value is a known member of the CurrentUserLocale enum.
 func (e CurrentUserLocale) Valid() bool {
 	switch e {
-	case En:
+	case CurrentUserLocaleEn:
 		return true
-	case Fr:
+	case CurrentUserLocaleFr:
 		return true
 	default:
 		return false
@@ -137,6 +140,57 @@ func (e HealthStatusStatus) Valid() bool {
 	}
 }
 
+// Defines values for Locale.
+const (
+	LocaleEn Locale = "en"
+	LocaleFr Locale = "fr"
+)
+
+// Valid indicates whether the value is a known member of the Locale enum.
+func (e Locale) Valid() bool {
+	switch e {
+	case LocaleEn:
+		return true
+	case LocaleFr:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for Role.
+const (
+	Admin     Role = "admin"
+	Owner     Role = "owner"
+	Staff     Role = "staff"
+	Volunteer Role = "volunteer"
+)
+
+// Valid indicates whether the value is a known member of the Role enum.
+func (e Role) Valid() bool {
+	switch e {
+	case Admin:
+		return true
+	case Owner:
+		return true
+	case Staff:
+		return true
+	case Volunteer:
+		return true
+	default:
+		return false
+	}
+}
+
+// CreateTenantRequest defines model for CreateTenantRequest.
+type CreateTenantRequest struct {
+	// DefaultLocale A language the interface supports.
+	DefaultLocale *Locale `json:"default_locale,omitempty"`
+
+	// Name 1 to 200 characters after trimming spaces.
+	Name string `json:"name"`
+}
+
 // CurrentUser The signed-in user's own account.
 type CurrentUser struct {
 	// DisplayName May be empty.
@@ -148,6 +202,9 @@ type CurrentUser struct {
 
 	// Locale The language the user prefers for the interface.
 	Locale CurrentUserLocale `json:"locale"`
+
+	// PlatformAdmin Whether the user may create tenants when the deployment does not allow self-service. It gives no access to any tenant: that still takes a membership.
+	PlatformAdmin bool `json:"platform_admin"`
 }
 
 // CurrentUserLocale The language the user prefers for the interface.
@@ -199,10 +256,50 @@ type HealthStatusChecks string
 // HealthStatusStatus defines model for HealthStatus.Status.
 type HealthStatusStatus string
 
+// Locale A language the interface supports.
+type Locale string
+
 // PageInfo Pagination state returned as `page` by every list endpoint.
 type PageInfo struct {
 	// NextCursor Cursor for the next page, or `null` when this is the last page.
 	NextCursor *string `json:"next_cursor"`
+}
+
+// Role A member's role in a tenant. `owner` has full control; `admin` manages the team, settings and data; `staff` does day-to-day work; `volunteer` has limited access to what is assigned to them.
+type Role string
+
+// Tenant A tenant, as seen by one of its members.
+type Tenant struct {
+	CreatedAt time.Time `json:"created_at"`
+
+	// DefaultLocale A language the interface supports.
+	DefaultLocale Locale             `json:"default_locale"`
+	Id            openapi_types.UUID `json:"id"`
+	Name          string             `json:"name"`
+
+	// Role A member's role in a tenant. `owner` has full control; `admin` manages the team, settings and data; `staff` does day-to-day work; `volunteer` has limited access to what is assigned to them.
+	Role Role `json:"role"`
+
+	// Slug A short, unique, URL-safe identifier generated from the name when the tenant was created. It does not change when the name does.
+	Slug      string    `json:"slug"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+// TenantList defines model for TenantList.
+type TenantList struct {
+	Data []Tenant `json:"data"`
+
+	// Page Pagination state returned as `page` by every list endpoint.
+	Page PageInfo `json:"page"`
+}
+
+// UpdateTenantRequest At least one field is required.
+type UpdateTenantRequest struct {
+	// DefaultLocale A language the interface supports.
+	DefaultLocale *Locale `json:"default_locale,omitempty"`
+
+	// Name 1 to 200 characters after trimming spaces.
+	Name *string `json:"name,omitempty"`
 }
 
 // Cursor defines model for Cursor.
@@ -210,6 +307,9 @@ type Cursor = string
 
 // Limit defines model for Limit.
 type Limit = int32
+
+// TenantId defines model for TenantId.
+type TenantId = openapi_types.UUID
 
 // BadRequest The body of every error response.
 type BadRequest = Error
@@ -238,6 +338,21 @@ type Unauthorized = Error
 // ValidationFailed The body of every error response.
 type ValidationFailed = Error
 
+// ListTenantsParams defines parameters for ListTenants.
+type ListTenantsParams struct {
+	// Cursor Opaque cursor from `page.next_cursor` of the previous page. Omit it to get the first page.
+	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
+
+	// Limit Maximum number of items to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// CreateTenantJSONRequestBody defines body for CreateTenant for application/json ContentType.
+type CreateTenantJSONRequestBody = CreateTenantRequest
+
+// UpdateTenantJSONRequestBody defines body for UpdateTenant for application/json ContentType.
+type UpdateTenantJSONRequestBody = UpdateTenantRequest
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// GetHealthz Liveness probe
@@ -249,6 +364,18 @@ type ServerInterface interface {
 	// GetMe The signed-in user
 	// (GET /v1/me)
 	GetMe(w http.ResponseWriter, r *http.Request)
+	// ListTenants The signed-in user's tenants
+	// (GET /v1/tenants)
+	ListTenants(w http.ResponseWriter, r *http.Request, params ListTenantsParams)
+	// CreateTenant Create a tenant
+	// (POST /v1/tenants)
+	CreateTenant(w http.ResponseWriter, r *http.Request)
+	// GetTenant A tenant
+	// (GET /v1/tenants/{tenant_id})
+	GetTenant(w http.ResponseWriter, r *http.Request, tenantId TenantId)
+	// UpdateTenant Change a tenant's name or default language
+	// (PATCH /v1/tenants/{tenant_id})
+	UpdateTenant(w http.ResponseWriter, r *http.Request, tenantId TenantId)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -270,6 +397,30 @@ func (_ Unimplemented) GetReadyz(w http.ResponseWriter, r *http.Request) {
 // GetMe The signed-in user
 // (GET /v1/me)
 func (_ Unimplemented) GetMe(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// ListTenants The signed-in user's tenants
+// (GET /v1/tenants)
+func (_ Unimplemented) ListTenants(w http.ResponseWriter, r *http.Request, params ListTenantsParams) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// CreateTenant Create a tenant
+// (POST /v1/tenants)
+func (_ Unimplemented) CreateTenant(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// GetTenant A tenant
+// (GET /v1/tenants/{tenant_id})
+func (_ Unimplemented) GetTenant(w http.ResponseWriter, r *http.Request, tenantId TenantId) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// UpdateTenant Change a tenant's name or default language
+// (PATCH /v1/tenants/{tenant_id})
+func (_ Unimplemented) UpdateTenant(w http.ResponseWriter, r *http.Request, tenantId TenantId) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -315,6 +466,118 @@ func (siw *ServerInterfaceWrapper) GetMe(w http.ResponseWriter, r *http.Request)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetMe(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListTenants operation middleware
+func (siw *ServerInterfaceWrapper) ListTenants(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListTenantsParams
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: "int32"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListTenants(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateTenant operation middleware
+func (siw *ServerInterfaceWrapper) CreateTenant(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateTenant(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetTenant operation middleware
+func (siw *ServerInterfaceWrapper) GetTenant(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "tenant_id" -------------
+	var tenantId TenantId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "tenant_id", chi.URLParam(r, "tenant_id"), &tenantId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "tenant_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetTenant(w, r, tenantId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// UpdateTenant operation middleware
+func (siw *ServerInterfaceWrapper) UpdateTenant(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "tenant_id" -------------
+	var tenantId TenantId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "tenant_id", chi.URLParam(r, "tenant_id"), &tenantId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "tenant_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateTenant(w, r, tenantId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -437,6 +700,18 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		ErrorHandlerFunc:   options.ErrorHandlerFunc,
 	}
 
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/v1/tenants", wrapper.ListTenants)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/v1/tenants", wrapper.CreateTenant)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/v1/tenants/{tenant_id}", wrapper.GetTenant)
+	})
+	r.Group(func(r chi.Router) {
+		r.Patch(options.BaseURL+"/v1/tenants/{tenant_id}", wrapper.UpdateTenant)
+	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/v1/me", wrapper.GetMe)
 	})
@@ -594,6 +869,389 @@ func (response GetMe503JSONResponse) VisitGetMeResponse(w http.ResponseWriter) e
 	return err
 }
 
+type ListTenantsRequestObject struct {
+	Params ListTenantsParams
+}
+
+type ListTenantsResponseObject interface {
+	VisitListTenantsResponse(w http.ResponseWriter) error
+}
+
+type ListTenants200JSONResponse TenantList
+
+func (response ListTenants200JSONResponse) VisitListTenantsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListTenants400JSONResponse struct{ BadRequestJSONResponse }
+
+func (response ListTenants400JSONResponse) VisitListTenantsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListTenants401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response ListTenants401JSONResponse) VisitListTenantsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListTenants500JSONResponse struct{ InternalErrorJSONResponse }
+
+func (response ListTenants500JSONResponse) VisitListTenantsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListTenants503JSONResponse struct{ ServiceUnavailableJSONResponse }
+
+func (response ListTenants503JSONResponse) VisitListTenantsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateTenantRequestObject struct {
+	Body *CreateTenantJSONRequestBody
+}
+
+type CreateTenantResponseObject interface {
+	VisitCreateTenantResponse(w http.ResponseWriter) error
+}
+
+type CreateTenant201JSONResponse Tenant
+
+func (response CreateTenant201JSONResponse) VisitCreateTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateTenant400JSONResponse struct{ BadRequestJSONResponse }
+
+func (response CreateTenant400JSONResponse) VisitCreateTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateTenant401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response CreateTenant401JSONResponse) VisitCreateTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateTenant403JSONResponse struct{ ForbiddenJSONResponse }
+
+func (response CreateTenant403JSONResponse) VisitCreateTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateTenant422JSONResponse struct{ ValidationFailedJSONResponse }
+
+func (response CreateTenant422JSONResponse) VisitCreateTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateTenant500JSONResponse struct{ InternalErrorJSONResponse }
+
+func (response CreateTenant500JSONResponse) VisitCreateTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateTenant503JSONResponse struct{ ServiceUnavailableJSONResponse }
+
+func (response CreateTenant503JSONResponse) VisitCreateTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTenantRequestObject struct {
+	TenantId TenantId `json:"tenant_id"`
+}
+
+type GetTenantResponseObject interface {
+	VisitGetTenantResponse(w http.ResponseWriter) error
+}
+
+type GetTenant200JSONResponse Tenant
+
+func (response GetTenant200JSONResponse) VisitGetTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTenant401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetTenant401JSONResponse) VisitGetTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTenant404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetTenant404JSONResponse) VisitGetTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTenant500JSONResponse struct{ InternalErrorJSONResponse }
+
+func (response GetTenant500JSONResponse) VisitGetTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTenant503JSONResponse struct{ ServiceUnavailableJSONResponse }
+
+func (response GetTenant503JSONResponse) VisitGetTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateTenantRequestObject struct {
+	TenantId TenantId `json:"tenant_id"`
+	Body     *UpdateTenantJSONRequestBody
+}
+
+type UpdateTenantResponseObject interface {
+	VisitUpdateTenantResponse(w http.ResponseWriter) error
+}
+
+type UpdateTenant200JSONResponse Tenant
+
+func (response UpdateTenant200JSONResponse) VisitUpdateTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateTenant400JSONResponse struct{ BadRequestJSONResponse }
+
+func (response UpdateTenant400JSONResponse) VisitUpdateTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateTenant401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response UpdateTenant401JSONResponse) VisitUpdateTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateTenant403JSONResponse struct{ ForbiddenJSONResponse }
+
+func (response UpdateTenant403JSONResponse) VisitUpdateTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateTenant404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response UpdateTenant404JSONResponse) VisitUpdateTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateTenant422JSONResponse struct{ ValidationFailedJSONResponse }
+
+func (response UpdateTenant422JSONResponse) VisitUpdateTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateTenant500JSONResponse struct{ InternalErrorJSONResponse }
+
+func (response UpdateTenant500JSONResponse) VisitUpdateTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateTenant503JSONResponse struct{ ServiceUnavailableJSONResponse }
+
+func (response UpdateTenant503JSONResponse) VisitUpdateTenantResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 	// GetHealthz Liveness probe
@@ -605,6 +1263,18 @@ type StrictServerInterface interface {
 	// GetMe The signed-in user
 	// (GET /v1/me)
 	GetMe(ctx context.Context, request GetMeRequestObject) (GetMeResponseObject, error)
+	// ListTenants The signed-in user's tenants
+	// (GET /v1/tenants)
+	ListTenants(ctx context.Context, request ListTenantsRequestObject) (ListTenantsResponseObject, error)
+	// CreateTenant Create a tenant
+	// (POST /v1/tenants)
+	CreateTenant(ctx context.Context, request CreateTenantRequestObject) (CreateTenantResponseObject, error)
+	// GetTenant A tenant
+	// (GET /v1/tenants/{tenant_id})
+	GetTenant(ctx context.Context, request GetTenantRequestObject) (GetTenantResponseObject, error)
+	// UpdateTenant Change a tenant's name or default language
+	// (PATCH /v1/tenants/{tenant_id})
+	UpdateTenant(ctx context.Context, request UpdateTenantRequestObject) (UpdateTenantResponseObject, error)
 }
 
 type StrictHandlerFunc func(ctx context.Context, w http.ResponseWriter, r *http.Request, request any) (any, error)
@@ -711,6 +1381,122 @@ func (sh *strictHandler) GetMe(w http.ResponseWriter, r *http.Request) {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(GetMeResponseObject); ok {
 		if err := validResponse.VisitGetMeResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListTenants operation middleware
+func (sh *strictHandler) ListTenants(w http.ResponseWriter, r *http.Request, params ListTenantsParams) {
+	var request ListTenantsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ListTenants(ctx, request.(ListTenantsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListTenants")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ListTenantsResponseObject); ok {
+		if err := validResponse.VisitListTenantsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CreateTenant operation middleware
+func (sh *strictHandler) CreateTenant(w http.ResponseWriter, r *http.Request) {
+	var request CreateTenantRequestObject
+
+	var body CreateTenantJSONRequestBody
+	if err := runtime.BindJSONBody(r, &body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateTenant(ctx, request.(CreateTenantRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateTenant")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(CreateTenantResponseObject); ok {
+		if err := validResponse.VisitCreateTenantResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetTenant operation middleware
+func (sh *strictHandler) GetTenant(w http.ResponseWriter, r *http.Request, tenantId TenantId) {
+	var request GetTenantRequestObject
+
+	request.TenantId = tenantId
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetTenant(ctx, request.(GetTenantRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetTenant")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetTenantResponseObject); ok {
+		if err := validResponse.VisitGetTenantResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateTenant operation middleware
+func (sh *strictHandler) UpdateTenant(w http.ResponseWriter, r *http.Request, tenantId TenantId) {
+	var request UpdateTenantRequestObject
+
+	request.TenantId = tenantId
+
+	var body UpdateTenantJSONRequestBody
+	if err := runtime.BindJSONBody(r, &body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateTenant(ctx, request.(UpdateTenantRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateTenant")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(UpdateTenantResponseObject); ok {
+		if err := validResponse.VisitUpdateTenantResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {

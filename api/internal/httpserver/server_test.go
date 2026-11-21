@@ -19,6 +19,7 @@ import (
 	"github.com/Writ-HQ/writ/api/internal/auth"
 	"github.com/Writ-HQ/writ/api/internal/health"
 	"github.com/Writ-HQ/writ/api/internal/oapi"
+	"github.com/Writ-HQ/writ/api/internal/tenants"
 )
 
 func discardLogger() *slog.Logger {
@@ -29,7 +30,36 @@ func discardLogger() *slog.Logger {
 // fixed token, so that these tests exercise routing and middleware rather
 // than token verification.
 func newTestRouter(logger *slog.Logger, hh *health.Handler) chi.Router {
-	return NewRouter(logger, stubAuthenticator{}, Handlers{Health: hh, Account: auth.NewHandler()}, Options{})
+	return NewRouter(logger, stubAuthenticator{}, stubResolver{}, stubHandlers(hh), Options{})
+}
+
+func stubHandlers(hh *health.Handler) Handlers {
+	// The tenants handler has no service: these tests reach only GetTenant,
+	// which answers from the request context.
+	return Handlers{Health: hh, Account: auth.NewHandler(), Tenants: tenants.NewHandler(nil)}
+}
+
+// stubResolver knows one tenant, in which stubUser is an admin, and one
+// tenant ID for which the lookup itself fails.
+type stubResolver struct{}
+
+var (
+	stubTenantID   = uuid.MustParse("0192f0c4-7d2a-7b1e-9c3f-000000000001")
+	brokenTenantID = uuid.MustParse("0192f0c4-7d2a-7b1e-9c3f-000000000002")
+)
+
+func (stubResolver) Resolve(_ context.Context, user auth.User, tenantID uuid.UUID) (tenants.Membership, error) {
+	switch {
+	case tenantID == stubTenantID && user.ID == stubUser.ID:
+		return tenants.Membership{
+			Tenant: tenants.Tenant{ID: stubTenantID, Name: "Example Campaign", Slug: "example-campaign-bcdfghjk", DefaultLocale: "en"},
+			Role:   tenants.RoleAdmin,
+		}, nil
+	case tenantID == brokenTenantID:
+		return tenants.Membership{}, errors.New("resolving: connection refused")
+	default:
+		return tenants.Membership{}, tenants.ErrNotFound
+	}
 }
 
 const stubToken = "stub-token"

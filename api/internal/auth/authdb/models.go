@@ -29,4 +29,5 @@ type User struct {
 	UpdatedAt       time.Time
 	ProfileSyncedAt *time.Time
 	DisabledAt      *time.Time
+	PlatformAdmin   bool
 }

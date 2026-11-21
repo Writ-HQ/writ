@@ -149,6 +149,23 @@ func TestLoadMFA(t *testing.T) {
 	})
 }
 
+func TestLoadTenantSelfServe(t *testing.T) {
+	for value, want := range map[string]bool{"": false, "false": false, "true": true, "1": true} {
+		cfg, err := Load(required(map[string]string{"TENANT_SELF_SERVE": value}))
+		if err != nil {
+			t.Fatalf("TENANT_SELF_SERVE=%q: %v", value, err)
+		}
+		if cfg.TenantSelfServe != want {
+			t.Errorf("TENANT_SELF_SERVE=%q: TenantSelfServe = %v, want %v", value, cfg.TenantSelfServe, want)
+		}
+	}
+	// A typo must not quietly open tenant creation to everyone, nor
+	// quietly leave it closed.
+	if _, err := Load(required(map[string]string{"TENANT_SELF_SERVE": "yes please"})); err == nil || !strings.Contains(err.Error(), "TENANT_SELF_SERVE") {
+		t.Errorf("Load() error = %v, want one naming TENANT_SELF_SERVE", err)
+	}
+}
+
 func TestLoadEnvironment(t *testing.T) {
 	for env, wantDocs := range map[string]bool{"": false, "production": false, "staging": true, "local": true} {
 		cfg, err := Load(required(map[string]string{"ENVIRONMENT": env}))

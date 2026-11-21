@@ -35,6 +35,9 @@ type User struct {
 	DisplayName string
 	// Locale is "en" or "fr".
 	Locale string
+	// PlatformAdmin lets the user create tenants when the deployment does
+	// not allow self-service. It gives no access to any tenant.
+	PlatformAdmin bool
 }
 
 type userKey struct{}
@@ -163,7 +166,10 @@ func (s *Service) Authenticate(ctx context.Context, token string) (User, error) 
 	if s.opts.Profiles != nil && s.profileIsStale(row) {
 		row = s.syncProfile(ctx, row, token)
 	}
-	return User{ID: row.ID, Email: row.Email, DisplayName: row.DisplayName, Locale: row.Locale}, nil
+	return User{
+		ID: row.ID, Email: row.Email, DisplayName: row.DisplayName, Locale: row.Locale,
+		PlatformAdmin: row.PlatformAdmin,
+	}, nil
 }
 
 // provision finds or creates the user for a verified subject.

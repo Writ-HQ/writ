@@ -81,8 +81,20 @@ validated and plan-tested but has never been applied. /api/cmd/migrate
 applies migrations and ships in the API image.
 .github/workflows/deploy-staging.yml deploys on merge to main through
 OIDC, but only when the repository variable DEPLOY_ENABLED is true. See
-/docs/runbooks/staging.md and /docs/decisions/0003. Not yet done: tenant
-selection and permission checks, /api/cmd/worker, the Next.js app.
+/docs/runbooks/staging.md and /docs/decisions/0003. Tenants are in: the
+tenant comes from the path (/v1/tenants/{tenant_id}/...), and
+httpserver.TenantContext checks membership for every operation with a
+{tenant_id} parameter and puts the tenant and role in the request context
+(tenants.MembershipFromContext). Anything but an active membership of a
+live tenant is 404, identical to an unknown path. Roles are owner, admin,
+staff, volunteer; the permission table is in
+/api/internal/tenants/permissions.go and a test pins it. Tenant creation
+needs users.platform_admin (set only by an operator, recorded as a
+security event, grants no access to any tenant) unless TENANT_SELF_SERVE is
+true. Slugs are generated with a random suffix. Modules record audit
+events with audit.Record in their own transaction, and build error bodies
+with apierror.New. See /docs/decisions/0005. Not yet done: member
+management and invitations, /api/cmd/worker, the Next.js app.
 
 ## Stack
 - API: Go, chi, pgx, sqlc, goose, River (jobs), go-playground/validator, slog

@@ -40,6 +40,13 @@ func methodNotAllowed(w http.ResponseWriter, r *http.Request) {
 // submitted value, so it is neither logged nor returned; only the name of
 // the offending parameter is.
 func requestError(w http.ResponseWriter, r *http.Request, err error) {
+	// A tenant ID that is not a UUID is rejected here, before the tenant
+	// middleware sees it. It must look exactly like any other tenant the
+	// caller cannot reach.
+	if paramName(err) == tenantParam {
+		notFound(w, r)
+		return
+	}
 	var details []oapi.ErrorDetail
 	if name := paramName(err); name != "" {
 		details = append(details, oapi.ErrorDetail{
