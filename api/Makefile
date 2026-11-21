@@ -8,7 +8,7 @@ GOLANGCI_LINT_VERSION := v2.15.0
 GOVULNCHECK_VERSION := v1.9.0
 SQLC_VERSION := v1.31.1
 # Keep in step with github.com/pressly/goose/v3 in go.mod.
-GOOSE_VERSION := v3.30.0
+GOOSE_VERSION := v3.30.1
 GOLANGCI_LINT := go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 GOVULNCHECK := go run golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
 SQLC := go run github.com/sqlc-dev/sqlc/cmd/sqlc@$(SQLC_VERSION)
