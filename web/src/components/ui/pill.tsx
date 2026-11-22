@@ -9,10 +9,13 @@ const variants = {
   "outline-inverse": "border border-white text-white hover:bg-white hover:text-ink",
 } as const;
 
+// From the reference: navbar buttons are 32px tall with 4px/16px padding
+// and 14px text; the hero button is 48px tall with 12px/20px padding and
+// 16px text.
 const sizes = {
-  sm: "h-8 px-3.5 text-[13px]",
+  sm: "h-8 px-4 text-sm leading-[18px]",
   md: "h-10 px-5 text-sm",
-  lg: "h-12 px-6 text-base",
+  lg: "h-12 px-5 text-base leading-[18px]",
 } as const;
 
 type Props = {

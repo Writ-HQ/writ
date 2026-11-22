@@ -64,8 +64,8 @@ export function DashboardMock() {
   ];
 
   return (
-    <Card className="flex w-[760px] overflow-hidden text-ink">
-      <aside className="w-[190px] shrink-0 border-r border-line bg-panel/60 p-3">
+    <Card className="flex min-h-[620px] w-[820px] overflow-hidden text-ink">
+      <aside className="flex w-[200px] shrink-0 flex-col border-r border-line bg-panel/60 p-3">
         <div className="mb-4 flex items-center gap-2 rounded-lg bg-white p-2 ring-1 ring-line">
           <span className="h-5 w-5 rounded bg-[#c7d9b0]" />
           <span className="truncate text-[11px] font-medium">{t("campaign")}</span>
@@ -81,7 +81,7 @@ export function DashboardMock() {
             </li>
           ))}
         </ul>
-        <div className="mt-28 flex items-center gap-2 px-2 text-[11px] text-ink/70">
+        <div className="mt-auto flex items-center gap-2 px-2 pb-2 text-[11px] text-ink/70">
           <Avatar person={people.jordan} size="h-5 w-5 text-[8px]" />
           {people.jordan.name}
         </div>

@@ -32,6 +32,17 @@
       "cta": "Join the waitlist",
       "visualLabel": "A preview of the Writ dashboard, with fictional data"
     },
+    "band": {
+      "label": "Built for campaigns of every kind",
+      "i1": "Municipal campaigns",
+      "i2": "Provincial campaigns",
+      "i3": "Federal campaigns",
+      "i4": "Nomination races",
+      "i5": "Leadership races",
+      "i6": "Riding associations",
+      "i7": "Advocacy groups",
+      "i8": "Non-profits"
+    },
     "stats": {
       "languages": {
         "value": "2",

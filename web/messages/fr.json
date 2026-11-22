@@ -32,6 +32,17 @@
       "cta": "S'inscrire à la liste d'attente",
       "visualLabel": "Un aperçu du tableau de bord de Writ, avec des données fictives"
     },
+    "band": {
+      "label": "Conçu pour tous les types de campagnes",
+      "i1": "Campagnes municipales",
+      "i2": "Campagnes provinciales",
+      "i3": "Campagnes fédérales",
+      "i4": "Courses à l'investiture",
+      "i5": "Courses à la direction",
+      "i6": "Associations de circonscription",
+      "i7": "Groupes de défense d'intérêts",
+      "i8": "Organismes sans but lucratif"
+    },
     "stats": {
       "languages": {
         "value": "2",

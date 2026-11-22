@@ -24,7 +24,7 @@ function MenuEntry({ item }: { item: MenuItem }) {
         </span>
       )}
       <span>
-        <span className="block text-[13px] font-medium">{item.label}</span>
+        <span className="block text-sm leading-[18.2px] font-medium">{item.label}</span>
         {item.desc && <span className="mt-0.5 block text-[12px] leading-snug text-muted">{item.desc}</span>}
       </span>
     </>
@@ -48,7 +48,7 @@ function Dropdown({ label, items, wide = false }: { label: string; items: MenuIt
       <button
         type="button"
         aria-haspopup="true"
-        className="flex h-16 items-center gap-1 text-[13px] font-medium text-ink/85 transition-colors hover:text-ink"
+        className="flex h-16 items-center gap-1 px-2.5 text-sm leading-[14px] font-semibold text-ink transition-colors hover:text-ink/70"
       >
         {label}
         <ChevronDown className="h-3 w-3 transition-transform group-focus-within:rotate-180 group-hover:rotate-180" />
@@ -89,7 +89,7 @@ export function AnnouncementBar() {
   const t = useTranslations("Landing.announcement");
   return (
     <div className="bg-ink text-white">
-      <div className="mx-auto flex min-h-9 max-w-[1440px] flex-wrap items-center justify-center gap-x-2 px-5 py-2 text-center text-[13px]">
+      <div className="mx-auto flex min-h-10 max-w-[1440px] flex-wrap items-center justify-center gap-x-2 px-5 py-2 text-center text-sm leading-[21px] font-medium">
         <span>{t("text")}</span>
         <button type="button" className="inline-flex items-center gap-1 font-medium underline-offset-4 hover:underline">
           {t("cta")}
@@ -140,21 +140,21 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 h-16 bg-white/[0.02]">
       <ProgressiveBlur />
-      <div className="relative z-10 mx-auto flex h-16 max-w-[1440px] items-center gap-10 px-5 sm:px-8 lg:px-20">
+      <div className="relative z-10 mx-auto flex h-16 max-w-[1440px] items-center gap-10 px-5 sm:px-8 lg:px-16">
         <Link href="/" aria-label={t("home")} className="flex items-center gap-2">
           <WritMark className="h-6 w-6 text-ink" />
-          <span className="text-[19px] font-semibold tracking-[-0.03em]">Writ</span>
+          <span className="text-[24px] leading-6 font-medium tracking-[-0.04em]">Writ</span>
         </Link>
 
-        <nav aria-label={t("menu")} className="hidden items-center gap-7 lg:flex">
+        <nav aria-label={t("menu")} className="hidden items-center gap-4 lg:flex">
           <Dropdown label={t("product")} items={menus.product} wide />
           <Dropdown label={t("solutions")} items={menus.solutions} />
           <Dropdown label={t("company")} items={menus.company} />
         </nav>
 
-        <div className="ml-auto flex items-center gap-3 sm:gap-4">
-          <LocaleSwitcher compact className="hidden sm:flex" />
-          <button type="button" className="hidden text-[13px] font-medium text-ink/85 hover:text-ink md:block">
+        <div className="ml-auto flex items-center gap-2">
+          <LocaleSwitcher compact className="mr-2 hidden sm:flex" />
+          <button type="button" className="hidden h-8 rounded-full px-4 text-sm leading-[18px] font-medium hover:bg-ink/5 md:block">
             {t("login")}
           </button>
           <Pill variant="outline" size="sm" className="hidden md:inline-flex">
