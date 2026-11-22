@@ -52,25 +52,35 @@ export function Stats() {
   );
 }
 
-// The six parts of the product, in a grid.
+// The six parts of the product. Measurements from the reference: 128px
+// above and below; a 135x138 picture, 24px gap and the heading centred
+// beside it; 32px down to a frame with 6% hairlines top and bottom and 32px
+// inside; two rows of three, 32px between rows and 31px between columns,
+// with hairline dividers; each item a 20px title and a 16px/21px
+// description, 8px apart, inside 16px of padding.
 export function Overview() {
   const t = useTranslations("Landing.overview");
-  const items: { key: "contacts" | "lists" | "email" | "social" | "volunteers" | "consent"; icon: IconType; href: string }[] = [
-    { key: "contacts", icon: Users, href: "#contacts" },
-    { key: "lists", icon: ListIcon, href: "#contacts" },
-    { key: "email", icon: Mail, href: "#email" },
-    { key: "social", icon: Chat, href: "#social" },
-    { key: "volunteers", icon: Layers, href: "#volunteers" },
-    { key: "consent", icon: Shield, href: "#consent" },
+  type Key = "contacts" | "lists" | "email" | "social" | "volunteers" | "consent";
+  const rows: { key: Key; icon: IconType; href: string }[][] = [
+    [
+      { key: "contacts", icon: Users, href: "#contacts" },
+      { key: "lists", icon: ListIcon, href: "#contacts" },
+      { key: "email", icon: Mail, href: "#email" },
+    ],
+    [
+      { key: "social", icon: Chat, href: "#social" },
+      { key: "volunteers", icon: Layers, href: "#volunteers" },
+      { key: "consent", icon: Shield, href: "#consent" },
+    ],
   ];
   return (
-    <section id="overview" className="pt-32 pb-8 sm:pt-40">
+    <section id="overview" className="py-24 lg:py-32">
       <Container>
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-8">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
           {/* A small stack of cards on sky, in place of an illustration. */}
-          <div aria-hidden="true" className="bg-sky relative h-[88px] w-[104px] shrink-0 overflow-hidden rounded-[6px]">
-            <span className="absolute top-4 left-4 h-9 w-14 rounded-md bg-white/90 shadow-sm" />
-            <span className="absolute top-8 left-9 h-9 w-14 rounded-md bg-white shadow-md" />
+          <div aria-hidden="true" className="bg-sky relative h-[110px] w-[108px] shrink-0 overflow-hidden rounded-[6px] sm:h-[138px] sm:w-[135px]">
+            <span className="absolute top-[22%] left-[16%] h-[34%] w-[52%] rounded-md bg-white/90 shadow-sm" />
+            <span className="absolute top-[42%] left-[34%] h-[34%] w-[52%] rounded-md bg-white shadow-md" />
           </div>
           <SectionTitle>
             {t("title1")}
@@ -78,21 +88,29 @@ export function Overview() {
             {t("title2")}
           </SectionTitle>
         </div>
-        <ul className="mt-14 grid border-t border-line sm:grid-cols-2 lg:grid-cols-3">
-          {items.map(({ key, icon: Icon, href }) => (
-            <li
-              key={key}
-              className="border-b border-line py-7 sm:px-6 sm:odd:pl-0 sm:even:border-l lg:px-8 lg:odd:pl-8 lg:even:border-l-0 lg:[&:not(:nth-child(3n+1))]:border-l lg:[&:nth-child(3n+1)]:pl-0"
-            >
-              <a href={href} className="group flex items-center gap-2 text-lg tracking-[-0.01em]">
-                <Icon className="h-4 w-4 text-ink/70" />
-                {t(`${key}.title`)}
-                <ArrowRight className="h-3.5 w-3.5 text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-ink" />
-              </a>
-              <p className="mt-2 max-w-[340px] text-[13px] leading-snug text-ink/80">{t(`${key}.desc`)}</p>
-            </li>
+
+        <div className="mt-8 border-y border-black/[0.06] py-8">
+          {rows.map((row, r) => (
+            <div key={r}>
+              {r > 0 && <div aria-hidden="true" className="my-4 hidden h-px bg-black/[0.06] lg:block" />}
+              <ul className="-mx-4 grid lg:grid-cols-3">
+                {row.map(({ key, icon: Icon, href }, c) => (
+                  <li key={key} className={`border-black/[0.06] max-lg:not-first:border-t lg:px-[15.5px] lg:first:pl-0 lg:last:pr-0 ${c > 0 ? "lg:border-l" : ""}`}>
+                    <a href={href} className="group flex flex-col gap-2 p-4">
+                      <span className="flex items-center gap-2 text-xl leading-[23px]">
+                        <Icon className="h-[18px] w-[18px] shrink-0 text-ink/70" />
+                        {t(`${key}.title`)}
+                        <ArrowRight className="h-4 w-4 text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-ink" />
+                      </span>
+                      <span className="max-w-[380px] text-base leading-[21px]">{t(`${key}.desc`)}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              {r === 0 && <div aria-hidden="true" className="h-px bg-black/[0.06] lg:hidden" />}
+            </div>
           ))}
-        </ul>
+        </div>
       </Container>
     </section>
   );

@@ -29,7 +29,10 @@ function Avatar({ person, size = "h-6 w-6 text-[9px]" }: { person: Person; size?
 
 function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`rounded-[14px] bg-white shadow-[0_1px_2px_rgb(0_0_0/0.06),0_12px_32px_-12px_rgb(0_0_0/0.18)] ${className}`}>
+    // The reference's frame: a 6px corner and a three-layer shadow.
+    <div
+      className={`rounded-[6px] bg-white shadow-[0_-5.4px_9.7px_0_rgb(0_0_0/0.03),0_8.6px_19.3px_-6.4px_rgb(24_39_75/0.12),0_12.9px_45px_-4.3px_rgb(24_39_75/0.12)] ${className}`}
+    >
       {children}
     </div>
   );
@@ -66,15 +69,15 @@ export function DashboardMock() {
   return (
     <Card className="flex h-[530px] w-[820px] overflow-hidden text-ink">
       <aside className="flex w-[200px] shrink-0 flex-col border-r border-line bg-panel/60 p-3">
-        <div className="mb-4 flex items-center gap-2 rounded-lg bg-white p-2 ring-1 ring-line">
-          <span className="h-5 w-5 rounded bg-[#c7d9b0]" />
+        <div className="mb-4 flex items-center gap-2 rounded-[14px] bg-white p-2 ring-[0.5px] ring-[#e5e5e5]">
+          <span className="h-5 w-5 rounded-[7.5px] bg-[#c7d9b0]" />
           <span className="truncate text-[11px] font-medium">{t("campaign")}</span>
         </div>
         <ul className="space-y-0.5">
           {nav.map(({ label, icon: Icon, active }) => (
             <li
               key={label}
-              className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-[11px] ${active ? "bg-white font-medium ring-1 ring-line" : "text-ink/70"}`}
+              className={`flex items-center gap-2 rounded-[14px] px-2.5 py-1.5 text-[11px] ${active ? "bg-white font-medium ring-[0.5px] ring-[#e5e5e5]" : "text-ink/70"}`}
             >
               <Icon className="h-3.5 w-3.5" />
               {label}
@@ -89,19 +92,19 @@ export function DashboardMock() {
       <div className="min-w-0 flex-1 p-5">
         <p className="mb-4 text-sm font-medium">{t("greeting")}</p>
         <div className="mb-5 grid grid-cols-3 gap-3">
-          <div className="rounded-xl p-3 ring-1 ring-line">
+          <div className="rounded-[14px] border-[0.5px] border-[#e5e5e5] p-3">
             <p className="text-[10px] text-muted">{t("supporters")}</p>
             <p className="mt-1 text-2xl tracking-tight">{t("supportersValue")}</p>
             <p className="mt-1 text-[10px] text-positive">{t("supportersDelta")}</p>
           </div>
-          <div className="rounded-xl p-3 ring-1 ring-line">
+          <div className="rounded-[14px] border-[0.5px] border-[#e5e5e5] p-3">
             <p className="text-[10px] text-muted">{t("doors")}</p>
             <p className="mt-1 text-2xl tracking-tight">{t("doorsValue")}</p>
             <div className="mt-2 h-1 rounded-full bg-line">
               <div className="h-1 w-3/5 rounded-full bg-ink" />
             </div>
           </div>
-          <div className="rounded-xl p-3 ring-1 ring-line">
+          <div className="rounded-[14px] border-[0.5px] border-[#e5e5e5] p-3">
             <p className="text-[10px] text-muted">{t("volunteersActive")}</p>
             <p className="mt-1 text-2xl tracking-tight">{t("volunteersValue")}</p>
             <div className="mt-1.5 flex -space-x-1.5">
