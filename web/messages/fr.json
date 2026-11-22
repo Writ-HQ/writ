@@ -1,0 +1,15 @@
+{
+  "Metadata": {
+    "title": "Writ",
+    "description": "Le CRM de campagne conçu pour le Canada."
+  },
+  "HomePage": {
+    "title": "Writ",
+    "subtitle": "Le CRM de campagne conçu pour le Canada. Bientôt disponible."
+  },
+  "LocaleSwitcher": {
+    "label": "Langue",
+    "en": "English",
+    "fr": "Français"
+  }
+}

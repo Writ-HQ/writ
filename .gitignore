@@ -9,6 +9,12 @@ bin/
 *.tfstate.*
 .terraform/
 
+# Next.js build output and generated files.
+web/.next/
+web/out/
+web/next-env.d.ts
+*.tsbuildinfo
+
 # Terraform. Variable and backend files can name accounts and addresses;
 # commit only the .example versions.
 *.tfvars
