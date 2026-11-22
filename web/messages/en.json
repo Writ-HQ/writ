@@ -27,7 +27,16 @@
       "privacy": "Privacy"
     },
     "hero": {
-      "title": "Run your whole campaign from one place.",
+      "title": "Run canvassing, email, volunteers and outreach from one bilingual campaign workspace.",
+      "lead": "Run",
+      "words": {
+        "w1": "canvassing",
+        "w2": "email",
+        "w3": "volunteers",
+        "w4": "outreach"
+      },
+      "line2": "from one bilingual",
+      "line3": "campaign workspace.",
       "subtitle": "Contacts, lists, bilingual email and your social inbox in one CRM built for Canadian campaigns. In English and French, with your data kept in Canada.",
       "cta": "Join the waitlist",
       "visualLabel": "A preview of the Writ dashboard, with fictional data"

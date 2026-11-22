@@ -27,7 +27,16 @@
       "privacy": "Confidentialité"
     },
     "hero": {
-      "title": "Toute votre campagne, gérée au même endroit.",
+      "title": "Gérez le porte-à-porte, vos courriels, vos bénévoles et vos messages depuis un seul espace de campagne bilingue.",
+      "lead": "Gérez",
+      "words": {
+        "w1": "le porte-à-porte",
+        "w2": "vos courriels",
+        "w3": "vos bénévoles",
+        "w4": "vos messages"
+      },
+      "line2": "depuis un seul espace",
+      "line3": "de campagne bilingue.",
       "subtitle": "Contacts, listes, courriels bilingues et messagerie sociale dans un CRM conçu pour les campagnes canadiennes. En français et en anglais, avec vos données conservées au Canada.",
       "cta": "S'inscrire à la liste d'attente",
       "visualLabel": "Un aperçu du tableau de bord de Writ, avec des données fictives"

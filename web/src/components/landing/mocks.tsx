@@ -64,7 +64,7 @@ export function DashboardMock() {
   ];
 
   return (
-    <Card className="flex min-h-[620px] w-[820px] overflow-hidden text-ink">
+    <Card className="flex h-[530px] w-[820px] overflow-hidden text-ink">
       <aside className="flex w-[200px] shrink-0 flex-col border-r border-line bg-panel/60 p-3">
         <div className="mb-4 flex items-center gap-2 rounded-lg bg-white p-2 ring-1 ring-line">
           <span className="h-5 w-5 rounded bg-[#c7d9b0]" />
