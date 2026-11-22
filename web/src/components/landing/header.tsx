@@ -11,24 +11,29 @@ type MenuItem = {
   /** An anchor on this page. Items without one are not wired up yet. */
   href?: string;
   icon?: ComponentType<SVGProps<SVGSVGElement>>;
+  /** Background of the small icon tile. */
+  tint?: string;
 };
 
-function MenuEntry({ item }: { item: MenuItem }) {
+// One entry in a menu: a small tinted icon tile and a 14px medium label,
+// in an 8px-padded row with 12px between them (from the reference).
+// Descriptions show only in the small-screen menu, where there is no card.
+function MenuEntry({ item, compact = true }: { item: MenuItem; compact?: boolean }) {
   const Icon = item.icon;
   const body = (
     <>
       {Icon && (
-        <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-panel ring-1 ring-line">
-          <Icon className="h-3.5 w-3.5" />
+        <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] ${item.tint ?? "bg-panel"}`}>
+          <Icon className="h-3 w-3 text-ink/75" />
         </span>
       )}
       <span>
         <span className="block text-sm leading-[18.2px] font-medium">{item.label}</span>
-        {item.desc && <span className="mt-0.5 block text-[12px] leading-snug text-muted">{item.desc}</span>}
+        {!compact && item.desc && <span className="mt-0.5 block text-[12px] leading-snug text-muted">{item.desc}</span>}
       </span>
     </>
   );
-  const classes = "flex w-full gap-3 rounded-lg p-2.5 text-left transition-colors hover:bg-panel";
+  const classes = "flex w-full items-center gap-3 rounded-[6px] p-2 text-left transition-colors hover:bg-panel";
   return item.href ? (
     <a href={item.href} className={classes}>
       {body}
@@ -40,25 +45,56 @@ function MenuEntry({ item }: { item: MenuItem }) {
   );
 }
 
-// A menu that opens on hover and on keyboard focus, without JavaScript.
-function Dropdown({ label, items, wide = false }: { label: string; items: MenuItem[]; wide?: boolean }) {
+const ArrowUpRight = (p: SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...p}>
+    <path d="M7 17 17 7M8 7h9v9" />
+  </svg>
+);
+
+// The card beside the Product menu: a dusk sky with a caption, as in the
+// reference's announcement card. Not wired to a page yet.
+function FeatureCard({ caption }: { caption: string }) {
+  return (
+    <button
+      type="button"
+      className="group/card relative flex h-[277px] w-[242px] shrink-0 flex-col justify-between overflow-hidden rounded-[6px] p-4 text-left text-white"
+      style={{
+        backgroundImage: [
+          "linear-gradient(to top, rgb(16 28 26 / 0.92), rgb(16 28 26 / 0.25) 38%, transparent 55%)",
+          "radial-gradient(ellipse 70% 28% at 78% 58%, rgb(214 160 170 / 0.75), transparent 70%)",
+          "radial-gradient(ellipse 60% 22% at 22% 72%, rgb(196 150 166 / 0.6), transparent 70%)",
+          "radial-gradient(ellipse 80% 30% at 50% 46%, rgb(236 222 222 / 0.85), transparent 70%)",
+          "linear-gradient(rgb(104 104 150), rgb(160 140 172) 35%, rgb(214 190 196) 55%, rgb(60 72 70) 80%, rgb(28 40 38))",
+        ].join(","),
+      }}
+    >
+      <ArrowUpRight className="ml-auto h-6 w-6 transition-transform group-hover/card:translate-x-0.5 group-hover/card:-translate-y-0.5" />
+      <span className="max-w-[200px] text-base leading-[21px] font-medium">{caption}</span>
+    </button>
+  );
+}
+
+// A menu that opens on hover and on keyboard focus, without JavaScript: a
+// white panel with a 226px column of entries and, for Product, a card.
+function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; card?: string }) {
   return (
     <div className="group relative">
       <button
         type="button"
         aria-haspopup="true"
-        className="flex h-16 items-center gap-1 px-2.5 text-sm leading-[14px] font-semibold text-ink transition-colors hover:text-ink/70"
+        className="flex h-16 items-center gap-1 px-2.5 text-sm leading-[14px] font-semibold text-ink transition-colors"
       >
         {label}
         <ChevronDown className="h-3 w-3 transition-transform group-focus-within:rotate-180 group-hover:rotate-180" />
       </button>
-      <div className="invisible absolute top-full left-0 -mt-2 opacity-0 transition-all duration-150 group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
-        <div
-          className={`grid gap-0.5 rounded-xl bg-white p-2 shadow-[0_12px_40px_-12px_rgb(0_0_0/0.25)] ring-1 ring-line ${wide ? "w-[560px] grid-cols-2" : "w-[280px]"}`}
-        >
-          {items.map((item) => (
-            <MenuEntry key={item.label} item={item} />
-          ))}
+      <div className="invisible absolute top-full -left-2.5 -mt-3 translate-y-1 opacity-0 transition-all duration-150 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+        <div className="flex gap-4 rounded-[16px] bg-white p-4 shadow-[0_0_0_1px_rgb(0_0_0/0.04),0_24px_48px_-16px_rgb(0_0_0/0.18),0_8px_16px_-8px_rgb(0_0_0/0.08)]">
+          <div className="flex w-[226px] flex-col gap-0.5 py-0.5">
+            {items.map((item) => (
+              <MenuEntry key={item.label} item={item} />
+            ))}
+          </div>
+          {card && <FeatureCard caption={card} />}
         </div>
       </div>
     </div>
@@ -68,17 +104,17 @@ function Dropdown({ label, items, wide = false }: { label: string; items: MenuIt
 function useMenus() {
   const t = useTranslations("Landing");
   const product: MenuItem[] = [
-    { label: t("overview.contacts.title"), desc: t("overview.contacts.desc"), href: "#contacts", icon: Users },
-    { label: t("overview.lists.title"), desc: t("overview.lists.desc"), href: "#overview", icon: ListIcon },
-    { label: t("overview.email.title"), desc: t("overview.email.desc"), href: "#email", icon: Mail },
-    { label: t("overview.social.title"), desc: t("overview.social.desc"), href: "#social", icon: Chat },
-    { label: t("overview.volunteers.title"), desc: t("overview.volunteers.desc"), href: "#volunteers", icon: Layers },
-    { label: t("overview.consent.title"), desc: t("overview.consent.desc"), href: "#consent", icon: Shield },
+    { label: t("overview.contacts.title"), desc: t("overview.contacts.desc"), href: "#contacts", icon: Users, tint: "bg-[#cfdcc4]" },
+    { label: t("overview.lists.title"), desc: t("overview.lists.desc"), href: "#overview", icon: ListIcon, tint: "bg-[#e9dcc4]" },
+    { label: t("overview.email.title"), desc: t("overview.email.desc"), href: "#email", icon: Mail, tint: "bg-sky" },
+    { label: t("overview.social.title"), desc: t("overview.social.desc"), href: "#social", icon: Chat, tint: "bg-[#d9d0ea]" },
+    { label: t("overview.volunteers.title"), desc: t("overview.volunteers.desc"), href: "#volunteers", icon: Layers, tint: "bg-[#e7d6d0]" },
+    { label: t("overview.consent.title"), desc: t("overview.consent.desc"), href: "#consent", icon: Shield, tint: "bg-mist" },
   ];
   const solutions: MenuItem[] = [
-    { label: t("builtFor.candidates.title"), href: "#built-for", icon: Users },
-    { label: t("builtFor.ridings.title"), href: "#built-for", icon: Building },
-    { label: t("builtFor.advocacy.title"), href: "#built-for", icon: Chat },
+    { label: t("builtFor.candidates.title"), href: "#built-for", icon: Users, tint: "bg-[#cfdcc4]" },
+    { label: t("builtFor.ridings.title"), href: "#built-for", icon: Building, tint: "bg-[#e9dcc4]" },
+    { label: t("builtFor.advocacy.title"), href: "#built-for", icon: Chat, tint: "bg-sky" },
   ];
   const company: MenuItem[] = [{ label: t("nav.about") }, { label: t("nav.contact") }, { label: t("nav.privacy") }];
   return { product, solutions, company };
@@ -145,8 +181,8 @@ export function Navbar() {
           <span className="text-[24px] leading-6 font-medium tracking-[-0.04em]">Writ</span>
         </Link>
 
-        <nav aria-label={t("menu")} className="hidden items-center gap-4 lg:flex">
-          <Dropdown label={t("product")} items={menus.product} wide />
+        <nav aria-label={t("menu")} className="hidden items-center gap-4 lg:flex [&:has(>div:hover)>div:not(:hover)>button]:text-ink/45 [&:has(>div:focus-within)>div:not(:focus-within)>button]:text-ink/45">
+          <Dropdown label={t("product")} items={menus.product} card={t("featureCard")} />
           <Dropdown label={t("solutions")} items={menus.solutions} />
           <Dropdown label={t("company")} items={menus.company} />
         </nav>
@@ -178,7 +214,7 @@ export function Navbar() {
                 <div key={label as string} className="border-b border-line py-2 last:border-0">
                   <p className="px-2.5 pb-1 text-[11px] font-medium text-muted uppercase">{label as string}</p>
                   {(items as MenuItem[]).map((item) => (
-                    <MenuEntry key={item.label} item={{ ...item, desc: undefined }} />
+                    <MenuEntry key={item.label} item={item} />
                   ))}
                 </div>
               ))}

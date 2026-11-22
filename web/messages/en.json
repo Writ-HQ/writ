@@ -24,7 +24,8 @@
       "menu": "Menu",
       "about": "About",
       "contact": "Contact",
-      "privacy": "Privacy"
+      "privacy": "Privacy",
+      "featureCard": "Read about the pilot"
     },
     "hero": {
       "title": "Run canvassing, email, volunteers and outreach from one bilingual campaign workspace.",
