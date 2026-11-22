@@ -1,0 +1,15 @@
+{
+  "Metadata": {
+    "title": "Writ",
+    "description": "The campaign CRM built for Canada."
+  },
+  "HomePage": {
+    "title": "Writ",
+    "subtitle": "The campaign CRM built for Canada. Coming soon."
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "en": "English",
+    "fr": "Français"
+  }
+}

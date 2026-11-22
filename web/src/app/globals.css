@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/*
+ * Neutral placeholders until the landing page design is decided. The
+ * project stays non-partisan in its colours: no party reds, blues,
+ * oranges or greens as brand colours.
+ */
+@theme {
+  --color-background: #fafaf9;
+  --color-foreground: #1c1917;
+  --color-muted: #78716c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #0c0a09;
+    --color-foreground: #fafaf9;
+    --color-muted: #a8a29e;
+  }
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}

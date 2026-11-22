@@ -39,7 +39,13 @@ openapi-typescript) are in place. CI (lint, race tests, govulncheck,
 generated-code check, web type-check, Docker build) and Dependabot are
 configured but have not run yet: the repo is not on GitHub. Error codes
 live in /api/internal/apierror/codes.go and must match the ErrorCode enum
-in the spec. /web holds only the generated API client so far. PostgreSQL 18
+in the spec. /web is a Next.js 16 App Router app (TypeScript strict,
+Tailwind 4, next-intl 4) beside the generated API client in
+/web/src/lib/api. Every route is under /[locale] (en, fr); strings live in
+/web/messages/en.json and fr.json, and a Vitest test fails if their keys
+differ or a value is empty. Next.js 16 calls middleware proxy.ts
+(/web/src/proxy.ts). TypeScript stays on 5.x because openapi-typescript
+requires it. Only a placeholder home page exists so far. PostgreSQL 18
 is in: migrations in /api/db/migrations (tenants, users, memberships,
 audit_log), roles writ_owner and writ_app, sqlc per module, and
 database.WithTenant (sets app.tenant_id and app.user_id) and
@@ -200,7 +206,9 @@ Run from the repo root:
   /api/internal/oapi, TypeScript into /web/src/lib/api) and from SQL
   queries with sqlc (into /api/internal/<module>/<module>db)
 - make generate-check — fail if generated code is out of date (CI runs this)
-- npm --prefix web run typecheck — type-check the web API client
+- npm --prefix web run dev — start the web app at http://localhost:3000
+- npm --prefix web run typecheck / lint / test / build — check the web
+  app (CI runs all four; test includes the en/fr message check)
 - make infra-check — format-check, validate and plan-test the Terraform
   code against a mocked provider (no AWS access, applies nothing)
-- [add web commands as they are created]
+- [add further web commands as they are created]
