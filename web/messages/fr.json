@@ -166,8 +166,8 @@
       }
     },
     "security": {
-      "title1": "Les données de votre campagne",
-      "title2": "restent les vôtres.",
+      "title1": "Vos données",
+      "title2": "sont à vous.",
       "isolated": {
         "title": "Séparées de toutes les autres campagnes",
         "desc": "Les données de chaque campagne sont séparées dans la base de données elle-même. Aucune autre campagne ne peut y accéder, même par erreur."

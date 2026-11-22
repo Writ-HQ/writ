@@ -166,8 +166,8 @@
       }
     },
     "security": {
-      "title1": "Your campaign's",
-      "title2": "data stays yours.",
+      "title1": "Your data",
+      "title2": "stays yours.",
       "isolated": {
         "title": "Walled off from every other campaign",
         "desc": "Each campaign's data is separated in the database itself. No other campaign can reach it, even by mistake."

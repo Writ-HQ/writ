@@ -240,9 +240,9 @@ export function Security() {
         <div className="grid border border-ink lg:grid-cols-2">
           <div className="border-b border-ink lg:border-r lg:border-b-0">
             <div aria-hidden="true" className="bg-sky h-36 lg:h-[164px]" />
-            <div className={`grid grid-cols-[48px_1fr_48px] sm:grid-cols-[123px_1fr_123px] ${row}`}>
+            <div className={`grid grid-cols-[48px_1fr_48px] sm:grid-cols-[96px_1fr_96px] xl:grid-cols-[123px_1fr_123px] ${row}`}>
               <span aria-hidden="true" className="border-r border-ink" />
-              <h2 className="flex items-center px-6 py-10 text-[40px] leading-[38px] font-normal tracking-[-0.8px] lg:px-[33px] lg:py-0 lg:text-[56px] lg:leading-[52px] lg:tracking-[-1.12px]">
+              <h2 className="flex min-w-0 items-center overflow-hidden px-6 py-10 text-[40px] leading-[38px] font-normal tracking-[-0.8px] lg:px-6 lg:py-0 lg:text-[44px] lg:leading-[42px] xl:px-[33px] xl:text-[56px] xl:leading-[52px] xl:tracking-[-1.12px]">
                 <span>
                   {t("title1")}
                   <br />
@@ -251,11 +251,11 @@ export function Security() {
               </h2>
               <span aria-hidden="true" className="border-l border-ink" />
             </div>
-            <div aria-hidden="true" className={`hidden grid-cols-[246px_1fr] lg:grid ${row}`}>
+            <div aria-hidden="true" className={`hidden grid-cols-[192px_1fr] lg:grid xl:grid-cols-[246px_1fr] ${row}`}>
               <span className="border-r border-ink" />
               <span />
             </div>
-            <div aria-hidden="true" className={`hidden grid-cols-[123px_1fr_123px] lg:grid ${row}`}>
+            <div aria-hidden="true" className={`hidden grid-cols-[96px_1fr_96px] lg:grid xl:grid-cols-[123px_1fr_123px] ${row}`}>
               <span className="border-r border-ink" />
               <span />
               <span className="border-l border-ink" />
