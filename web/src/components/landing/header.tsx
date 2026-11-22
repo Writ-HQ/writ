@@ -1,7 +1,6 @@
 import { useTranslations } from "next-intl";
 import type { ComponentType, SVGProps } from "react";
 
-import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ArrowRight, Building, Chat, ChevronDown, Layers, ListIcon, Mail, Shield, Users, WritMark } from "@/components/ui/icons";
 import { Pill } from "@/components/ui/pill";
 import { Link } from "@/i18n/navigation";
@@ -153,7 +152,6 @@ export function Navbar() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <LocaleSwitcher compact className="mr-2 hidden sm:flex" />
           <button type="button" className="hidden h-8 rounded-full px-4 text-sm leading-[18px] font-medium hover:bg-ink/5 md:block">
             {t("login")}
           </button>
@@ -184,8 +182,7 @@ export function Navbar() {
                   ))}
                 </div>
               ))}
-              <div className="flex items-center justify-between gap-3 pt-3">
-                <LocaleSwitcher compact />
+              <div className="flex items-center justify-end gap-3 pt-3">
                 <div className="flex gap-2">
                   <button type="button" className="text-[13px] font-medium">
                     {t("login")}
