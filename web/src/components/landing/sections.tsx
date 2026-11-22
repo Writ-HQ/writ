@@ -220,7 +220,11 @@ export function BuiltFor() {
   );
 }
 
-// How the data is protected, in a ruled grid.
+// How the data is protected, in a ruled grid of solid black lines, sized
+// from the reference: each side is four 164px rows. Left: sky, then the
+// heading between two 123px cells, then a 246px cell, then the same three
+// cells again. Right: four items, 20px titles and 14px/18px descriptions,
+// with dividers inset 40px.
 export function Security() {
   const t = useTranslations("Landing.security");
   const items: { key: "isolated" | "canada" | "mfa" | "audit"; icon: IconType }[] = [
@@ -229,34 +233,42 @@ export function Security() {
     { key: "mfa", icon: KeyRound },
     { key: "audit", icon: Ledger },
   ];
+  const row = "border-t border-ink lg:h-[164px]";
   return (
-    <section id="security" className="pb-28 sm:pb-36">
+    <section id="security" className="pb-24 lg:pb-32">
       <Container>
-        <div className="grid border border-line lg:grid-cols-[1fr_1.1fr]">
-          <div className="grid grid-rows-[auto_auto_1fr] border-b border-line lg:border-r lg:border-b-0">
-            <div aria-hidden="true" className="bg-sky h-36 border-b border-line sm:h-44" />
-            <div className="grid grid-cols-[48px_1fr_48px] border-b border-line sm:grid-cols-[96px_1fr_96px]">
-              <span aria-hidden="true" className="border-r border-line" />
-              <SectionTitle className="px-6 py-10 sm:text-[48px]">
-                {t("title1")}
-                <br />
-                {t("title2")}
-              </SectionTitle>
-              <span aria-hidden="true" className="border-l border-line" />
+        <div className="grid border border-ink lg:grid-cols-2">
+          <div className="border-b border-ink lg:border-r lg:border-b-0">
+            <div aria-hidden="true" className="bg-sky h-36 lg:h-[164px]" />
+            <div className={`grid grid-cols-[48px_1fr_48px] sm:grid-cols-[123px_1fr_123px] ${row}`}>
+              <span aria-hidden="true" className="border-r border-ink" />
+              <h2 className="flex items-center px-6 py-10 text-[40px] leading-[38px] font-normal tracking-[-0.8px] lg:px-[33px] lg:py-0 lg:text-[56px] lg:leading-[52px] lg:tracking-[-1.12px]">
+                <span>
+                  {t("title1")}
+                  <br />
+                  {t("title2")}
+                </span>
+              </h2>
+              <span aria-hidden="true" className="border-l border-ink" />
             </div>
-            <div aria-hidden="true" className="grid min-h-24 grid-cols-[96px_1fr] sm:grid-cols-[160px_1fr]">
-              <span className="border-r border-line" />
+            <div aria-hidden="true" className={`hidden grid-cols-[246px_1fr] lg:grid ${row}`}>
+              <span className="border-r border-ink" />
               <span />
+            </div>
+            <div aria-hidden="true" className={`hidden grid-cols-[123px_1fr_123px] lg:grid ${row}`}>
+              <span className="border-r border-ink" />
+              <span />
+              <span className="border-l border-ink" />
             </div>
           </div>
           <ul>
             {items.map(({ key, icon: Icon }) => (
-              <li key={key} className="mx-6 border-b border-line py-9 last:border-0 sm:mx-10">
-                <h3 className="flex items-center gap-3 text-lg tracking-[-0.01em]">
-                  <Icon className="h-5 w-5 shrink-0 text-ink/70" />
-                  {t(`${key}.title`)}
-                </h3>
-                <p className="mt-2 max-w-[440px] pl-8 text-[13px] leading-snug text-ink/80">{t(`${key}.desc`)}</p>
+              <li key={key} className="mx-6 flex flex-col justify-center border-b border-ink py-8 last:border-0 sm:mx-10 lg:h-[164px] lg:py-0">
+                <div className="grid grid-cols-[20px_1fr] gap-x-[17px] gap-y-2 sm:pl-[35px]">
+                  <Icon className="mt-[1px] h-5 w-5" />
+                  <h3 className="text-xl leading-[23px] font-normal">{t(`${key}.title`)}</h3>
+                  <p className="col-start-2 max-w-[360px] text-sm leading-[18px]">{t(`${key}.desc`)}</p>
+                </div>
               </li>
             ))}
           </ul>
@@ -266,36 +278,37 @@ export function Security() {
   );
 }
 
-// Questions and answers. Native disclosure elements: they open and close
-// without JavaScript and are announced correctly by screen readers.
+// Questions and answers, sized from the reference: a 416px column, 64px
+// gap; a 32px medium heading; 20px medium questions with 24px above and
+// below, between solid black lines. Native disclosure elements: they open
+// and close without JavaScript and are announced correctly by screen
+// readers.
 export function Faq() {
   const t = useTranslations("Landing.faq");
   const questions = ["q1", "q2", "q3", "q4", "q5", "q6", "q7"] as const;
   return (
-    <section id="faq" className="pb-28 sm:pb-36">
+    <section id="faq" className="py-24 lg:py-32">
       <Container>
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.6fr]">
-          <div>
-            <SectionTitle className="sm:text-[32px]">
+        <div className="grid gap-10 lg:grid-cols-[416px_1fr] lg:gap-16">
+          <div className="flex flex-col items-start gap-8 lg:py-8">
+            <h2 className="text-[32px] leading-[35px] font-medium tracking-[-0.64px]">
               {t("title1")}
               <br />
               {t("title2")}
-            </SectionTitle>
-            <p className="mt-6 max-w-[320px] text-[13px] leading-snug text-ink/80">{t("subtitle")}</p>
-            <div className="mt-6">
-              <Pill variant="outline" size="sm">
-                {t("cta")}
-              </Pill>
-            </div>
+            </h2>
+            <p className="text-base leading-[21px]">{t("subtitle")}</p>
+            <Pill variant="outline" size="sm" className="h-9">
+              {t("cta")}
+            </Pill>
           </div>
-          <div className="border-t border-line lg:border-t-0">
+          <div>
             {questions.map((q) => (
-              <details key={q} className="group border-b border-line">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-[15px] [&::-webkit-details-marker]:hidden">
+              <details key={q} className="group border-b border-ink last:border-0">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-6 text-xl leading-[23px] font-medium [&::-webkit-details-marker]:hidden">
                   {t(`${q}.q`)}
-                  <Plus className="h-4 w-4 shrink-0 transition-transform group-open:rotate-45" />
+                  <Plus className="h-3 w-3 shrink-0 transition-transform group-open:rotate-45" strokeWidth={2.5} />
                 </summary>
-                <p className="max-w-[640px] pb-6 text-[14px] leading-relaxed text-ink/75">{t(`${q}.a`)}</p>
+                <p className="-mt-2 max-w-[680px] pb-6 text-base leading-[21px] text-ink/80">{t(`${q}.a`)}</p>
               </details>
             ))}
           </div>

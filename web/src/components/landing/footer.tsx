@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import type { ComponentType, SVGProps } from "react";
+import type { ComponentType, ReactNode, SVGProps } from "react";
 
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Chat, Globe, Home, Ledger, Mail, MapleLeaf, Users, WritMark } from "@/components/ui/icons";
@@ -41,7 +41,7 @@ export function Footer() {
   const t = useTranslations("Landing");
   const f = useTranslations("Landing.footer");
   const year = new Date().getFullYear();
-  const notes = ["n1", "n2", "n3", "n4", "n5", "n6"] as const;
+  const notes = ["n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10"] as const;
 
   return (
     <footer className="overflow-hidden bg-ink pt-[46px] text-white">
@@ -115,13 +115,23 @@ export function Footer() {
               <h2 id="footer-notes" className="text-sm leading-[18px] font-medium text-white/60">
                 {f("notesTitle")}
               </h2>
+              {/* Two columns of five, numbered down each column. The number
+                  sits in a fixed-width column so every note's text lines up,
+                  including after "10.". */}
               <div className="mt-4 grid gap-[10px] sm:grid-cols-2 sm:gap-8">
-                {[notes.slice(0, 3), notes.slice(3)].map((group, g) => (
-                  <ol key={g} start={g * 3 + 1} className="flex flex-col gap-[10px]">
+                {[notes.slice(0, 5), notes.slice(5)].map((group, g) => (
+                  <ol key={g} start={g * 5 + 1} className="flex flex-col gap-[10px]">
                     {group.map((n, i) => (
-                      <li key={n} className="flex gap-3 text-xs leading-4 text-faint">
-                        <span className="w-4 shrink-0 tabular-nums">{g * 3 + i + 1}.</span>
-                        <span>{f(n)}</span>
+                      <li key={n} className="grid grid-cols-[1.375rem_1fr] text-xs leading-4 text-faint">
+                        <span className="tabular-nums">{g * 5 + i + 1}.</span>
+                        <span>
+                          {n === "n10"
+                            ? f.rich("n10", {
+                                terms: (chunks) => <NoteLink>{chunks}</NoteLink>,
+                                privacy: (chunks) => <NoteLink>{chunks}</NoteLink>,
+                              })
+                            : f(n)}
+                        </span>
                       </li>
                     ))}
                   </ol>
@@ -134,6 +144,16 @@ export function Footer() {
 
       <Stamps />
     </footer>
+  );
+}
+
+// A link inside a note: white and underlined, as in the reference. Not
+// wired to a page yet.
+function NoteLink({ children }: { children: ReactNode }) {
+  return (
+    <button type="button" className="text-white underline decoration-white/40 underline-offset-2 hover:decoration-white">
+      {children}
+    </button>
   );
 }
 
