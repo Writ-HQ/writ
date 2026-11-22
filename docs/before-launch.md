@@ -25,6 +25,14 @@ and verified, with the date.
       URL, so every token and the `OIDC_ISSUER` setting change with it;
       users are matched by subject identifier, so plan how existing
       accounts carry over. See decisions/0004.
+- [ ] **Revisit the landing page's sky-blue palette.** Kept for now by
+      decision on 2026-11-22. Pale blue is close to one party's colours,
+      and the project rule is to stay non-partisan in colours.
+- [ ] **The landing page's claims are true.** It says supporter data never
+      leaves Canada, which depends on self-hosting Zitadel in ca-central-1
+      (above), and it describes features still on the roadmap (email,
+      social inbox, consent, retention) as if available. Check every claim
+      against what ships before the page is public.
 - [ ] **Platform admins must hand over ownership and remove their own
       membership after onboarding a campaign.** Creating a tenant makes
       the creator its owner, so whoever onboards a campaign can read

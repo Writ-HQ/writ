@@ -45,7 +45,12 @@ Tailwind 4, next-intl 4) beside the generated API client in
 /web/messages/en.json and fr.json, and a Vitest test fails if their keys
 differ or a value is empty. Next.js 16 calls middleware proxy.ts
 (/web/src/proxy.ts). TypeScript stays on 5.x because openapi-typescript
-requires it. Only a placeholder home page exists so far. PostgreSQL 18
+requires it. The landing page is /web/src/app/[locale]/page.tsx, built
+from /web/src/components/landing (Geist font, black and white with a pale
+sky gradient; product visuals are coded mock-ups with fictional data, not
+screenshots). Its buttons are not wired to anything yet. A second test
+fails if a French value is identical to the English one unless the key is
+allowlisted. PostgreSQL 18
 is in: migrations in /api/db/migrations (tenants, users, memberships,
 audit_log), roles writ_owner and writ_app, sqlc per module, and
 database.WithTenant (sets app.tenant_id and app.user_id) and

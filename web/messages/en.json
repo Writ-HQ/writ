@@ -1,15 +1,294 @@
 {
   "Metadata": {
-    "title": "Writ",
-    "description": "The campaign CRM built for Canada."
-  },
-  "HomePage": {
-    "title": "Writ",
-    "subtitle": "The campaign CRM built for Canada. Coming soon."
+    "title": "Writ — The campaign CRM built for Canada",
+    "description": "Contacts, lists, bilingual email and your social inbox in one place, for candidates, riding associations and advocacy groups. Hosted in Canada."
   },
   "LocaleSwitcher": {
     "label": "Language",
     "en": "English",
     "fr": "Français"
+  },
+  "Landing": {
+    "announcement": {
+      "text": "Writ is opening a pilot for Canadian campaigns.",
+      "cta": "Join the waitlist"
+    },
+    "nav": {
+      "home": "Writ home",
+      "product": "Product",
+      "solutions": "Solutions",
+      "company": "Company",
+      "login": "Log in",
+      "demo": "See a demo",
+      "waitlist": "Join the waitlist",
+      "menu": "Menu",
+      "about": "About",
+      "contact": "Contact",
+      "privacy": "Privacy"
+    },
+    "hero": {
+      "title": "Run your whole campaign from one place.",
+      "subtitle": "Contacts, lists, bilingual email and your social inbox in one CRM built for Canadian campaigns. In English and French, with your data kept in Canada.",
+      "cta": "Join the waitlist",
+      "visualLabel": "A preview of the Writ dashboard, with fictional data"
+    },
+    "stats": {
+      "languages": {
+        "value": "2",
+        "unit": "official languages",
+        "note": "Every screen, email and form in English and French."
+      },
+      "canada": {
+        "value": "100%",
+        "unit": "hosted in Canada",
+        "note": "Your campaign's data stays in Canadian data centres."
+      },
+      "place": {
+        "value": "1",
+        "unit": "place for everything",
+        "note": "Contacts, email, social and volunteers, no more spreadsheets."
+      }
+    },
+    "overview": {
+      "title1": "Know every supporter.",
+      "title2": "Reach them where they are.",
+      "contacts": {
+        "title": "Contacts",
+        "desc": "People and households in one record, with their full history."
+      },
+      "lists": {
+        "title": "Lists and segments",
+        "desc": "Build lists by riding, tag or interest. They update themselves."
+      },
+      "email": {
+        "title": "Bilingual email",
+        "desc": "Write once in both languages. Each person gets theirs."
+      },
+      "social": {
+        "title": "Social inbox",
+        "desc": "Facebook and Instagram messages, matched to your contacts."
+      },
+      "volunteers": {
+        "title": "Volunteers and roles",
+        "desc": "Everyone sees exactly what their role needs, and nothing more."
+      },
+      "consent": {
+        "title": "Consent and privacy",
+        "desc": "Consent and opt-outs tracked for every person, on every channel."
+      }
+    },
+    "features": {
+      "contacts": {
+        "eyebrow": "Contacts and households",
+        "title": "Every supporter, household and conversation in one record.",
+        "b1": "Import a spreadsheet, with a preview before anything is saved.",
+        "b2": "Group people into households at the same address.",
+        "b3": "Tags and custom fields that fit your riding.",
+        "b4": "Find and merge duplicates before they cause problems.",
+        "b5": "See every email, reply and sign-up on one timeline.",
+        "cta": "Explore contacts"
+      },
+      "email": {
+        "eyebrow": "Bilingual email",
+        "title": "Write once in English and French. Send each person theirs.",
+        "b1": "Templates with an English and a French version side by side.",
+        "b2": "Each contact receives the language they prefer.",
+        "b3": "Unsubscribes and consent handled automatically.",
+        "b4": "See who opened and clicked.",
+        "b5": "Sign-up forms and landing pages that add people straight to your lists.",
+        "cta": "Explore email"
+      },
+      "social": {
+        "eyebrow": "Social inbox",
+        "title": "Every Facebook and Instagram message, matched to the right person.",
+        "b1": "One inbox for messages and comments from both platforms.",
+        "b2": "Each conversation linked to the contact it came from.",
+        "b3": "Schedule posts in both languages.",
+        "b4": "Nothing goes out without the approvals you set.",
+        "cta": "Explore the inbox"
+      },
+      "volunteers": {
+        "eyebrow": "Volunteers and roles",
+        "title": "Give every volunteer exactly the access they need.",
+        "b1": "Four roles: owner, admin, staff and volunteer.",
+        "b2": "Volunteers see only the lists they are assigned.",
+        "b3": "Two-step sign-in for every team member.",
+        "b4": "Remove someone's access instantly, from anywhere.",
+        "cta": "Explore roles"
+      },
+      "consent": {
+        "eyebrow": "Consent and privacy",
+        "title": "Consent and privacy, built in rather than bolted on.",
+        "b1": "Consent and opt-out recorded per person, per channel.",
+        "b2": "Retention and deletion requests handled in one place.",
+        "b3": "Every export, role change and send is recorded.",
+        "b4": "Your supporters' data is never sold or shared.",
+        "cta": "Explore privacy"
+      }
+    },
+    "builtFor": {
+      "title1": "Built for the people",
+      "title2": "who run Canadian campaigns.",
+      "candidates": {
+        "title": "Candidates",
+        "desc": "Get from nomination to election day with every supporter, volunteer and conversation in one place.",
+        "cta": "For candidates"
+      },
+      "ridings": {
+        "title": "Riding associations",
+        "desc": "Keep your members, donors and volunteers organized between elections, not only during them.",
+        "cta": "For riding associations"
+      },
+      "advocacy": {
+        "title": "Advocacy groups",
+        "desc": "Grow a list of supporters across the country and reach each one in their own language.",
+        "cta": "For advocacy groups"
+      }
+    },
+    "security": {
+      "title1": "Your campaign's",
+      "title2": "data stays yours.",
+      "isolated": {
+        "title": "Walled off from every other campaign",
+        "desc": "Each campaign's data is separated in the database itself. No other campaign can reach it, even by mistake."
+      },
+      "canada": {
+        "title": "Stored in Canada",
+        "desc": "Everything is hosted in Canadian data centres, under Canadian privacy law."
+      },
+      "mfa": {
+        "title": "Two-step sign-in for everyone",
+        "desc": "Every team member signs in with multi-factor authentication. No exceptions."
+      },
+      "audit": {
+        "title": "Every sensitive action on record",
+        "desc": "Exports, role changes and sends are logged in a record that nobody can edit or delete."
+      }
+    },
+    "faq": {
+      "title1": "Frequently",
+      "title2": "asked questions",
+      "subtitle": "How Writ works, who it is for, and how your data is protected.",
+      "cta": "See a demo",
+      "q1": {
+        "q": "What is Writ?",
+        "a": "Writ is a CRM for political campaigns in Canada. It brings your contacts, lists, email, social media messages and volunteers into one place, in English and French."
+      },
+      "q2": {
+        "q": "Who is Writ for?",
+        "a": "Candidates, riding associations and advocacy groups of any size, at any level of government. Writ is non-partisan and works with campaigns across the political spectrum."
+      },
+      "q3": {
+        "q": "Where is our data stored?",
+        "a": "In Canadian data centres. Your data does not leave Canada."
+      },
+      "q4": {
+        "q": "Can other campaigns see our data?",
+        "a": "No. Each campaign's data is separated in the database itself, and every request is checked against your team's membership. Another campaign cannot reach your data, even by mistake."
+      },
+      "q5": {
+        "q": "Is Writ available in French?",
+        "a": "Yes. Every screen, email template and form is available in English and French, and each of your contacts can be reached in the language they prefer."
+      },
+      "q6": {
+        "q": "Do you sell or share voter data?",
+        "a": "Never. Your supporters' data belongs to your campaign. We do not sell it, share it or use it for anything else."
+      },
+      "q7": {
+        "q": "When can we start?",
+        "a": "We are opening a pilot for a small number of campaigns. Join the waitlist and we will be in touch."
+      }
+    },
+    "closing": {
+      "title1": "Your whole campaign.",
+      "title2": "One place.",
+      "waitlist": "Join the waitlist",
+      "demo": "See a demo"
+    },
+    "footer": {
+      "product": "Product",
+      "solutions": "Solutions",
+      "company": "Company",
+      "getStarted": "Get started",
+      "about": "About",
+      "contact": "Contact",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "nonPartisan": "Writ is non-partisan software. We work with campaigns across the political spectrum and never sell or share supporter data.",
+      "copyright": "© {year} Writ"
+    },
+    "mock": {
+      "campaign": "Example Riding Association",
+      "nav": {
+        "overview": "Overview",
+        "contacts": "Contacts",
+        "lists": "Lists",
+        "email": "Email",
+        "inbox": "Inbox",
+        "volunteers": "Volunteers"
+      },
+      "greeting": "Good morning, Jordan",
+      "supporters": "Supporters",
+      "supportersValue": "4,218",
+      "supportersDelta": "+126 this week",
+      "doors": "Doors knocked",
+      "doorsValue": "1,904",
+      "volunteersActive": "Active volunteers",
+      "volunteersValue": "38",
+      "activity": "Recent activity",
+      "colPerson": "Person",
+      "colWhat": "What happened",
+      "colWhen": "When",
+      "a1": "Signed up to volunteer",
+      "a2": "Opened “Town hall on Thursday”",
+      "a3": "Replied on Instagram",
+      "a4": "Asked for a lawn sign",
+      "a5": "Unsubscribed from email",
+      "t1": "2 min ago",
+      "t2": "14 min ago",
+      "t3": "1 h ago",
+      "t4": "3 h ago",
+      "t5": "Yesterday",
+      "household": "Household · 3 people",
+      "tags": {
+        "volunteer": "Volunteer",
+        "lawnSign": "Lawn sign",
+        "french": "Prefers French"
+      },
+      "timeline": "Timeline",
+      "tl1": "Opened “Town hall on Thursday”",
+      "tl2": "Signed up at the farmers' market",
+      "tl3": "Added to Lakeview North canvass",
+      "subject": "Subject",
+      "subjectValue": "Town hall on Thursday",
+      "audience": "Lakeview North supporters · 1,284 people",
+      "bodyPreview": "Join us Thursday at 7 pm at the community centre to talk about what matters in Lakeview North.",
+      "sendsIn": "Each person receives their own language",
+      "schedule": "Schedule",
+      "inboxAll": "All messages",
+      "matched": "Matched to contact",
+      "m1": "Is there a town hall in Lakeview this week?",
+      "m2": "Happy to help with the canvass on Saturday!",
+      "m3": "Where can I get a lawn sign?",
+      "team": "Team",
+      "roles": {
+        "owner": "Owner",
+        "admin": "Admin",
+        "staff": "Staff",
+        "volunteer": "Volunteer"
+      },
+      "mfaOn": "MFA on",
+      "assigned": "2 lists",
+      "consentFor": "Consent · Marie Gagnon",
+      "channels": {
+        "email": "Email",
+        "sms": "Text messages",
+        "phone": "Phone calls"
+      },
+      "optedIn": "Opted in",
+      "optedOut": "Opted out",
+      "noAnswer": "Not asked",
+      "consentNote": "Recorded with source and date for every change."
+    }
   }
 }
