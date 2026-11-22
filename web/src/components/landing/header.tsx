@@ -100,13 +100,47 @@ export function AnnouncementBar() {
   );
 }
 
+// A blur that is strongest at the top edge and fades to nothing at the
+// bottom: eight stacked layers, each blurring twice as much as the one
+// below it, each masked to an overlapping band of the height.
+const blurLayers = [0.078125, 0.15625, 0.3125, 0.625, 1.25, 2.5, 5, 10].map((px, i) => {
+  const band = (n: number) => `${n * 12.5}%`;
+  const stops =
+    i === 0
+      ? `transparent 0%, #000 ${band(1)}, #000 ${band(2)}, transparent ${band(3)}`
+      : i === 6
+        ? `transparent ${band(6)}, #000 ${band(7)}, #000 100%`
+        : i === 7
+          ? `transparent ${band(7)}, #000 100%`
+          : `transparent ${band(i)}, #000 ${band(i + 1)}, #000 ${band(i + 2)}, transparent ${band(i + 3)}`;
+  const mask = `linear-gradient(to top, ${stops})`;
+  return { blur: `blur(${px}px)`, mask, z: i + 1 };
+});
+
+function ProgressiveBlur() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+      {blurLayers.map(({ blur, mask, z }) => (
+        <div
+          key={z}
+          className="absolute inset-0"
+          style={{ zIndex: z, backdropFilter: blur, WebkitBackdropFilter: blur, maskImage: mask, WebkitMaskImage: mask }}
+        />
+      ))}
+    </div>
+  );
+}
+
 export function Navbar() {
   const t = useTranslations("Landing.nav");
   const menus = useMenus();
 
+  // Transparent and borderless: the hero's sky runs up behind it, and the
+  // page blurs progressively as it scrolls underneath.
   return (
-    <header className="sticky top-0 z-40 border-b border-line/70 bg-white/85 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-10 px-5 sm:px-8 lg:px-20">
+    <header className="sticky top-0 z-50 h-16 bg-white/[0.02]">
+      <ProgressiveBlur />
+      <div className="relative z-10 mx-auto flex h-16 max-w-[1440px] items-center gap-10 px-5 sm:px-8 lg:px-20">
         <Link href="/" aria-label={t("home")} className="flex items-center gap-2">
           <WritMark className="h-6 w-6 text-ink" />
           <span className="text-[19px] font-semibold tracking-[-0.03em]">Writ</span>
