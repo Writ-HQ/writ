@@ -1,25 +1,120 @@
 @import "tailwindcss";
 
 /*
- * Neutral placeholders until the landing page design is decided. The
- * project stays non-partisan in its colours: no party reds, blues,
- * oranges or greens as brand colours.
+ * Landing page design tokens. Black and white with grey hairlines, pill
+ * buttons, and a pale sky gradient behind product visuals.
+ *
+ * Colour note: the sky blue is kept for now by decision of the product
+ * owner (2026-11-22). The project rule is to stay non-partisan in
+ * colours, and pale blue sits close to one party's palette; revisit
+ * before launch (docs/before-launch.md).
  */
 @theme {
-  --color-background: #fafaf9;
-  --color-foreground: #1c1917;
-  --color-muted: #78716c;
-}
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: #0c0a09;
-    --color-foreground: #fafaf9;
-    --color-muted: #a8a29e;
+  --color-ink: #000000;
+  --color-ink-soft: #0d0d0d;
+  --color-muted: #737373;
+  --color-subtle: #8b8b8b;
+  --color-faint: #b3b3b3;
+  --color-line: #e8e8e8;
+  --color-panel: #f9f9f9;
+  --color-mist: #dfe5ea;
+  --color-slate: #3b4650;
+  --color-positive: #27a139;
+  --color-positive-soft: #effcef;
+  --color-warning: #ee7f00;
+
+  --radius-card: 6px;
+
+  --animate-marquee: marquee 60s linear infinite;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
   }
 }
 
+/*
+ * The hero's cycling word and picture: four items share one 12-second
+ * cycle, each shown for a quarter of it (delays of 0, 3, 6 and 9s), rising
+ * in and out.
+ */
+@keyframes cycle {
+  0% {
+    opacity: 0;
+    transform: translateY(35%);
+  }
+  3%,
+  22% {
+    opacity: 1;
+    transform: none;
+  }
+  25%,
+  100% {
+    opacity: 0;
+    transform: translateY(-35%);
+  }
+}
+
+.cycle-item {
+  animation: cycle 12s ease-in-out infinite both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+  /* Without motion, show only the first item, still. */
+  .cycle-item {
+    animation: none;
+    opacity: 0;
+  }
+  .cycle-item:first-child {
+    opacity: 1;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Section anchors land below the sticky navbar. */
+  scroll-padding-top: 5rem;
+}
+
 body {
-  background: var(--color-background);
-  color: var(--color-foreground);
+  background: #ffffff;
+  color: var(--color-ink);
+  font-feature-settings: "ss01" on;
+}
+
+/*
+ * A pale sky: a vertical gradient with soft white clouds drawn by radial
+ * gradients, in place of a photograph.
+ */
+@utility bg-sky {
+  background-color: rgb(175 215 237);
+  background-image:
+    radial-gradient(ellipse 38% 22% at 18% 26%, rgb(255 255 255 / 0.85), transparent 70%),
+    radial-gradient(ellipse 30% 16% at 72% 18%, rgb(255 255 255 / 0.7), transparent 70%),
+    radial-gradient(ellipse 45% 20% at 60% 78%, rgb(255 255 255 / 0.75), transparent 70%),
+    radial-gradient(ellipse 25% 14% at 8% 86%, rgb(255 255 255 / 0.6), transparent 70%),
+    linear-gradient(
+      rgb(175 215 237),
+      rgb(190 220 236),
+      rgb(198 224 237),
+      rgb(201 222 233),
+      rgb(189 216 232),
+      rgb(157 207 235)
+    );
+}
+
+/* The closing band: mostly mist at the top, sky clouds towards the bottom. */
+@utility bg-sky-band {
+  background-color: rgb(223 229 234);
+  background-image:
+    radial-gradient(ellipse 50% 60% at 20% 100%, rgb(157 207 235 / 0.9), transparent 70%),
+    radial-gradient(ellipse 40% 50% at 85% 90%, rgb(175 215 237 / 0.8), transparent 70%),
+    radial-gradient(ellipse 35% 40% at 55% 20%, rgb(255 255 255 / 0.7), transparent 70%),
+    linear-gradient(rgb(232 236 239), rgb(214 228 238));
 }

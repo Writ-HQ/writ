@@ -41,6 +41,30 @@ describe("messages", () => {
     expect(files).toEqual([...routing.locales].sort());
   });
 
+  // Keys whose French really is the same as the English. Anything else
+  // identical in both files is taken to be English left untranslated.
+  const sameInBothLanguages = new Set([
+    "LocaleSwitcher.en",
+    "LocaleSwitcher.fr",
+    "Landing.nav.solutions",
+    "Landing.nav.menu",
+    "Landing.stats.languages.value",
+    "Landing.stats.place.value",
+    "Landing.overview.contacts.title",
+    "Landing.footer.solutions",
+    "Landing.footer.copyright",
+    "Landing.mock.nav.contacts",
+    "Landing.mock.volunteersValue",
+  ]);
+
+  it("fr is translated: no value is identical to en unless listed", () => {
+    const french = byLocale.get("fr")!;
+    const untranslated = [...english.entries()]
+      .filter(([key, value]) => french.get(key) === value && !sameInBothLanguages.has(key))
+      .map(([key]) => key);
+    expect(untranslated).toEqual([]);
+  });
+
   for (const locale of routing.locales) {
     it(`${locale} has exactly the same keys as en`, () => {
       const keys = [...byLocale.get(locale)!.keys()].sort();

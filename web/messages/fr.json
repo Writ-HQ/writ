@@ -1,15 +1,330 @@
 {
   "Metadata": {
-    "title": "Writ",
-    "description": "Le CRM de campagne conçu pour le Canada."
-  },
-  "HomePage": {
-    "title": "Writ",
-    "subtitle": "Le CRM de campagne conçu pour le Canada. Bientôt disponible."
+    "title": "Writ — Le CRM de campagne conçu pour le Canada",
+    "description": "Contacts, listes, courriels bilingues et messagerie sociale au même endroit, pour les candidats, les associations de circonscription et les groupes de défense d'intérêts. Hébergé au Canada."
   },
   "LocaleSwitcher": {
     "label": "Langue",
     "en": "English",
     "fr": "Français"
+  },
+  "Landing": {
+    "announcement": {
+      "text": "Writ ouvre un projet pilote pour les campagnes canadiennes.",
+      "cta": "S'inscrire à la liste d'attente"
+    },
+    "nav": {
+      "home": "Accueil de Writ",
+      "product": "Produit",
+      "solutions": "Solutions",
+      "company": "Entreprise",
+      "login": "Se connecter",
+      "demo": "Voir une démo",
+      "waitlist": "Liste d'attente",
+      "menu": "Menu",
+      "about": "À propos",
+      "contact": "Nous joindre",
+      "privacy": "Confidentialité",
+      "featureCard": "En savoir plus sur le projet pilote"
+    },
+    "hero": {
+      "title": "Gérez le porte-à-porte, vos courriels, vos bénévoles et vos messages depuis un seul espace de campagne bilingue.",
+      "lead": "Gérez",
+      "words": {
+        "w1": "le porte-à-porte",
+        "w2": "vos courriels",
+        "w3": "vos bénévoles",
+        "w4": "vos messages"
+      },
+      "line2": "depuis un seul espace",
+      "line3": "de campagne bilingue.",
+      "subtitle": "Contacts, listes, courriels bilingues et messagerie sociale dans un CRM conçu pour les campagnes canadiennes. En français et en anglais, avec vos données conservées au Canada.",
+      "cta": "S'inscrire à la liste d'attente",
+      "visualLabel": "Un aperçu du tableau de bord de Writ, avec des données fictives"
+    },
+    "band": {
+      "label": "Conçu pour tous les types de campagnes",
+      "i1": "Campagnes municipales",
+      "i2": "Campagnes provinciales",
+      "i3": "Campagnes fédérales",
+      "i4": "Courses à l'investiture",
+      "i5": "Courses à la direction",
+      "i6": "Associations de circonscription",
+      "i7": "Groupes de défense d'intérêts",
+      "i8": "Organismes sans but lucratif"
+    },
+    "stats": {
+      "languages": {
+        "value": "2",
+        "unit": "langues officielles",
+        "note": "Chaque écran, courriel et formulaire en français et en anglais."
+      },
+      "canada": {
+        "value": "100 %",
+        "unit": "hébergé au Canada",
+        "note": "Les données de votre campagne restent dans des centres de données canadiens."
+      },
+      "place": {
+        "value": "1",
+        "unit": "seul endroit",
+        "note": "Contacts, courriels, réseaux sociaux et bénévoles, sans tableurs."
+      }
+    },
+    "overview": {
+      "title1": "Connaissez chaque sympathisant.",
+      "title2": "Joignez-le là où il se trouve.",
+      "contacts": {
+        "title": "Contacts",
+        "desc": "Les personnes et les ménages dans une seule fiche, avec tout leur historique."
+      },
+      "lists": {
+        "title": "Listes et segments",
+        "desc": "Créez des listes par circonscription, étiquette ou intérêt. Elles se mettent à jour d'elles-mêmes."
+      },
+      "email": {
+        "title": "Courriels bilingues",
+        "desc": "Rédigez une fois dans les deux langues. Chacun reçoit la sienne."
+      },
+      "social": {
+        "title": "Messagerie sociale",
+        "desc": "Les messages Facebook et Instagram, associés à vos contacts."
+      },
+      "volunteers": {
+        "title": "Bénévoles et rôles",
+        "desc": "Chacun voit exactement ce dont son rôle a besoin, et rien de plus."
+      },
+      "consent": {
+        "title": "Consentement et confidentialité",
+        "desc": "Consentements et désabonnements suivis pour chaque personne, sur chaque canal."
+      }
+    },
+    "features": {
+      "contacts": {
+        "eyebrow": "Contacts et ménages",
+        "title": "Chaque sympathisant, ménage et échange dans une seule fiche.",
+        "b1": "Importez un tableur, avec un aperçu avant que rien ne soit enregistré.",
+        "b2": "Regroupez les personnes d'une même adresse en ménages.",
+        "b3": "Des étiquettes et des champs personnalisés adaptés à votre circonscription.",
+        "b4": "Repérez et fusionnez les doublons avant qu'ils ne causent des problèmes.",
+        "b5": "Voyez chaque courriel, réponse et inscription sur un seul fil.",
+        "cta": "Découvrir les contacts"
+      },
+      "email": {
+        "eyebrow": "Courriels bilingues",
+        "title": "Rédigez une fois en français et en anglais. Chacun reçoit sa langue.",
+        "b1": "Des modèles avec une version française et une version anglaise côte à côte.",
+        "b2": "Chaque contact reçoit la langue qu'il préfère.",
+        "b3": "Désabonnements et consentements gérés automatiquement.",
+        "b4": "Voyez qui a ouvert et cliqué.",
+        "b5": "Des formulaires d'inscription et des pages d'accueil qui ajoutent les gens directement à vos listes.",
+        "cta": "Découvrir les courriels"
+      },
+      "social": {
+        "eyebrow": "Messagerie sociale",
+        "title": "Chaque message Facebook et Instagram, associé à la bonne personne.",
+        "b1": "Une seule boîte pour les messages et commentaires des deux plateformes.",
+        "b2": "Chaque conversation liée au contact dont elle provient.",
+        "b3": "Planifiez vos publications dans les deux langues.",
+        "b4": "Rien ne part sans les approbations que vous avez définies.",
+        "cta": "Découvrir la messagerie"
+      },
+      "volunteers": {
+        "eyebrow": "Bénévoles et rôles",
+        "title": "Donnez à chaque bénévole exactement l'accès dont il a besoin.",
+        "b1": "Quatre rôles : propriétaire, administrateur, personnel et bénévole.",
+        "b2": "Les bénévoles ne voient que les listes qui leur sont attribuées.",
+        "b3": "Connexion en deux étapes pour chaque membre de l'équipe.",
+        "b4": "Retirez l'accès de quelqu'un instantanément, où que vous soyez.",
+        "cta": "Découvrir les rôles"
+      },
+      "consent": {
+        "eyebrow": "Consentement et confidentialité",
+        "title": "Le consentement et la confidentialité, intégrés dès le départ.",
+        "b1": "Consentement et désabonnement enregistrés par personne et par canal.",
+        "b2": "Demandes de conservation et de suppression traitées au même endroit.",
+        "b3": "Chaque exportation, changement de rôle et envoi est consigné.",
+        "b4": "Les données de vos sympathisants ne sont jamais vendues ni partagées.",
+        "cta": "Découvrir la confidentialité"
+      }
+    },
+    "builtFor": {
+      "title1": "Conçu pour les personnes",
+      "title2": "qui mènent les campagnes canadiennes.",
+      "candidates": {
+        "title": "Candidats",
+        "desc": "De l'investiture au jour du scrutin, avec chaque sympathisant, bénévole et échange au même endroit.",
+        "cta": "Pour les candidats"
+      },
+      "ridings": {
+        "title": "Associations de circonscription",
+        "desc": "Gardez vos membres, donateurs et bénévoles organisés entre les élections, pas seulement pendant.",
+        "cta": "Pour les associations"
+      },
+      "advocacy": {
+        "title": "Groupes de défense d'intérêts",
+        "desc": "Faites croître une liste de sympathisants partout au pays et joignez chacun dans sa langue.",
+        "cta": "Pour les groupes"
+      }
+    },
+    "security": {
+      "title1": "Vos données",
+      "title2": "sont à vous.",
+      "isolated": {
+        "title": "Séparées de toutes les autres campagnes",
+        "desc": "Les données de chaque campagne sont séparées dans la base de données elle-même. Aucune autre campagne ne peut y accéder, même par erreur."
+      },
+      "canada": {
+        "title": "Stockées au Canada",
+        "desc": "Tout est hébergé dans des centres de données canadiens, sous les lois canadiennes sur la protection des renseignements personnels."
+      },
+      "mfa": {
+        "title": "Connexion en deux étapes pour tous",
+        "desc": "Chaque membre de l'équipe se connecte avec l'authentification multifacteur. Sans exception."
+      },
+      "audit": {
+        "title": "Chaque action sensible consignée",
+        "desc": "Les exportations, changements de rôle et envois sont consignés dans un registre que personne ne peut modifier ni supprimer."
+      }
+    },
+    "faq": {
+      "title1": "Questions",
+      "title2": "fréquentes",
+      "subtitle": "Comment Writ fonctionne, à qui il s'adresse et comment vos données sont protégées.",
+      "cta": "Voir une démo",
+      "q1": {
+        "q": "Qu'est-ce que Writ?",
+        "a": "Writ est un CRM pour les campagnes politiques au Canada. Il réunit vos contacts, listes, courriels, messages des réseaux sociaux et bénévoles au même endroit, en français et en anglais."
+      },
+      "q2": {
+        "q": "À qui s'adresse Writ?",
+        "a": "Aux candidats, aux associations de circonscription et aux groupes de défense d'intérêts de toutes tailles, à tous les ordres de gouvernement. Writ est non partisan et travaille avec des campagnes de tous les horizons politiques."
+      },
+      "q3": {
+        "q": "Où nos données sont-elles stockées?",
+        "a": "Dans des centres de données canadiens. Vos données ne quittent pas le Canada."
+      },
+      "q4": {
+        "q": "D'autres campagnes peuvent-elles voir nos données?",
+        "a": "Non. Les données de chaque campagne sont séparées dans la base de données elle-même, et chaque requête est vérifiée en fonction des membres de votre équipe. Une autre campagne ne peut pas accéder à vos données, même par erreur."
+      },
+      "q5": {
+        "q": "Writ est-il offert en français?",
+        "a": "Oui. Chaque écran, modèle de courriel et formulaire est offert en français et en anglais, et chacun de vos contacts peut être joint dans la langue qu'il préfère."
+      },
+      "q6": {
+        "q": "Vendez-vous ou partagez-vous des données sur les électeurs?",
+        "a": "Jamais. Les données de vos sympathisants appartiennent à votre campagne. Nous ne les vendons pas, ne les partageons pas et ne les utilisons à aucune autre fin."
+      },
+      "q7": {
+        "q": "Quand pouvons-nous commencer?",
+        "a": "Nous ouvrons un projet pilote pour un petit nombre de campagnes. Inscrivez-vous à la liste d'attente et nous communiquerons avec vous."
+      }
+    },
+    "closing": {
+      "title1": "Toute votre campagne.",
+      "title2": "Un seul endroit.",
+      "waitlist": "S'inscrire à la liste d'attente",
+      "demo": "Voir une démo"
+    },
+    "footer": {
+      "product": "Produit",
+      "solutions": "Solutions",
+      "company": "Entreprise",
+      "resources": "Ressources",
+      "getStarted": "Commencer",
+      "about": "À propos",
+      "contact": "Nous joindre",
+      "privacy": "Confidentialité",
+      "terms": "Conditions d'utilisation",
+      "help": "Centre d'aide",
+      "security": "Sécurité",
+      "accessibility": "Accessibilité",
+      "status": "État du service",
+      "notesTitle": "Remarques",
+      "n1": "Writ est un logiciel non partisan. Il offre le même service aux campagnes de tous les horizons politiques et n'appuie ni ne s'oppose à aucun candidat, parti, position ou résultat référendaire.",
+      "n2": "Les données des sympathisants sont stockées dans des centres de données canadiens et chiffrées en transit et au repos. Elles ne sont pas transférées hors du Canada pour y être stockées ou traitées.",
+      "n3": "Chaque campagne est propriétaire des données qu'elle verse dans Writ. Writ ne traite ces données que pour fournir le service à cette campagne et ne les vend jamais, ne les partage avec aucune autre campagne et ne les utilise à aucune autre fin, y compris l'entraînement de modèles d'IA.",
+      "n4": "Les données de chaque campagne sont séparées de celles de toutes les autres dans la base de données elle-même, et chaque requête est vérifiée en fonction de l'équipe de la campagne. L'accès au sein d'une campagne suit les rôles attribués par ses propriétaires et administrateurs.",
+      "n5": "Writ est en développement. Les fonctionnalités décrites sur cette page ne seront pas toutes offertes pendant le projet pilote. La disponibilité, les prix et les conditions sont confirmés avec chaque campagne à son arrivée.",
+      "n6": "Writ n'est affilié ni à Élections Canada, ni à aucune autorité électorale provinciale, territoriale ou municipale, ni à aucun parti politique. Les listes électorales fournies par une autorité électorale demeurent assujetties aux règles de cette autorité quant à leur utilisation.",
+      "n7": "Chaque campagne demeure responsable de respecter les lois électorales, de financement électoral, de protection des renseignements personnels et anti-pourriel qui s'appliquent à elle, y compris la Loi canadienne anti-pourriel (LCAP). Writ fournit des outils pour consigner les consentements et traiter les désabonnements, mais ne donne pas d'avis juridique.",
+      "n8": "Les courriels sont transmis par Amazon Web Services au Canada. Les fonctionnalités Facebook et Instagram utilisent les plateformes de Meta, exigent que chaque campagne connecte ses propres comptes et sont assujetties aux conditions de Meta.",
+      "n9": "Chaque membre de l'équipe se connecte avec l'authentification multifacteur. Les exportations, changements de rôle, envois et autres actions sensibles sont consignés dans un registre qui ne peut être ni modifié ni supprimé.",
+      "n10": "Facebook et Instagram sont des marques de commerce de Meta Platforms, Inc.; Writ n'est ni affilié à Meta ni approuvé par celle-ci. Les noms, lieux et chiffres présentés dans les images du produit sont fictifs. Pour en savoir plus, consultez les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>.",
+      "copyright": "© {year} Writ"
+    },
+    "mock": {
+      "campaign": "Association de circonscription exemple",
+      "nav": {
+        "overview": "Aperçu",
+        "contacts": "Contacts",
+        "lists": "Listes",
+        "email": "Courriels",
+        "inbox": "Messagerie",
+        "volunteers": "Bénévoles"
+      },
+      "greeting": "Bonjour, Jordan",
+      "supporters": "Sympathisants",
+      "supportersValue": "4 218",
+      "supportersDelta": "+126 cette semaine",
+      "doors": "Portes frappées",
+      "doorsValue": "1 904",
+      "volunteersActive": "Bénévoles actifs",
+      "volunteersValue": "38",
+      "activity": "Activité récente",
+      "colPerson": "Personne",
+      "colWhat": "Ce qui s'est passé",
+      "colWhen": "Quand",
+      "a1": "S'est inscrite comme bénévole",
+      "a2": "A ouvert « Assemblée publique jeudi »",
+      "a3": "A répondu sur Instagram",
+      "a4": "A demandé une affiche de pelouse",
+      "a5": "S'est désabonné des courriels",
+      "t1": "il y a 2 min",
+      "t2": "il y a 14 min",
+      "t3": "il y a 1 h",
+      "t4": "il y a 3 h",
+      "t5": "Hier",
+      "household": "Ménage · 3 personnes",
+      "tags": {
+        "volunteer": "Bénévole",
+        "lawnSign": "Affiche de pelouse",
+        "french": "Préfère le français"
+      },
+      "timeline": "Historique",
+      "tl1": "A ouvert « Assemblée publique jeudi »",
+      "tl2": "Inscrite au marché fermier",
+      "tl3": "Ajoutée au porte-à-porte de Lakeview-Nord",
+      "subject": "Objet",
+      "subjectValue": "Assemblée publique jeudi",
+      "audience": "Sympathisants de Lakeview-Nord · 1 284 personnes",
+      "bodyPreview": "Joignez-vous à nous jeudi à 19 h au centre communautaire pour parler de ce qui compte à Lakeview-Nord.",
+      "sendsIn": "Chaque personne reçoit sa propre langue",
+      "schedule": "Planifier",
+      "inboxAll": "Tous les messages",
+      "matched": "Associé au contact",
+      "m1": "Y a-t-il une assemblée publique à Lakeview cette semaine?",
+      "m2": "Avec plaisir pour le porte-à-porte samedi!",
+      "m3": "Où puis-je obtenir une affiche de pelouse?",
+      "team": "Équipe",
+      "roles": {
+        "owner": "Propriétaire",
+        "admin": "Administrateur",
+        "staff": "Personnel",
+        "volunteer": "Bénévole"
+      },
+      "mfaOn": "AMF activée",
+      "assigned": "2 listes",
+      "consentFor": "Consentement · Marie Gagnon",
+      "channels": {
+        "email": "Courriel",
+        "sms": "Messages texte",
+        "phone": "Appels"
+      },
+      "optedIn": "Accepté",
+      "optedOut": "Refusé",
+      "noAnswer": "Non demandé",
+      "consentNote": "Consigné avec la source et la date à chaque changement."
+    }
   }
 }

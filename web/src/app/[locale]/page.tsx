@@ -1,16 +1,26 @@
-import { useTranslations } from "next-intl";
+import { Footer } from "@/components/landing/footer";
+import { AnnouncementBar, Navbar } from "@/components/landing/header";
+import { Hero } from "@/components/landing/hero";
+import { BuiltFor, Closing, Faq, Features, Overview, Security, Stats } from "@/components/landing/sections";
 
-import { LocaleSwitcher } from "@/components/locale-switcher";
-
-// A placeholder until the landing page is designed.
-export default function HomePage() {
-  const t = useTranslations("HomePage");
-
+// The public landing page. Every call to action is a button that is not
+// wired to anything yet.
+export default function LandingPage() {
   return (
-    <main className="mx-auto flex min-h-dvh max-w-3xl flex-col items-start justify-center gap-6 px-6">
-      <h1 className="text-5xl font-semibold tracking-tight">{t("title")}</h1>
-      <p className="text-lg text-(--color-muted)">{t("subtitle")}</p>
-      <LocaleSwitcher />
-    </main>
+    <>
+      <AnnouncementBar />
+      <Navbar />
+      <main>
+        <Hero />
+        <Stats />
+        <Overview />
+        <Features />
+        <BuiltFor />
+        <Security />
+        <Faq />
+        <Closing />
+      </main>
+      <Footer />
+    </>
   );
 }
