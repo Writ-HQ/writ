@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import type React from "react";
 
 import { Pill } from "@/components/ui/pill";
+import { subprocessors } from "@/lib/subprocessors";
 
 import { Container } from "./container";
 import { DashboardMock } from "./mocks";
@@ -145,36 +146,24 @@ function PhonePicture() {
   );
 }
 
-// A slowly scrolling strip of the kinds of campaigns Writ is built for,
-// faded at both ends. (The reference shows customer logos here; Writ has
-// no customers yet, and none are invented.)
+// The companies Writ is built on, where the reference shows customer
+// logos: a "Built on" label and, for each subprocessor in use, its name
+// and what it does for Writ. Names rather than logos (see
+// src/lib/subprocessors.ts). Same place and height as before: 64px below
+// the hairline, 50px tall.
 function Band() {
   const t = useTranslations("Landing.band");
-  const items = (["i1", "i2", "i3", "i4", "i5", "i6", "i7", "i8"] as const).map((k) => t(k));
-
-  const list = (hidden: boolean) => (
-    <ul aria-hidden={hidden || undefined} className="flex shrink-0 items-center gap-14 pr-14">
-      {items.map((item) => (
-        <li key={item} className="flex items-center gap-2.5 text-[17px] font-medium tracking-[-0.02em] whitespace-nowrap text-ink/55">
-          <span aria-hidden="true" className="h-2 w-2 rotate-45 rounded-[1px] bg-ink/35" />
-          {item}
-        </li>
-      ))}
-    </ul>
-  );
-
   return (
-    <div
-      aria-label={t("label")}
-      role="region"
-      className="group mt-16 h-[50px] overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_84px,#000_calc(100%-84px),transparent)]"
-    >
-      {/* Two copies side by side: moving left by one copy's width loops
-          without a seam. */}
-      <div className="animate-marquee flex h-full w-max group-hover:[animation-play-state:paused]">
-        {list(false)}
-        {list(true)}
-      </div>
+    <div className="mt-16 flex min-h-[50px] flex-wrap items-center gap-x-14 gap-y-4">
+      <p className="text-sm leading-[18px] font-medium text-ink/45">{t("label")}</p>
+      <ul className="flex flex-wrap items-center gap-x-14 gap-y-4">
+        {subprocessors.map(({ name, purpose }) => (
+          <li key={name} className="flex items-baseline gap-3 whitespace-nowrap">
+            <span className="text-[19px] font-semibold tracking-[-0.03em] text-ink/70">{name}</span>
+            <span className="text-[13px] text-ink/45">{t(`purposes.${purpose}`)}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
