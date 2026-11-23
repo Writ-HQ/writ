@@ -1,7 +1,8 @@
 import { useTranslations } from "next-intl";
 import type { ComponentType, SVGProps } from "react";
 
-import { ArrowRight, Building, Chat, ChevronDown, Layers, ListIcon, Mail, Shield, Users, WritMark } from "@/components/ui/icons";
+import { ArrowRight, Building, Chat, ChevronDown, Layers, ListIcon, Mail, Shield, Users } from "@/components/ui/icons";
+import { Logo } from "@/components/ui/logo";
 import { Pill } from "@/components/ui/pill";
 import { Link } from "@/i18n/navigation";
 
@@ -177,8 +178,7 @@ export function Navbar() {
       <ProgressiveBlur />
       <div className="relative z-10 mx-auto flex h-16 max-w-[1440px] items-center gap-10 px-5 sm:px-8 lg:px-16">
         <Link href="/" aria-label={t("home")} className="flex items-center gap-2">
-          <WritMark className="h-6 w-6 text-ink" />
-          <span className="text-[24px] leading-6 font-medium tracking-[-0.04em]">Writ</span>
+          <Logo />
         </Link>
 
         <nav aria-label={t("menu")} className="hidden items-center gap-4 lg:flex [&:has(>div:hover)>div:not(:hover)>button]:text-ink/45 [&:has(>div:focus-within)>div:not(:focus-within)>button]:text-ink/45">
