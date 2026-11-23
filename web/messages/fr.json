@@ -11,7 +11,7 @@
   "Landing": {
     "announcement": {
       "text": "Writ ouvre un projet pilote pour les campagnes canadiennes.",
-      "cta": "S'inscrire à la liste d'attente"
+      "cta": "Voir une démo"
     },
     "nav": {
       "home": "Accueil de Writ",
@@ -20,7 +20,6 @@
       "company": "Entreprise",
       "login": "Se connecter",
       "demo": "Voir une démo",
-      "waitlist": "Liste d'attente",
       "menu": "Menu",
       "about": "À propos",
       "contact": "Nous joindre",
@@ -39,7 +38,7 @@
       "line2": "depuis un seul espace",
       "line3": "de campagne bilingue.",
       "subtitle": "Contacts, listes, courriels bilingues et messagerie sociale dans un CRM conçu pour les campagnes canadiennes. En français et en anglais, avec vos données conservées au Canada.",
-      "cta": "S'inscrire à la liste d'attente",
+      "cta": "Voir une démo",
       "visualLabel": "Un aperçu du tableau de bord de Writ, avec des données fictives"
     },
     "band": {
@@ -213,14 +212,14 @@
       },
       "q7": {
         "q": "Quand pouvons-nous commencer?",
-        "a": "Nous ouvrons un projet pilote pour un petit nombre de campagnes. Inscrivez-vous à la liste d'attente et nous communiquerons avec vous."
+        "a": "Nous ouvrons un projet pilote pour un petit nombre de campagnes. Demandez une démo et nous communiquerons avec vous."
       }
     },
     "closing": {
       "title1": "Toute votre campagne.",
       "title2": "Un seul endroit.",
-      "waitlist": "S'inscrire à la liste d'attente",
-      "demo": "Voir une démo"
+      "demo": "Voir une démo",
+      "signIn": "Se connecter"
     },
     "footer": {
       "product": "Produit",

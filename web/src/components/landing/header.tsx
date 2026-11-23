@@ -188,13 +188,10 @@ export function Navbar() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <button type="button" className="hidden h-8 rounded-full px-4 text-sm leading-[18px] font-medium hover:bg-ink/5 md:block">
-            {t("login")}
-          </button>
           <Pill variant="outline" size="sm" className="hidden md:inline-flex">
             {t("demo")}
           </Pill>
-          <Pill size="sm">{t("waitlist")}</Pill>
+          <Pill size="sm">{t("login")}</Pill>
 
           {/* Small screens: the same links in a disclosure. */}
           <details className="group relative lg:hidden">

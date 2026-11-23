@@ -330,10 +330,10 @@ export function Closing() {
         </SectionTitle>
         <div className="flex flex-wrap gap-3 lg:mr-[12%]">
           <Pill variant="slate" size="lg">
-            {t("waitlist")}
+            {t("demo")}
           </Pill>
           <Pill variant="outline-light" size="lg" className="bg-white/30">
-            {t("demo")}
+            {t("signIn")}
           </Pill>
         </div>
       </Container>

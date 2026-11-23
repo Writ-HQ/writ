@@ -11,16 +11,15 @@
   "Landing": {
     "announcement": {
       "text": "Writ is opening a pilot for Canadian campaigns.",
-      "cta": "Join the waitlist"
+      "cta": "See a demo"
     },
     "nav": {
       "home": "Writ home",
       "product": "Product",
       "solutions": "Solutions",
       "company": "Company",
-      "login": "Log in",
+      "login": "Sign in",
       "demo": "See a demo",
-      "waitlist": "Join the waitlist",
       "menu": "Menu",
       "about": "About",
       "contact": "Contact",
@@ -39,7 +38,7 @@
       "line2": "from one bilingual",
       "line3": "campaign workspace.",
       "subtitle": "Contacts, lists, bilingual email and your social inbox in one CRM built for Canadian campaigns. In English and French, with your data kept in Canada.",
-      "cta": "Join the waitlist",
+      "cta": "See a demo",
       "visualLabel": "A preview of the Writ dashboard, with fictional data"
     },
     "band": {
@@ -213,14 +212,14 @@
       },
       "q7": {
         "q": "When can we start?",
-        "a": "We are opening a pilot for a small number of campaigns. Join the waitlist and we will be in touch."
+        "a": "We are opening a pilot for a small number of campaigns. Book a demo and we will be in touch."
       }
     },
     "closing": {
       "title1": "Your whole campaign.",
       "title2": "One place.",
-      "waitlist": "Join the waitlist",
-      "demo": "See a demo"
+      "demo": "See a demo",
+      "signIn": "Sign in"
     },
     "footer": {
       "product": "Product",

@@ -97,10 +97,10 @@ export function Footer() {
                 <h2 className="text-sm leading-[18px] font-medium text-white/60">{f("getStarted")}</h2>
                 <div className="flex flex-col items-start gap-2">
                   <Pill variant="solid-inverse" size="sm">
-                    {t("nav.waitlist")}
+                    {t("nav.demo")}
                   </Pill>
                   <Pill variant="outline-inverse" size="sm">
-                    {t("nav.demo")}
+                    {t("nav.login")}
                   </Pill>
                 </div>
               </div>
