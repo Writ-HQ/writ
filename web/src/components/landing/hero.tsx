@@ -86,7 +86,10 @@ function HeroTitle() {
 // Small illustrations that sit in the heading, drawn in SVG: tilted, with
 // gradients and a soft shadow, like objects on a desk. Decorative. Each is
 // drawn once per page, so the gradient ids do not clash.
-const pictureStyle = "h-[1.15em] w-auto drop-shadow-[0_6px_6px_rgb(0_0_0/0.22)]";
+// Upright pictures are 1.15em tall; the envelope, which is wide, is 0.85em
+// tall so that it is no wider than the 1.3em slot.
+const shadow = "w-auto drop-shadow-[0_6px_6px_rgb(0_0_0/0.22)]";
+const pictureStyle = `h-[1.15em] ${shadow}`;
 
 function ClipboardPicture() {
   return (
@@ -123,7 +126,7 @@ function ClipboardPicture() {
 
 function EnvelopePicture() {
   return (
-    <svg viewBox="0 0 52 36" className={`${pictureStyle} h-[0.95em] rotate-[6deg]`} aria-hidden="true">
+    <svg viewBox="0 0 52 36" className={`h-[0.85em] ${shadow} rotate-[6deg]`} aria-hidden="true">
       <defs>
         <linearGradient id="hp-env" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#ffffff" />
