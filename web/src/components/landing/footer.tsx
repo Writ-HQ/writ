@@ -2,7 +2,8 @@ import { useTranslations } from "next-intl";
 import type { ComponentType, ReactNode, SVGProps } from "react";
 
 import { LocaleSwitcher } from "@/components/locale-switcher";
-import { Chat, Globe, Home, Ledger, Mail, MapleLeaf, Users, WritMark } from "@/components/ui/icons";
+import { Chat, Globe, Home, Ledger, Mail, MapleLeaf, Users } from "@/components/ui/icons";
+import { Logo, WritMark } from "@/components/ui/logo";
 import { Pill } from "@/components/ui/pill";
 
 import { Container } from "./container";
@@ -49,10 +50,7 @@ export function Footer() {
         <div className="grid gap-12 lg:grid-cols-[385px_1fr] lg:gap-8">
           {/* Logo at the top, copyright at the bottom. */}
           <div className="flex flex-col justify-between gap-10 lg:py-8 max-lg:order-last">
-            <div className="flex items-center gap-2 max-lg:hidden">
-              <WritMark className="h-6 w-6 text-white" style={{ ["--writ-cut" as string]: "#000" }} />
-              <span className="text-[24px] leading-6 font-medium tracking-[-0.04em]">Writ</span>
-            </div>
+            <Logo className="max-lg:hidden" />
             <div className="space-y-1">
               <p className="text-xs leading-4 font-medium">{f("copyright", { year })}</p>
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs leading-4 font-medium text-faint">
@@ -69,10 +67,7 @@ export function Footer() {
           </div>
 
           <div>
-            <div className="flex items-center gap-2 lg:hidden">
-              <WritMark className="h-6 w-6 text-white" style={{ ["--writ-cut" as string]: "#000" }} />
-              <span className="text-[24px] leading-6 font-medium tracking-[-0.04em]">Writ</span>
-            </div>
+            <Logo className="lg:hidden" />
             <nav aria-label={f("product")} className="grid grid-cols-2 gap-8 max-lg:mt-10 sm:grid-cols-3 lg:grid-cols-5 lg:py-8">
               <LinkColumn
                 title={f("product")}
@@ -193,7 +188,7 @@ function Stamps() {
           >
             <span className={`relative flex h-full w-full items-center justify-center overflow-hidden ${className}`}>
               <span className="absolute inset-0 bg-[radial-gradient(rgb(0_0_0/0.13)_0.7px,transparent_0.9px)] bg-[length:4px_4px]" />
-              <Icon className="relative h-16 w-16 text-ink/55" style={{ ["--writ-cut" as string]: "transparent" }} />
+              <Icon className="relative h-16 w-16 text-ink/55" />
             </span>
           </span>
         </span>

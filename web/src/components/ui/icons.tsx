@@ -145,16 +145,3 @@ export const Inbox = (p: IconProps) => (
     <path d="M4 13h4.5l1 2h5l1-2H20" />
   </Icon>
 );
-
-// The Writ mark: a page with a folded corner and a W cut out of it. The
-// cut-out is drawn in --writ-cut, white by default; set it to the
-// background colour on dark backgrounds.
-export function WritMark(p: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" {...p}>
-      <path d="M5 2.5h10l4 4v15H5z" fill="currentColor" />
-      <path d="M15 2.5v4h4" fill="none" stroke="var(--writ-cut, #fff)" strokeWidth={1.4} />
-      <path d="m8 11 1.6 6 2.4-5 2.4 5L16 11" fill="none" stroke="var(--writ-cut, #fff)" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
