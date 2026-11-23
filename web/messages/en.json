@@ -18,8 +18,9 @@
       "product": "Product",
       "solutions": "Solutions",
       "company": "Company",
-      "login": "Sign in",
+      "login": "Log in",
       "demo": "See a demo",
+      "start": "Get started",
       "menu": "Menu",
       "about": "About",
       "contact": "Contact",
@@ -38,7 +39,7 @@
       "line2": "from one bilingual",
       "line3": "campaign workspace.",
       "subtitle": "Contacts, lists, bilingual email and your social inbox in one CRM built for Canadian campaigns. In English and French, with your data kept in Canada.",
-      "cta": "See a demo",
+      "cta": "Get started",
       "visualLabel": "A preview of the Writ dashboard, with fictional data"
     },
     "band": {
@@ -219,7 +220,7 @@
       "title1": "Your whole campaign.",
       "title2": "One place.",
       "demo": "See a demo",
-      "signIn": "Sign in"
+      "start": "Get started"
     },
     "footer": {
       "product": "Product",
