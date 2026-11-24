@@ -380,7 +380,38 @@
         "staff": "Contacts, courriels et messagerie",
         "volunteer": "Ses 2 listes seulement"
       },
-      "consentChanged": "{channel} mis à jour à l’instant"
+      "consentChanged": "{channel} mis à jour à l’instant",
+      "contacts": {
+        "importSheet": "Importer un tableur",
+        "addContact": "Ajouter un contact",
+        "status": "Statut",
+        "lastContact": "Dernier contact",
+        "states": {
+          "volunteer": "Bénévole",
+          "followUp": "À relancer",
+          "supporter": "Sympathisant",
+          "duplicate": "Doublon possible"
+        },
+        "when": {
+          "today": "Aujourd’hui",
+          "yesterday": "Hier",
+          "twoDays": "Il y a 2 jours",
+          "threeDays": "Il y a 3 jours"
+        },
+        "importing": "Importation des contacts",
+        "chips": {
+          "volunteer": "Bénévole",
+          "lawnSign": "Pancarte",
+          "french": "Préfère le français",
+          "signup": "Formulaire d’inscription",
+          "canvass": "Porte-à-porte",
+          "townHall": "Assemblée publique",
+          "newsletter": "Infolettre",
+          "ward3": "Quartier 3",
+          "ward7": "Quartier 7",
+          "email": "Courriel"
+        }
+      }
     }
   },
   "Auth": {

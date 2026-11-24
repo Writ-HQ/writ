@@ -1,9 +1,9 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
-import { Check, Users } from "@/components/ui/icons";
+import { CalendarSolid, Check, ClipboardSolid, HomeSolid, MailSolid, Users } from "@/components/ui/icons";
 import { useReducedMotion } from "@/lib/motion";
 
 import { Avatar, Card, people, Tag, type Person } from "./mocks";
@@ -45,44 +45,6 @@ function useTick(ms = STEP) {
 /** The newest `count` items after `tick` steps: item `tick` first, then the ones before it. */
 const latest = <T,>(list: readonly T[], tick: number, count: number) =>
   Array.from({ length: count }, (_, i) => list[(((tick - i) % list.length) + list.length) % list.length]!);
-
-// Contacts: a new event slides into the top of Marie's timeline.
-export function LiveContactMock() {
-  const t = useTranslations("Landing.mock");
-  const [ref, tick] = useTick();
-  const events = [t("tl1"), t("tl4"), t("tl2"), t("tl5"), t("tl3"), t("tl6")] as const;
-  const times = [t("justNow"), t("t2"), t("t5")];
-  // Newest first: each tick, the next event in the list becomes the newest.
-  const shown = latest(events, tick, 3);
-  return (
-    <div ref={ref}>
-      <Card className="w-[340px] p-5 text-ink">
-        <div className="flex items-center gap-3">
-          <Avatar person={people.marie} size="h-10 w-10 text-xs" />
-          <div>
-            <p className="text-sm font-medium">{people.marie.name}</p>
-            <p className="text-[11px] text-muted">{t("household")}</p>
-          </div>
-        </div>
-        <div className="mt-4 flex flex-wrap gap-1.5">
-          <Tag tone="positive">{t("tags.volunteer")}</Tag>
-          <Tag>{t("tags.lawnSign")}</Tag>
-          <Tag>{t("tags.french")}</Tag>
-        </div>
-        <p className="mt-5 mb-2 text-[11px] font-medium">{t("timeline")}</p>
-        <ol className="space-y-2.5 border-l border-line pl-3 text-[11px]">
-          {shown.map((what, i) => (
-            <li key={`${tick}-${what}`} className={`relative ${i === 0 ? "live-in" : "live-shift"}`}>
-              <span className={`absolute top-1 -left-[15.5px] h-1.5 w-1.5 rounded-full ${i === 0 ? "bg-positive" : "bg-ink"}`} />
-              <p>{what}</p>
-              <p className="text-[10px] text-muted">{times[i]}</p>
-            </li>
-          ))}
-        </ol>
-      </Card>
-    </div>
-  );
-}
 
 // Email: the EN/FR switch flips, and the subject and preview swap with it.
 export function LiveEmailMock() {
@@ -283,6 +245,172 @@ export function LiveConsentMock() {
           {changed < 0 ? t("consentNote") : t("consentChanged", { channel: channels[changed]! })}
         </p>
       </Card>
+    </div>
+  );
+}
+
+// Contacts, laid out like altitude.xyz's bill-pay panel: a large white card
+// anchored to the bottom left, running off the left and bottom edges with
+// one big rounded corner; two grey pill buttons, a table whose names run
+// off the left edge, and a last row still importing. Behind it on the
+// right, lanes of tag and source chips drift sideways in turn.
+
+type Chip = { label: string; icon: ReactNode };
+
+function ChipIcon({ tint, children }: { tint: string; children: ReactNode }) {
+  return <span className={`flex size-[22px] shrink-0 items-center justify-center rounded-full ${tint}`}>{children}</span>;
+}
+
+function Lane({ chips, seconds, reverse }: { chips: Chip[]; seconds: number; reverse?: boolean }) {
+  const row = (copy: number) =>
+    chips.map((c, i) => (
+      <span
+        key={`${copy}-${i}`}
+        className="mr-2.5 flex h-[38px] shrink-0 items-center gap-2 rounded-full bg-white px-3 text-[12.5px] font-medium whitespace-nowrap text-ink shadow-[0_1px_2px_rgb(0_0_0/0.06),0_4px_12px_-4px_rgb(24_39_75/0.12)]"
+      >
+        {c.icon}
+        {c.label}
+      </span>
+    ));
+  return (
+    <div className="flex w-max animate-marquee" style={{ animationDuration: `${seconds}s`, animationDirection: reverse ? "reverse" : "normal" }}>
+      {row(0)}
+      {row(1)}
+    </div>
+  );
+}
+
+function Spinner() {
+  return (
+    <svg viewBox="0 0 16 16" className="size-3.5 animate-spin text-ink/50 motion-reduce:animate-none" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+      {[0, 45, 90, 135, 180, 225, 270, 315].map((a, i) => (
+        <path key={a} d="M8 1.8v2.4" transform={`rotate(${a} 8 8)`} opacity={0.25 + (i / 8) * 0.75} />
+      ))}
+    </svg>
+  );
+}
+
+export function ContactsPanel() {
+  const t = useTranslations("Landing.mock.contacts");
+  const fb = <span className="flex size-[22px] items-center justify-center rounded-full bg-[#1877f2] text-[10px] font-bold text-white">f</span>;
+  const ig = <span className="flex size-[22px] items-center justify-center rounded-[7px] bg-gradient-to-tr from-[#f9a03f] via-[#e1306c] to-[#833ab4] text-[10px] font-bold text-white">◎</span>;
+  const wa = (
+    <span className="flex size-[22px] items-center justify-center rounded-full bg-[#25d366] text-white">
+      <svg viewBox="0 0 16 16" className="size-3" fill="currentColor" aria-hidden="true">
+        <path d="M8 1.5a6.5 6.5 0 0 0-5.6 9.8L1.5 14.5l3.3-.9A6.5 6.5 0 1 0 8 1.5zm3.2 8.9c-.1.4-.8.7-1.1.8-.3 0-.6.1-2-.5-1.7-.7-2.8-2.5-2.9-2.6-.1-.1-.7-.9-.7-1.8s.4-1.3.6-1.5c.1-.2.3-.2.4-.2h.3c.1 0 .2 0 .4.3l.5 1.3c0 .1.1.2 0 .3l-.2.3-.3.3c-.1.1-.2.2-.1.4.1.2.5.9 1.1 1.4.8.7 1.4.9 1.6 1 .2.1.3 0 .4-.1l.5-.6c.1-.2.2-.1.4-.1l1.2.6c.2.1.3.1.3.2.1.1.1.4 0 .8z" />
+      </svg>
+    </span>
+  );
+  const dot = (tint: string) => <ChipIcon tint={tint}><span className="size-2 rounded-full bg-white/90" /></ChipIcon>;
+  const glyph = (tint: string, g: string) => (
+    <ChipIcon tint={tint}>
+      <span className="text-[10px] font-semibold text-ink/70">{g}</span>
+    </ChipIcon>
+  );
+  const icon = (tint: string, Icon: (p: { className?: string }) => ReactNode) => (
+    <ChipIcon tint={tint}>
+      <Icon className="size-3 text-ink/70" />
+    </ChipIcon>
+  );
+  const Sign = ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 16 16" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M2.5 2.5h11v7h-11zM7.2 9.5h1.6v4.5H7.2z" />
+    </svg>
+  );
+  const lanes: Chip[][] = [
+    [
+      { label: t("chips.volunteer"), icon: dot("bg-positive") },
+      { label: "Facebook", icon: fb },
+      { label: t("chips.ward3"), icon: glyph("bg-[#e7e0a9]", "3") },
+      { label: t("chips.newsletter"), icon: icon("bg-[#bcd7ec]", MailSolid) },
+    ],
+    [
+      { label: t("chips.lawnSign"), icon: icon("bg-[#f3d3b8]", Sign) },
+      { label: "WhatsApp", icon: wa },
+      { label: t("chips.french"), icon: glyph("bg-[#d8c6e8]", "Fr") },
+      { label: t("chips.canvass"), icon: icon("bg-[#c7d9b0]", HomeSolid) },
+    ],
+    [
+      { label: t("chips.signup"), icon: icon("bg-[#c9e3dc]", ClipboardSolid) },
+      { label: "Instagram", icon: ig },
+      { label: t("chips.ward7"), icon: glyph("bg-[#e7e0a9]", "7") },
+      { label: t("chips.email"), icon: icon("bg-[#bcd7ec]", MailSolid) },
+    ],
+    [
+      { label: t("chips.townHall"), icon: icon("bg-[#f3d3b8]", CalendarSolid) },
+      { label: t("chips.volunteer"), icon: dot("bg-positive") },
+      { label: "Facebook", icon: fb },
+      { label: t("chips.lawnSign"), icon: icon("bg-[#f3d3b8]", Sign) },
+    ],
+    [
+      { label: t("chips.french"), icon: glyph("bg-[#d8c6e8]", "Fr") },
+      { label: t("chips.signup"), icon: icon("bg-[#c9e3dc]", ClipboardSolid) },
+      { label: "WhatsApp", icon: wa },
+      { label: t("chips.ward3"), icon: glyph("bg-[#e7e0a9]", "3") },
+    ],
+  ];
+  const tones = {
+    positive: "bg-positive-soft text-positive ring-positive/15",
+    warning: "bg-[#fff4e5] text-warning ring-warning/15",
+  } as const;
+  const rows = [
+    { person: people.marie, state: t("states.volunteer"), tone: "positive" as const, when: t("when.today") },
+    { person: people.owen, state: t("states.followUp"), tone: "warning" as const, when: t("when.twoDays") },
+    { person: people.priya, state: t("states.supporter"), tone: "positive" as const, when: t("when.yesterday") },
+    { person: people.dev, state: t("states.duplicate"), tone: "warning" as const, when: t("when.threeDays") },
+  ];
+
+  return (
+    <div className="absolute inset-0">
+      {/* Lanes of chips, behind the card on the right. */}
+      <div className="absolute top-[38%] right-0 bottom-0 left-[38%] flex flex-col justify-around overflow-hidden py-2 motion-reduce:[&_*]:animate-none">
+        {lanes.map((lane, i) => (
+          <Lane key={i} chips={lane} seconds={38 + i * 7} reverse={i % 2 === 1} />
+        ))}
+      </div>
+
+      {/* The card, running off the left and bottom edges. */}
+      <div className="absolute top-[15%] bottom-0 -left-12 w-[calc(66%+3rem)] rounded-tr-[32px] bg-white px-7 pt-6 text-ink shadow-[0_-4px_10px_0_rgb(0_0_0/0.03),0_12px_40px_-8px_rgb(24_39_75/0.18)]">
+        <div className="flex justify-end gap-2">
+          <span className="flex h-9 items-center gap-2 rounded-full bg-[#f0f0f0] px-3.5 text-[12.5px] font-medium whitespace-nowrap">
+            <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M8 10.5V2.5M5 5.5l3-3 3 3M2.5 10v3h11v-3" />
+            </svg>
+            {t("importSheet")}
+          </span>
+          <span className="flex h-9 items-center gap-1.5 rounded-full bg-[#f0f0f0] px-3.5 text-[12.5px] font-medium whitespace-nowrap">
+            <span className="text-[15px] leading-none">+</span>
+            {t("addContact")}
+          </span>
+        </div>
+        <div className="mt-6 grid grid-cols-[1fr_auto_auto] items-center gap-x-6 text-[12px]">
+          <span />
+          <span className="text-muted">{t("status")}</span>
+          <span className="text-right text-muted">{t("lastContact")}</span>
+          {rows.map((r) => (
+            <div key={r.person.initials} className="contents">
+              <span className="flex h-[54px] items-center gap-2.5 truncate text-[13px] text-ink/60">
+                <Avatar person={r.person} size="h-7 w-7 text-[9px]" />
+                {r.person.name}
+              </span>
+              <span>
+                <span className={`inline-flex rounded-full px-2.5 py-1 text-[12px] font-medium ring-1 ${tones[r.tone]}`}>{r.state}</span>
+              </span>
+              <span className="text-right text-[13px] tabular-nums">{r.when}</span>
+            </div>
+          ))}
+          <span className="h-[54px]" />
+          <span>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f3f3f3] px-2.5 py-1 text-[12px] font-medium text-ink/60 ring-1 ring-line">
+              <Spinner />
+              {t("importing")}
+            </span>
+          </span>
+          <span className="flex justify-end">
+            <Spinner />
+          </span>
+        </div>
+      </div>
     </div>
   );
 }

@@ -380,7 +380,38 @@
         "staff": "Contacts, email and inbox",
         "volunteer": "Their 2 assigned lists only"
       },
-      "consentChanged": "{channel} updated just now"
+      "consentChanged": "{channel} updated just now",
+      "contacts": {
+        "importSheet": "Import a spreadsheet",
+        "addContact": "Add contact",
+        "status": "Status",
+        "lastContact": "Last contact",
+        "states": {
+          "volunteer": "Volunteer",
+          "followUp": "Needs follow-up",
+          "supporter": "Supporter",
+          "duplicate": "Possible duplicate"
+        },
+        "when": {
+          "today": "Today",
+          "yesterday": "Yesterday",
+          "twoDays": "2 days ago",
+          "threeDays": "3 days ago"
+        },
+        "importing": "Importing contacts",
+        "chips": {
+          "volunteer": "Volunteer",
+          "lawnSign": "Lawn sign",
+          "french": "Prefers French",
+          "signup": "Signup form",
+          "canvass": "Canvass",
+          "townHall": "Town hall",
+          "newsletter": "Newsletter",
+          "ward3": "Ward 3",
+          "ward7": "Ward 7",
+          "email": "Email"
+        }
+      }
     }
   },
   "Auth": {

@@ -29,7 +29,7 @@ import { CampaignBox } from "./campaign-box";
 import { Container, SectionTitle } from "./container";
 import { CountUp } from "./count-up";
 import { MockReveal } from "./mock-reveal";
-import { LiveConsentMock, LiveContactMock, LiveEmailMock, LiveInboxMock, LiveTeamMock } from "./live-mocks";
+import { ContactsPanel, LiveConsentMock, LiveEmailMock, LiveInboxMock, LiveTeamMock } from "./live-mocks";
 
 type IconType = ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -164,8 +164,9 @@ export function Overview() {
 type FeatureKey = "contacts" | "email" | "social" | "volunteers" | "consent";
 
 // Each feature has its own sky behind its picture and on its icon tile.
-const features: { key: FeatureKey; icon: IconType; bullets: string[]; Mock: ComponentType; sky: string }[] = [
-  { key: "contacts", icon: UsersSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: LiveContactMock, sky: "bg-sky" },
+// `fill`: the picture fills its panel instead of sitting centred in it.
+const features: { key: FeatureKey; icon: IconType; bullets: string[]; Mock: ComponentType; sky: string; fill?: boolean }[] = [
+  { key: "contacts", icon: UsersSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: ContactsPanel, sky: "bg-sky", fill: true },
   { key: "email", icon: MailSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: LiveEmailMock, sky: "bg-dawn" },
   { key: "social", icon: ChatSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: LiveInboxMock, sky: "bg-lavender" },
   { key: "volunteers", icon: LayersSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: LiveTeamMock, sky: "bg-sage" },
@@ -184,6 +185,7 @@ function Feature({
   bullets,
   Mock,
   sky,
+  fill = false,
   flip,
 }: {
   featureKey: FeatureKey;
@@ -191,6 +193,7 @@ function Feature({
   bullets: string[];
   Mock: ComponentType;
   sky: string;
+  fill?: boolean;
   flip: boolean;
 }) {
   const t = useTranslations(`Landing.features.${featureKey}`);
@@ -223,11 +226,15 @@ function Feature({
             </div>
           </div>
           <div aria-hidden="true" className={`${sky} relative flex h-[340px] items-center justify-center overflow-hidden sm:h-[440px] lg:h-[544px]`}>
-            <div className="scale-[0.8] sm:scale-100 lg:scale-110">
-              <MockReveal>
-                <Mock />
-              </MockReveal>
-            </div>
+            {fill ? (
+              <Mock />
+            ) : (
+              <div className="scale-[0.8] sm:scale-100 lg:scale-110">
+                <MockReveal>
+                  <Mock />
+                </MockReveal>
+              </div>
+            )}
           </div>
         </div>
       </Container>
@@ -238,8 +245,8 @@ function Feature({
 export function Features() {
   return (
     <>
-      {features.map(({ key, icon, bullets, Mock, sky }, i) => (
-        <Feature key={key} featureKey={key} icon={icon} bullets={bullets} Mock={Mock} sky={sky} flip={i % 2 === 1} />
+      {features.map(({ key, icon, bullets, Mock, sky, fill }, i) => (
+        <Feature key={key} featureKey={key} icon={icon} bullets={bullets} Mock={Mock} sky={sky} fill={fill} flip={i % 2 === 1} />
       ))}
     </>
   );

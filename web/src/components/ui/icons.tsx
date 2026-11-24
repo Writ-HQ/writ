@@ -338,6 +338,13 @@ export const LifebuoySolid = (p: IconProps) => (
   </Solid>
 );
 
+/** A solid house with its door cut out. */
+export const HomeSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M11.3 2.6a1 1 0 0 1 1.4 0l8.4 8a1 1 0 0 1-.7 1.7H19V20a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 20v-7.7H3.6a1 1 0 0 1-.7-1.7zM10 15.5v6h4v-6z" />
+  </Solid>
+);
+
 export const Layers = (p: IconProps) => (
   <Icon {...p}>
     <path d="m12 3 9 5-9 5-9-5 9-5Z" />
