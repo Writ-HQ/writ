@@ -365,7 +365,22 @@
       "optedIn": "Opted in",
       "optedOut": "Opted out",
       "noAnswer": "Not asked",
-      "consentNote": "Recorded with source and date for every change."
+      "consentNote": "Recorded with source and date for every change.",
+      "justNow": "Just now",
+      "tl4": "Replied to “Help with winter heating”",
+      "tl5": "Asked for a lawn sign",
+      "tl6": "Joined the Saturday canvass",
+      "subjectOther": "Assemblée publique jeudi",
+      "bodyOther": "Joignez-vous à nous jeudi à 19 h au centre communautaire pour parler de ce qui compte à Lakeview-Nord.",
+      "m4": "Can someone call me about my pension?",
+      "m5": "Thanks for the newsletter, see you Thursday.",
+      "perms": {
+        "owner": "Full control, billing and exports",
+        "admin": "Team, settings and exports",
+        "staff": "Contacts, email and inbox",
+        "volunteer": "Their 2 assigned lists only"
+      },
+      "consentChanged": "{channel} updated just now"
     }
   },
   "Auth": {

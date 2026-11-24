@@ -365,7 +365,22 @@
       "optedIn": "Accepté",
       "optedOut": "Refusé",
       "noAnswer": "Non demandé",
-      "consentNote": "Consigné avec la source et la date à chaque changement."
+      "consentNote": "Consigné avec la source et la date à chaque changement.",
+      "justNow": "À l’instant",
+      "tl4": "A répondu à « Aide pour le chauffage cet hiver »",
+      "tl5": "A demandé une pancarte",
+      "tl6": "S’est joint au porte-à-porte de samedi",
+      "subjectOther": "Town hall on Thursday",
+      "bodyOther": "Join us Thursday at 7 pm at the community centre to talk about what matters in Lakeview North.",
+      "m4": "Quelqu’un peut-il m’appeler au sujet de ma pension?",
+      "m5": "Merci pour l’infolettre, à jeudi!",
+      "perms": {
+        "owner": "Contrôle total, facturation et exportations",
+        "admin": "Équipe, paramètres et exportations",
+        "staff": "Contacts, courriels et messagerie",
+        "volunteer": "Ses 2 listes seulement"
+      },
+      "consentChanged": "{channel} mis à jour à l’instant"
     }
   },
   "Auth": {

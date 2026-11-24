@@ -1,14 +1,14 @@
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
-import { Chat, Check, Home, Inbox, ListIcon, Mail, Users } from "@/components/ui/icons";
+import { Chat, Home, Inbox, ListIcon, Mail, Users } from "@/components/ui/icons";
 
 // Product mock-ups that stand in for screenshots until the real dashboard
 // exists. Every name, place and number in them is fictional. They are
 // pictures: hidden from screen readers, which get a single description
 // from the section that contains them.
 
-const people = {
+export const people = {
   marie: { name: "Marie Gagnon", initials: "MG", tint: "bg-[#c7d9b0]" },
   owen: { name: "Owen Clarke", initials: "OC", tint: "bg-[#d8c6e8]" },
   priya: { name: "Priya Nair", initials: "PN", tint: "bg-[#f3d3b8]" },
@@ -17,9 +17,9 @@ const people = {
   jordan: { name: "Jordan Lee", initials: "JL", tint: "bg-[#c9e3dc]" },
 } as const;
 
-type Person = (typeof people)[keyof typeof people];
+export type Person = (typeof people)[keyof typeof people];
 
-function Avatar({ person, size = "h-6 w-6 text-[9px]" }: { person: Person; size?: string }) {
+export function Avatar({ person, size = "h-6 w-6 text-[9px]" }: { person: Person; size?: string }) {
   return (
     <span className={`inline-flex shrink-0 items-center justify-center rounded-full font-semibold text-ink/70 ${person.tint} ${size}`}>
       {person.initials}
@@ -27,7 +27,7 @@ function Avatar({ person, size = "h-6 w-6 text-[9px]" }: { person: Person; size?
   );
 }
 
-function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
+export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
     // The reference's frame: a 6px corner and a three-layer shadow.
     <div
@@ -38,7 +38,7 @@ function Card({ children, className = "" }: { children: ReactNode; className?: s
   );
 }
 
-function Tag({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "positive" | "warning" }) {
+export function Tag({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "positive" | "warning" }) {
   const tones = {
     neutral: "bg-panel text-ink/70 ring-1 ring-line",
     positive: "bg-positive-soft text-positive",
@@ -139,174 +139,6 @@ export function DashboardMock() {
           </tbody>
         </table>
       </div>
-    </Card>
-  );
-}
-
-// Contacts: one person's record, with household, tags and timeline.
-export function ContactMock() {
-  const t = useTranslations("Landing.mock");
-  return (
-    <Card className="w-[340px] p-5 text-ink">
-      <div className="flex items-center gap-3">
-        <Avatar person={people.marie} size="h-10 w-10 text-xs" />
-        <div>
-          <p className="text-sm font-medium">{people.marie.name}</p>
-          <p className="text-[11px] text-muted">{t("household")}</p>
-        </div>
-      </div>
-      <div className="mt-4 flex flex-wrap gap-1.5">
-        <Tag tone="positive">{t("tags.volunteer")}</Tag>
-        <Tag>{t("tags.lawnSign")}</Tag>
-        <Tag>{t("tags.french")}</Tag>
-      </div>
-      <p className="mt-5 mb-2 text-[11px] font-medium">{t("timeline")}</p>
-      <ol className="space-y-2.5 border-l border-line pl-3 text-[11px]">
-        {[
-          [t("tl1"), t("t2")],
-          [t("tl2"), t("t5")],
-          [t("tl3"), t("t5")],
-        ].map(([what, when]) => (
-          <li key={what} className="relative">
-            <span className="absolute top-1 -left-[15.5px] h-1.5 w-1.5 rounded-full bg-ink" />
-            <p>{what}</p>
-            <p className="text-[10px] text-muted">{when}</p>
-          </li>
-        ))}
-      </ol>
-    </Card>
-  );
-}
-
-// Email: a bilingual composer.
-export function EmailMock() {
-  const t = useTranslations("Landing.mock");
-  return (
-    <Card className="w-[380px] overflow-hidden text-ink">
-      <div className="flex items-center justify-between border-b border-line px-4 py-2.5">
-        <div className="flex gap-1 rounded-full bg-panel p-0.5 text-[10px] font-medium ring-1 ring-line">
-          <span className="rounded-full bg-white px-2.5 py-0.5 shadow-sm">EN</span>
-          <span className="px-2.5 py-0.5 text-muted">FR</span>
-        </div>
-        <span className="rounded-full bg-ink px-3 py-1 text-[10px] font-medium text-white">{t("schedule")}</span>
-      </div>
-      <div className="space-y-3 p-4 text-[11px]">
-        <div>
-          <p className="text-[10px] text-muted">{t("subject")}</p>
-          <p className="mt-0.5 font-medium">{t("subjectValue")}</p>
-        </div>
-        <p className="leading-relaxed text-ink/80">{t("bodyPreview")}</p>
-        <div className="flex items-center gap-2 rounded-lg bg-panel px-3 py-2 ring-1 ring-line">
-          <Users className="h-3.5 w-3.5 text-muted" />
-          <span className="truncate">{t("audience")}</span>
-        </div>
-        <p className="flex items-center gap-1.5 text-positive">
-          <Check className="h-3.5 w-3.5" />
-          {t("sendsIn")}
-        </p>
-      </div>
-    </Card>
-  );
-}
-
-function PlatformBadge({ platform }: { platform: "fb" | "ig" }) {
-  return platform === "fb" ? (
-    <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#1877f2] text-[8px] font-bold text-white">f</span>
-  ) : (
-    <span className="inline-flex h-4 w-4 items-center justify-center rounded-[5px] bg-gradient-to-tr from-[#f9a03f] via-[#e1306c] to-[#833ab4] text-[8px] font-bold text-white">
-      ◎
-    </span>
-  );
-}
-
-// Social: an inbox with messages from both platforms, matched to contacts.
-export function InboxMock() {
-  const t = useTranslations("Landing.mock");
-  const messages = [
-    { person: people.priya, platform: "ig" as const, text: t("m1"), when: t("t1"), matched: true },
-    { person: people.owen, platform: "fb" as const, text: t("m2"), when: t("t3") },
-    { person: people.dev, platform: "ig" as const, text: t("m3"), when: t("t4") },
-  ];
-  return (
-    <Card className="w-[380px] overflow-hidden text-ink">
-      <p className="border-b border-line px-4 py-2.5 text-[11px] font-medium">{t("inboxAll")}</p>
-      <ul>
-        {messages.map(({ person, platform, text, when, matched }) => (
-          <li key={person.initials} className={`flex gap-3 border-b border-line/70 px-4 py-3 last:border-0 ${matched ? "bg-panel" : ""}`}>
-            <span className="relative">
-              <Avatar person={person} size="h-8 w-8 text-[10px]" />
-              <span className="absolute -right-1 -bottom-1">
-                <PlatformBadge platform={platform} />
-              </span>
-            </span>
-            <div className="min-w-0 flex-1 text-[11px]">
-              <p className="flex justify-between gap-2">
-                <span className="font-medium">{person.name}</span>
-                <span className="text-[10px] text-muted">{when}</span>
-              </p>
-              <p className="mt-0.5 truncate text-ink/75">{text}</p>
-              {matched && (
-                <p className="mt-1.5">
-                  <Tag tone="positive">✓ {t("matched")}</Tag>
-                </p>
-              )}
-            </div>
-          </li>
-        ))}
-      </ul>
-    </Card>
-  );
-}
-
-// Volunteers: a team list with roles.
-export function TeamMock() {
-  const t = useTranslations("Landing.mock");
-  const team = [
-    { person: people.jordan, role: t("roles.owner") },
-    { person: people.priya, role: t("roles.admin") },
-    { person: people.owen, role: t("roles.staff") },
-    { person: people.marie, role: t("roles.volunteer"), lists: t("assigned") },
-  ];
-  return (
-    <Card className="w-[360px] overflow-hidden text-ink">
-      <p className="border-b border-line px-4 py-2.5 text-[11px] font-medium">{t("team")}</p>
-      <ul>
-        {team.map(({ person, role, lists }) => (
-          <li key={person.initials} className="flex items-center gap-3 border-b border-line/70 px-4 py-2.5 text-[11px] last:border-0">
-            <Avatar person={person} size="h-7 w-7 text-[9px]" />
-            <span className="flex-1">
-              <span className="block font-medium">{person.name}</span>
-              <span className="text-[10px] text-positive">{t("mfaOn")}</span>
-            </span>
-            {lists && <span className="text-[10px] text-muted">{lists}</span>}
-            <Tag>{role}</Tag>
-          </li>
-        ))}
-      </ul>
-    </Card>
-  );
-}
-
-// Consent: one person's consent by channel.
-export function ConsentMock() {
-  const t = useTranslations("Landing.mock");
-  const rows = [
-    { channel: t("channels.email"), state: t("optedIn"), tone: "positive" as const },
-    { channel: t("channels.sms"), state: t("optedOut"), tone: "warning" as const },
-    { channel: t("channels.phone"), state: t("noAnswer"), tone: "neutral" as const },
-  ];
-  return (
-    <Card className="w-[340px] overflow-hidden text-ink">
-      <p className="border-b border-line px-4 py-2.5 text-[11px] font-medium">{t("consentFor")}</p>
-      <ul>
-        {rows.map(({ channel, state, tone }) => (
-          <li key={channel} className="flex items-center justify-between border-b border-line/70 px-4 py-2.5 text-[11px] last:border-0">
-            {channel}
-            <Tag tone={tone}>{state}</Tag>
-          </li>
-        ))}
-      </ul>
-      <p className="bg-panel px-4 py-2.5 text-[10px] text-muted">{t("consentNote")}</p>
     </Card>
   );
 }

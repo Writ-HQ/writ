@@ -188,6 +188,51 @@
   }
 }
 
+/* The live product mock-ups (components/landing/live-mocks.tsx). */
+.live-in {
+  animation: live-in 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.live-shift {
+  animation: live-shift 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.live-fade {
+  animation: live-fade 500ms ease both;
+}
+.live-pop {
+  display: inline-flex;
+  animation: live-pop 450ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes live-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+@keyframes live-shift {
+  from {
+    transform: translateY(-14px);
+  }
+}
+@keyframes live-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes live-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-in,
+  .live-shift,
+  .live-fade,
+  .live-pop {
+    animation: none;
+  }
+}
+
 html {
   scroll-behavior: smooth;
   /* Section anchors land below the sticky navbar. */
