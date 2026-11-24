@@ -163,12 +163,13 @@ export function Overview() {
 
 type FeatureKey = "contacts" | "email" | "social" | "volunteers" | "consent";
 
-const features: { key: FeatureKey; icon: IconType; bullets: string[]; Mock: ComponentType }[] = [
-  { key: "contacts", icon: UsersSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: LiveContactMock },
-  { key: "email", icon: MailSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: LiveEmailMock },
-  { key: "social", icon: ChatSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: LiveInboxMock },
-  { key: "volunteers", icon: LayersSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: LiveTeamMock },
-  { key: "consent", icon: ShieldSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: LiveConsentMock },
+// Each feature has its own sky behind its picture and on its icon tile.
+const features: { key: FeatureKey; icon: IconType; bullets: string[]; Mock: ComponentType; sky: string }[] = [
+  { key: "contacts", icon: UsersSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: LiveContactMock, sky: "bg-sky" },
+  { key: "email", icon: MailSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: LiveEmailMock, sky: "bg-dawn" },
+  { key: "social", icon: ChatSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: LiveInboxMock, sky: "bg-lavender" },
+  { key: "volunteers", icon: LayersSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: LiveTeamMock, sky: "bg-sage" },
+  { key: "consent", icon: ShieldSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: LiveConsentMock, sky: "bg-dusk" },
 ];
 
 // One product area: text on one side, a mock-up on sky on the other,
@@ -177,7 +178,21 @@ const features: { key: FeatureKey; icon: IconType; bullets: string[]; Mock: Comp
 // 16px eyebrow 36px below it; a 44px heading on 40px lines; then, pushed
 // to the bottom so the button lines up with the panel's foot, 17px
 // bullets 8px apart and a 42px outline button.
-function Feature({ featureKey, icon: Icon, bullets, Mock, flip }: { featureKey: FeatureKey; icon: IconType; bullets: string[]; Mock: ComponentType; flip: boolean }) {
+function Feature({
+  featureKey,
+  icon: Icon,
+  bullets,
+  Mock,
+  sky,
+  flip,
+}: {
+  featureKey: FeatureKey;
+  icon: IconType;
+  bullets: string[];
+  Mock: ComponentType;
+  sky: string;
+  flip: boolean;
+}) {
   const t = useTranslations(`Landing.features.${featureKey}`);
   return (
     <section id={featureKey} className="py-12 lg:py-16">
@@ -207,7 +222,7 @@ function Feature({ featureKey, icon: Icon, bullets, Mock, flip }: { featureKey: 
               </div>
             </div>
           </div>
-          <div aria-hidden="true" className="bg-sky relative flex h-[340px] items-center justify-center overflow-hidden rounded-[6px] sm:h-[440px] lg:h-[544px]">
+          <div aria-hidden="true" className={`${sky} relative flex h-[340px] items-center justify-center overflow-hidden rounded-[6px] sm:h-[440px] lg:h-[544px]`}>
             <div className="scale-[0.8] sm:scale-100 lg:scale-110">
               <MockReveal>
                 <Mock />
@@ -223,8 +238,8 @@ function Feature({ featureKey, icon: Icon, bullets, Mock, flip }: { featureKey: 
 export function Features() {
   return (
     <>
-      {features.map(({ key, icon, bullets, Mock }, i) => (
-        <Feature key={key} featureKey={key} icon={icon} bullets={bullets} Mock={Mock} flip={i % 2 === 1} />
+      {features.map(({ key, icon, bullets, Mock, sky }, i) => (
+        <Feature key={key} featureKey={key} icon={icon} bullets={bullets} Mock={Mock} sky={sky} flip={i % 2 === 1} />
       ))}
     </>
   );

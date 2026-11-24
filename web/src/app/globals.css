@@ -266,6 +266,76 @@ body {
     );
 }
 
+/* More skies for the feature panels, each with the same clouds: dawn,
+   lavender, sage and dusk. Pastel only, so none reads as a party colour. */
+@utility bg-dawn {
+  background-color: rgb(244 214 190);
+  background-image:
+    radial-gradient(ellipse 38% 22% at 18% 26%, rgb(255 255 255 / 0.85), transparent 70%),
+    radial-gradient(ellipse 30% 16% at 72% 18%, rgb(255 255 255 / 0.7), transparent 70%),
+    radial-gradient(ellipse 45% 20% at 60% 78%, rgb(255 255 255 / 0.75), transparent 70%),
+    radial-gradient(ellipse 25% 14% at 8% 86%, rgb(255 255 255 / 0.6), transparent 70%),
+    linear-gradient(
+      rgb(244 214 190),
+      rgb(247 224 204),
+      rgb(249 232 214),
+      rgb(246 226 210),
+      rgb(240 212 192),
+      rgb(236 196 170)
+    );
+}
+
+@utility bg-lavender {
+  background-color: rgb(214 206 238);
+  background-image:
+    radial-gradient(ellipse 38% 22% at 18% 26%, rgb(255 255 255 / 0.85), transparent 70%),
+    radial-gradient(ellipse 30% 16% at 72% 18%, rgb(255 255 255 / 0.7), transparent 70%),
+    radial-gradient(ellipse 45% 20% at 60% 78%, rgb(255 255 255 / 0.75), transparent 70%),
+    radial-gradient(ellipse 25% 14% at 8% 86%, rgb(255 255 255 / 0.6), transparent 70%),
+    linear-gradient(
+      rgb(214 206 238),
+      rgb(224 218 242),
+      rgb(230 225 244),
+      rgb(226 220 240),
+      rgb(216 208 236),
+      rgb(200 190 230)
+    );
+}
+
+@utility bg-sage {
+  background-color: rgb(204 224 204);
+  background-image:
+    radial-gradient(ellipse 38% 22% at 18% 26%, rgb(255 255 255 / 0.85), transparent 70%),
+    radial-gradient(ellipse 30% 16% at 72% 18%, rgb(255 255 255 / 0.7), transparent 70%),
+    radial-gradient(ellipse 45% 20% at 60% 78%, rgb(255 255 255 / 0.75), transparent 70%),
+    radial-gradient(ellipse 25% 14% at 8% 86%, rgb(255 255 255 / 0.6), transparent 70%),
+    linear-gradient(
+      rgb(204 224 204),
+      rgb(216 232 214),
+      rgb(224 236 220),
+      rgb(219 233 216),
+      rgb(206 226 204),
+      rgb(186 214 186)
+    );
+}
+
+@utility bg-dusk {
+  background-color: rgb(214 200 222);
+  background-image:
+    radial-gradient(ellipse 38% 22% at 18% 26%, rgb(255 255 255 / 0.85), transparent 70%),
+    radial-gradient(ellipse 30% 16% at 72% 18%, rgb(255 255 255 / 0.7), transparent 70%),
+    radial-gradient(ellipse 45% 20% at 60% 78%, rgb(255 255 255 / 0.75), transparent 70%),
+    radial-gradient(ellipse 25% 14% at 8% 86%, rgb(255 255 255 / 0.6), transparent 70%),
+    linear-gradient(
+      rgb(214 200 222),
+      rgb(222 212 228),
+      rgb(214 218 236),
+      rgb(200 212 234),
+      rgb(184 200 228),
+      rgb(166 188 222)
+    );
+}
+
 /* The closing band: mostly mist at the top, sky clouds towards the bottom. */
 @utility bg-sky-band {
   background-color: rgb(223 229 234);
