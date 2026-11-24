@@ -60,6 +60,19 @@ export const MapleLeaf = (p: IconProps) => (
   </Icon>
 );
 
+/**
+ * The maple leaf as on the flag: solid red, 11 points. Not a line icon,
+ * so it carries its own colour and ignores currentColor.
+ */
+export const MapleLeafRed = (p: IconProps) => (
+  <svg viewBox="155 152 890 890" aria-hidden="true" focusable="false" {...p}>
+    <path
+      fill="#E8112D"
+      d="M600 152L667 278Q682 305 708 292L758 265L722 465Q718 495 740 502Q750 504 757 492L840 392L855 440Q862 460 884 453L986 432L957 545Q952 570 975 582L1005 602L812 762Q795 778 802 797L818 846L638 826Q616 824 616 852L622 1042L578 1042L584 852Q584 824 562 826L382 846L398 797Q405 778 388 762L195 602L225 582Q248 570 243 545L214 432L316 453Q338 460 345 440L360 392L443 492Q450 504 460 502Q482 495 478 465L442 265L492 292Q518 305 533 278Z"
+    />
+  </svg>
+);
+
 export const Layers = (p: IconProps) => (
   <Icon {...p}>
     <path d="m12 3 9 5-9 5-9-5 9-5Z" />

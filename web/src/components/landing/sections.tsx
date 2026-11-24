@@ -14,6 +14,7 @@ import {
   Lock,
   Mail,
   MapleLeaf,
+  MapleLeafRed,
   Plus,
   Shield,
   Users,
@@ -229,7 +230,7 @@ export function Security() {
   const t = useTranslations("Landing.security");
   const items: { key: "isolated" | "canada" | "mfa" | "audit"; icon: IconType }[] = [
     { key: "isolated", icon: Lock },
-    { key: "canada", icon: MapleLeaf },
+    { key: "canada", icon: MapleLeafRed },
     { key: "mfa", icon: KeyRound },
     { key: "audit", icon: Ledger },
   ];
