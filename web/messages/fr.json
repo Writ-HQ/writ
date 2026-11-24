@@ -98,7 +98,7 @@
       },
       "social": {
         "title": "Messagerie sociale",
-        "desc": "Les messages Facebook et Instagram, associés à vos contacts."
+        "desc": "Les messages Facebook, Instagram et WhatsApp dans une seule boîte, associés à vos contacts."
       },
       "volunteers": {
         "title": "Bénévoles et rôles",
@@ -107,6 +107,30 @@
       "consent": {
         "title": "Consentement et confidentialité",
         "desc": "Consentements et désabonnements suivis pour chaque personne, sur chaque canal."
+      },
+      "texts": {
+        "title": "Textos et appels",
+        "desc": "Des textos dans les deux sens, un registre de chaque appel et un texto automatique quand vous en manquez un."
+      },
+      "appointments": {
+        "title": "Rendez-vous",
+        "desc": "Des heures de bureau et des rencontres que les gens réservent eux-mêmes, avec rappels par courriel et texto."
+      },
+      "automations": {
+        "title": "Suivis automatiques",
+        "desc": "Remerciements, vœux d’anniversaire et rappels qui s’envoient tout seuls. Activez ou désactivez chacun."
+      },
+      "reviews": {
+        "title": "Avis et réputation",
+        "desc": "Demandez des avis, répondez au même endroit et voyez si les gens vous trouvent."
+      },
+      "websites": {
+        "title": "Sites Web et formulaires",
+        "desc": "Un site Web simple, des formulaires d’inscription et des sondages, créés à partir d’un modèle."
+      },
+      "casework": {
+        "title": "Gestion des dossiers",
+        "desc": "Chaque demande suivie du premier contact jusqu’à son règlement, sans que rien ne reste en attente."
       }
     },
     "features": {
@@ -132,8 +156,8 @@
       },
       "social": {
         "eyebrow": "Messagerie sociale",
-        "title": "Chaque message Facebook et Instagram, associé à la bonne personne.",
-        "b1": "Une seule boîte pour les messages et commentaires des deux plateformes.",
+        "title": "Chaque message Facebook, Instagram et WhatsApp, associé à la bonne personne.",
+        "b1": "Une seule boîte pour les messages et commentaires de toutes les plateformes.",
         "b2": "Chaque conversation liée au contact dont elle provient.",
         "b3": "Planifiez vos publications dans les deux langues.",
         "b4": "Rien ne part sans les approbations que vous avez définies.",

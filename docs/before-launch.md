@@ -85,10 +85,12 @@ and verified, with the date.
   database host in the privacy policy. Move the waitlist into the API
   when it is deployed.
 
-- **Features named in the landing page band.** The band
-  (web/src/lib/built-with.ts) lists SMS, surveys, websites, appointments,
-  call tracking, reputation management and document signing, none of
-  which are built, and most are not on the roadmap. Before promoting the
+- **Features named on the landing page.** The band
+  (web/src/lib/built-with.ts) and the feature grid (Overview in
+  web/src/components/landing/sections.tsx) name SMS and calls, WhatsApp,
+  surveys, websites, appointments, automatic follow-ups, reviews and
+  reputation, and document signing. None of these are built, and some
+  are not on the roadmap yet (docs/product-plan.md). Before promoting the
   site beyond the waitlist, build them, mark them as coming, or take them
   out, so the page does not promise what Writ cannot do.
 

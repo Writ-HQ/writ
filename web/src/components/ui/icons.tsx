@@ -176,6 +176,93 @@ export const ShieldSolid = (p: IconProps) => (
   </Solid>
 );
 
+/** A solid message bubble with three white dots: texting. */
+export const MessageSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M5 3h14a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-8.6l-4.4 3.4c-.5.4-1.2 0-1.2-.6V18H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z" />
+    <circle cx="8" cy="10.5" r="1.3" fill="#fff" />
+    <circle cx="12" cy="10.5" r="1.3" fill="#fff" />
+    <circle cx="16" cy="10.5" r="1.3" fill="#fff" />
+  </Solid>
+);
+
+/** A solid clipboard with a white check: surveys. */
+export const ClipboardSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M7 4h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
+    <rect x="8.5" y="2" width="7" height="4.2" rx="1.2" stroke="#fff" strokeWidth="1.4" />
+    <path d="M8.6 13.6l2.3 2.3 4.6-5" fill="none" stroke="#fff" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+  </Solid>
+);
+
+/** A solid browser window with white dots and a white bar: websites. */
+export const BrowserSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <rect x="2" y="3.5" width="20" height="17" rx="2.5" />
+    <path d="M2.6 9h18.8M13.5 13h4.5M13.5 16.2h3" fill="none" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
+    <circle cx="5.4" cy="6.3" r=".95" fill="#fff" />
+    <circle cx="8.2" cy="6.3" r=".95" fill="#fff" />
+    <rect x="5.5" y="12" width="5.5" height="5.2" rx=".8" fill="#fff" />
+  </Solid>
+);
+
+/** A solid calendar page with white dates: appointments. */
+export const CalendarSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M5 4.5h14A2.5 2.5 0 0 1 21.5 7v11.5A2.5 2.5 0 0 1 19 21H5a2.5 2.5 0 0 1-2.5-2.5V7A2.5 2.5 0 0 1 5 4.5z" />
+    <rect x="6.6" y="2" width="2.4" height="5.2" rx="1.2" stroke="#fff" strokeWidth="1.2" />
+    <rect x="15" y="2" width="2.4" height="5.2" rx="1.2" stroke="#fff" strokeWidth="1.2" />
+    <path d="M2.8 9.6h18.4" fill="none" stroke="#fff" strokeWidth="1.4" />
+    <g fill="#fff">
+      <rect x="6.4" y="12.4" width="2.4" height="2.4" rx=".6" />
+      <rect x="10.8" y="12.4" width="2.4" height="2.4" rx=".6" />
+      <rect x="15.2" y="12.4" width="2.4" height="2.4" rx=".6" />
+      <rect x="6.4" y="16.4" width="2.4" height="2.4" rx=".6" />
+      <rect x="10.8" y="16.4" width="2.4" height="2.4" rx=".6" />
+    </g>
+  </Solid>
+);
+
+/** A solid telephone handset with two sound waves: calls. */
+export const PhoneSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M6.4 2.7l2.2-.5a1.5 1.5 0 0 1 1.7.9l1.4 3.3a1.5 1.5 0 0 1-.4 1.7L9.6 9.6a12 12 0 0 0 4.8 4.8l1.5-1.7a1.5 1.5 0 0 1 1.7-.4l3.3 1.4a1.5 1.5 0 0 1 .9 1.7l-.5 2.2a2.6 2.6 0 0 1-2.5 2.1C10.6 19.7 4.3 13.4 4.3 5.2a2.6 2.6 0 0 1 2.1-2.5z" />
+    <path d="M14.8 2.8a6.6 6.6 0 0 1 6.4 6.4M14.6 6.3a3 3 0 0 1 3.1 3.1" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
+  </Solid>
+);
+
+/** A solid star with rounded points: reputation. */
+export const StarSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path
+      d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5-4.7-4.6 6.5-.9z"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinejoin="round"
+    />
+  </Solid>
+);
+
+/** A solid page with a white signature and a pen across its corner: signing. */
+export const SignatureSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M6.5 2h7.6L19 6.9V20a2 2 0 0 1-2 2H6.5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" />
+    <path d="M13.8 2.6V6a1.2 1.2 0 0 0 1.2 1.2h3.4z" fill="#fff" opacity=".45" />
+    <path d="M7.4 15.8c1-1.6 2-1.6 2.6 0s1.6 1.6 2.6 0" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M21.2 11.4a1.6 1.6 0 0 1 0 2.3l-5.6 5.6-3 .8.8-3 5.6-5.7a1.6 1.6 0 0 1 2.2 0z" stroke="#fff" strokeWidth="1.5" strokeLinejoin="round" />
+  </Solid>
+);
+
+/** A solid briefcase with a white seam and clasp: casework. */
+export const BriefcaseSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M8.5 7V5.2a1.7 1.7 0 0 1 1.7-1.7h3.6a1.7 1.7 0 0 1 1.7 1.7V7" fill="none" stroke="currentColor" strokeWidth="2" />
+    <path d="M4.5 7h15A2.5 2.5 0 0 1 22 9.5v9a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 18.5v-9A2.5 2.5 0 0 1 4.5 7z" />
+    <path d="M2.6 12.6h18.8" fill="none" stroke="#fff" strokeWidth="1.4" />
+    <rect x="10.4" y="11.1" width="3.2" height="3" rx=".7" stroke="#fff" strokeWidth="1.2" />
+  </Solid>
+);
+
 export const Info = (p: IconProps) => (
   <Icon {...p}>
     <circle cx="12" cy="12" r="9" />
@@ -214,55 +301,11 @@ export const ContactBook = (p: IconProps) => (
   </Icon>
 );
 
-export const MessageDots = (p: IconProps) => (
-  <Icon {...p}>
-    <path d="M4.5 4.5h15a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4.5 3.5v-3.5h0a1 1 0 0 1-1-1v-10a1 1 0 0 1 1-1z" />
-    <path d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01" strokeWidth={2.4} />
-  </Icon>
-);
-
-export const ClipboardCheck = (p: IconProps) => (
-  <Icon {...p}>
-    <path d="M9 4.5H6.5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-14a1 1 0 0 0-1-1H15" />
-    <rect x="9" y="3" width="6" height="3" rx="1" />
-    <path d="M9 13.5l2 2 4-4.5" />
-  </Icon>
-);
-
-export const Browser = (p: IconProps) => (
-  <Icon {...p}>
-    <rect x="3" y="4.5" width="18" height="15" rx="2" />
-    <path d="M3 9h18M6.5 6.75h.01M9 6.75h.01" />
-  </Icon>
-);
-
-export const Calendar = (p: IconProps) => (
-  <Icon {...p}>
-    <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
-    <path d="M3.5 10h17M8 3v4M16 3v4M8 14h2M14 14h2M8 17h2" />
-  </Icon>
-);
-
-export const PhoneCall = (p: IconProps) => (
-  <Icon {...p}>
-    <path d="M5 4h3.5l1.5 4-2 1.5a10 10 0 0 0 6.5 6.5l1.5-2 4 1.5V19a1.5 1.5 0 0 1-1.5 1.5C10.5 20.5 3.5 13.5 3.5 5.5A1.5 1.5 0 0 1 5 4z" />
-    <path d="M14.5 3.5a6 6 0 0 1 6 6M14.5 7a2.5 2.5 0 0 1 2.5 2.5" />
-  </Icon>
-);
-
-export const Star = (p: IconProps) => (
-  <Icon {...p}>
-    <path d="M12 3.5l2.6 5.3 5.9.9-4.25 4.1 1 5.8L12 16.8l-5.25 2.8 1-5.8L3.5 9.7l5.9-.9z" />
-  </Icon>
-);
-
-/** A page with a signature line and a pen. */
-export const Signature = (p: IconProps) => (
-  <Icon {...p}>
-    <path d="M13.5 20.5h-7a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1h8l4 4v4" />
-    <path d="M8.5 15.5c1-1.5 2-1.5 2.5 0s1.5 1.5 2.5 0" />
-    <path d="M20.5 13.5l-5 5-2 .5.5-2 5-5a1 1 0 0 1 1.5 1.5z" />
-  </Icon>
+/** A solid lightning bolt: things that happen automatically. */
+export const BoltSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M13.6 2.2a.6.6 0 0 1 1 .55L13.2 9.5h5.6a.6.6 0 0 1 .47.98l-8.9 11.3a.6.6 0 0 1-1.05-.52L10.8 14.5H5.2a.6.6 0 0 1-.47-.97z" />
+  </Solid>
 );
 
 export const Layers = (p: IconProps) => (

@@ -98,7 +98,7 @@
       },
       "social": {
         "title": "Social inbox",
-        "desc": "Facebook and Instagram messages, matched to your contacts."
+        "desc": "Facebook, Instagram and WhatsApp messages in one inbox, matched to your contacts."
       },
       "volunteers": {
         "title": "Volunteers and roles",
@@ -107,6 +107,30 @@
       "consent": {
         "title": "Consent and privacy",
         "desc": "Consent and opt-outs tracked for every person, on every channel."
+      },
+      "texts": {
+        "title": "Texts and calls",
+        "desc": "Two-way texting, a record of every call, and an automatic text when you miss one."
+      },
+      "appointments": {
+        "title": "Appointments",
+        "desc": "Office hours and meetings people can book themselves, with reminders by email and text."
+      },
+      "automations": {
+        "title": "Automatic follow-ups",
+        "desc": "Thank-yous, birthday notes and reminders that send themselves. Switch each one on or off."
+      },
+      "reviews": {
+        "title": "Reviews and reputation",
+        "desc": "Ask for reviews, reply from one place, and see whether people are finding you."
+      },
+      "websites": {
+        "title": "Websites and forms",
+        "desc": "A simple website, signup forms and surveys, set up from a template."
+      },
+      "casework": {
+        "title": "Casework",
+        "desc": "Every request tracked from first contact to resolution, with nothing left waiting."
       }
     },
     "features": {
@@ -132,8 +156,8 @@
       },
       "social": {
         "eyebrow": "Social inbox",
-        "title": "Every Facebook and Instagram message, matched to the right person.",
-        "b1": "One inbox for messages and comments from both platforms.",
+        "title": "Every Facebook, Instagram and WhatsApp message, matched to the right person.",
+        "b1": "One inbox for messages and comments from every platform.",
         "b2": "Each conversation linked to the contact it came from.",
         "b3": "Schedule posts in both languages.",
         "b4": "Nothing goes out without the approvals you set.",

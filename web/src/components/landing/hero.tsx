@@ -1,7 +1,17 @@
 import { useTranslations } from "next-intl";
 import type { ComponentType, ReactNode, SVGProps } from "react";
 
-import { Briefcase, Browser, Calendar, ClipboardCheck, Mail, MessageDots, PhoneCall, Signature, Star } from "@/components/ui/icons";
+import {
+  BriefcaseSolid,
+  BrowserSolid,
+  CalendarSolid,
+  ClipboardSolid,
+  MailSolid,
+  MessageSolid,
+  PhoneSolid,
+  SignatureSolid,
+  StarSolid,
+} from "@/components/ui/icons";
 import { Pill } from "@/components/ui/pill";
 import { bandItems, type FeatureKey } from "@/lib/built-with";
 
@@ -85,15 +95,15 @@ function HeroTitle() {
 // copy is hidden from screen readers. It stops on hover, and stands still
 // for people who ask for less motion. 64px below the hairline, 50px tall.
 const FEATURE_ICONS: Record<FeatureKey, ComponentType<SVGProps<SVGSVGElement>>> = {
-  newsletters: Mail,
-  sms: MessageDots,
-  surveys: ClipboardCheck,
-  websites: Browser,
-  appointments: Calendar,
-  calls: PhoneCall,
-  reputation: Star,
-  signing: Signature,
-  casework: Briefcase,
+  newsletters: MailSolid,
+  sms: MessageSolid,
+  surveys: ClipboardSolid,
+  websites: BrowserSolid,
+  appointments: CalendarSolid,
+  calls: PhoneSolid,
+  reputation: StarSolid,
+  signing: SignatureSolid,
+  casework: BriefcaseSolid,
 };
 
 /** Times the list repeats in each half of the loop: enough to be wider than the widest screen. */
@@ -111,7 +121,7 @@ function Band() {
           aria-hidden={copy > 0 || i >= bandItems.length || undefined}
           className="flex shrink-0 items-center gap-2 pr-[88px] whitespace-nowrap text-ink"
         >
-          {Icon ? <Icon strokeWidth={1.8} className="size-5 shrink-0" /> : item.kind === "platform" && <BrandLogo name={item.logo} className="size-5 shrink-0" />}
+          {Icon ? <Icon className="size-5 shrink-0" /> : item.kind === "platform" && <BrandLogo name={item.logo} className="size-5 shrink-0" />}
           <span className="text-[17px] font-semibold tracking-[-0.02em]">{item.kind === "feature" ? t(`features.${item.key}`) : item.name}</span>
         </li>
       );
