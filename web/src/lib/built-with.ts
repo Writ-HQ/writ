@@ -11,7 +11,8 @@ import { subprocessors } from "./subprocessors";
 export type BandItem = {
   /** The name as its owner writes it. Not translated. */
   name: string;
-  /** Key under Landing.band.purposes. */
+  /** Key under Landing.band.purposes: what it does for Writ. Not shown in
+   *  the band, kept for a fuller list such as a privacy page. */
   purpose: "hosting" | "signIn" | "social" | "database" | "web";
   /** Shown before the name, where the owner's guidelines allow a logo. */
   logo?: LogoKey;

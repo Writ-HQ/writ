@@ -198,7 +198,7 @@ function PhonePicture() {
 }
 
 // Where the reference shows customer logos: a "Built with" label and a
-// band that scrolls in a loop, each name with what it does for Writ
+// band of names (and logos, where allowed) that scrolls in a loop
 // (src/lib/built-with.ts). The list is drawn twice and slid by half its
 // width, so the loop has no seam; the copy is hidden from screen readers.
 // It stops on hover, and stands still for people who ask for less motion.
@@ -206,13 +206,12 @@ function PhonePicture() {
 function Band() {
   const t = useTranslations("Landing.band");
   const items = (hidden: boolean) =>
-    builtWith.map(({ name, purpose, logo }) => (
+    builtWith.map(({ name, logo }) => (
       <li key={name} aria-hidden={hidden || undefined} className="flex shrink-0 items-center gap-3 pr-14 whitespace-nowrap">
         <span className="flex items-center gap-2 text-ink/70">
           {logo && <BrandLogo name={logo} className="size-[22px] shrink-0" />}
           <span className="text-[19px] font-semibold tracking-[-0.03em]">{name}</span>
         </span>
-        <span className="text-[13px] text-ink/45">{t(`purposes.${purpose}`)}</span>
       </li>
     ));
   return (
