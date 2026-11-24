@@ -129,37 +129,45 @@ const features: { key: FeatureKey; icon: IconType; bullets: string[]; Mock: Comp
 ];
 
 // One product area: text on one side, a mock-up on sky on the other,
-// alternating sides down the page.
+// alternating sides down the page. Sized from the reference: a hairline
+// over the text column only, level with the top of a 544px sky panel; a
+// 16px eyebrow 36px below it; a 44px heading on 40px lines; then, pushed
+// to the bottom so the button lines up with the panel's foot, 17px
+// bullets 8px apart and a 42px outline button.
 function Feature({ featureKey, icon: Icon, bullets, Mock, flip }: { featureKey: FeatureKey; icon: IconType; bullets: string[]; Mock: ComponentType; flip: boolean }) {
   const t = useTranslations(`Landing.features.${featureKey}`);
   return (
-    <section id={featureKey} className="py-14 lg:py-16">
+    <section id={featureKey} className="py-12 lg:py-16">
       <Container>
-        <div className="grid items-center gap-10 border-t border-line pt-14 lg:grid-cols-2 lg:gap-16 lg:pt-16">
-          <div className={flip ? "lg:order-2" : ""}>
-            <p className="flex items-center gap-2.5 text-[13px]">
-              <span className="bg-sky flex h-6 w-6 items-center justify-center rounded-[5px]">
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
+          <div className={`flex flex-col border-t border-line pt-9 ${flip ? "lg:order-2" : ""}`}>
+            <p className="flex items-center gap-3 text-base leading-5">
+              <span className="bg-sky flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px]">
                 <Icon className="h-3.5 w-3.5" />
               </span>
               {t("eyebrow")}
             </p>
-            <SectionTitle className="mt-6 max-w-[540px]">{t("title")}</SectionTitle>
-            <ul className="mt-8 space-y-2.5">
-              {bullets.map((b) => (
-                <li key={b} className="flex gap-2.5 text-[14px] leading-snug">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0" />
-                  {t(b as "b1")}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-9">
-              <Pill variant="outline" size="sm">
-                {t("cta")}
-              </Pill>
+            <h2 className="mt-7 max-w-[600px] text-[34px] leading-[34px] font-normal tracking-[-0.035em] text-balance sm:text-[44px] sm:leading-[40px]">
+              {t("title")}
+            </h2>
+            <div className="mt-10 lg:mt-auto lg:pt-12">
+              <ul className="space-y-2">
+                {bullets.map((b) => (
+                  <li key={b} className="flex gap-3 text-[17px] leading-[23px]">
+                    <Check strokeWidth={1.75} className="mt-[3px] h-[17px] w-[17px] shrink-0" />
+                    {t(b as "b1")}
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-9">
+                <Pill variant="outline" size="feature">
+                  {t("cta")}
+                </Pill>
+              </div>
             </div>
           </div>
-          <div aria-hidden="true" className="bg-sky relative flex h-[340px] items-center justify-center overflow-hidden rounded-[6px] sm:h-[420px]">
-            <div className="scale-[0.8] sm:scale-100">
+          <div aria-hidden="true" className="bg-sky relative flex h-[340px] items-center justify-center overflow-hidden rounded-[6px] sm:h-[440px] lg:h-[544px]">
+            <div className="scale-[0.8] sm:scale-100 lg:scale-110">
               <Mock />
             </div>
           </div>
