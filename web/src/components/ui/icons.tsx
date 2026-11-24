@@ -126,6 +126,56 @@ export const LayersSolid = (p: IconProps) => (
   </Solid>
 );
 
+/** Two people: a solid figure in front, a lighter one behind. */
+export const UsersSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <g opacity=".4">
+      <circle cx="16.6" cy="7.2" r="3" />
+      <path d="M16.9 13.5c3 .2 5.1 2.5 5.3 5.7a1 1 0 0 1-1 1.1h-3.7c-.3-2.6-1.4-5-3.2-6.4.8-.3 1.7-.4 2.6-.4z" />
+    </g>
+    <circle cx="9" cy="7.6" r="3.7" />
+    <path d="M2.2 20.1C2.6 16.5 5.4 13.9 9 13.9s6.4 2.6 6.8 6.2a1 1 0 0 1-1 1.1H3.2a1 1 0 0 1-1-1.1z" />
+  </Solid>
+);
+
+/** A list: solid dots and rounded bars. */
+export const ListSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <circle cx="4.2" cy="6" r="1.7" />
+    <circle cx="4.2" cy="12" r="1.7" />
+    <circle cx="4.2" cy="18" r="1.7" />
+    <rect x="8.2" y="4.85" width="13.6" height="2.3" rx="1.15" />
+    <rect x="8.2" y="10.85" width="13.6" height="2.3" rx="1.15" />
+    <rect x="8.2" y="16.85" width="9.6" height="2.3" rx="1.15" />
+  </Solid>
+);
+
+/** A solid envelope with its flap cut in white. */
+export const MailSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M4.5 4.5h15A2.5 2.5 0 0 1 22 7v10a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 17V7a2.5 2.5 0 0 1 2.5-2.5z" />
+    <path d="M3.4 6.6L12 12.8l8.6-6.2" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+  </Solid>
+);
+
+/** A solid speech bubble with three white dots. */
+export const ChatSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M12 2.8c5.1 0 9.2 3.5 9.2 7.9s-4.1 7.9-9.2 7.9c-1 0-2-.1-2.9-.4l-4.6 2.4c-.5.2-1-.2-.8-.7l1.2-3.6c-1.3-1.5-2.1-3.4-2.1-5.6 0-4.4 4.1-7.9 9.2-7.9z" />
+    <circle cx="8" cy="10.7" r="1.15" fill="#fff" />
+    <circle cx="12" cy="10.7" r="1.15" fill="#fff" />
+    <circle cx="16" cy="10.7" r="1.15" fill="#fff" />
+  </Solid>
+);
+
+/** A solid shield with a white check. */
+export const ShieldSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M11.3 2.3a2 2 0 0 1 1.4 0l6.6 2.5a1.2 1.2 0 0 1 .8 1.1v5.4c0 4.9-3.3 9-8.1 10.4-4.8-1.4-8.1-5.5-8.1-10.4V5.9a1.2 1.2 0 0 1 .8-1.1z" />
+    <path d="M8.6 12.1l2.4 2.4 4.5-4.9" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+  </Solid>
+);
+
 export const Layers = (p: IconProps) => (
   <Icon {...p}>
     <path d="m12 3 9 5-9 5-9-5 9-5Z" />

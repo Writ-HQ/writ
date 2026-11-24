@@ -5,19 +5,20 @@ import {
   ArrowRight,
   Building,
   Chat,
+  ChatSolid,
   Check,
   GlobeSolid,
   KeySolid,
-  Layers,
   LayersSolid,
   LedgerSolid,
-  ListIcon,
+  ListSolid,
   LockSolid,
-  Mail,
+  MailSolid,
   MapleLeafRed,
   Plus,
-  Shield,
+  ShieldSolid,
   Users,
+  UsersSolid,
 } from "@/components/ui/icons";
 import { Pill } from "@/components/ui/pill";
 
@@ -64,14 +65,14 @@ export function Overview() {
   type Key = "contacts" | "lists" | "email" | "social" | "volunteers" | "consent";
   const rows: { key: Key; icon: IconType; href: string }[][] = [
     [
-      { key: "contacts", icon: Users, href: "#contacts" },
-      { key: "lists", icon: ListIcon, href: "#contacts" },
-      { key: "email", icon: Mail, href: "#email" },
+      { key: "contacts", icon: UsersSolid, href: "#contacts" },
+      { key: "lists", icon: ListSolid, href: "#contacts" },
+      { key: "email", icon: MailSolid, href: "#email" },
     ],
     [
-      { key: "social", icon: Chat, href: "#social" },
-      { key: "volunteers", icon: Layers, href: "#volunteers" },
-      { key: "consent", icon: Shield, href: "#consent" },
+      { key: "social", icon: ChatSolid, href: "#social" },
+      { key: "volunteers", icon: LayersSolid, href: "#volunteers" },
+      { key: "consent", icon: ShieldSolid, href: "#consent" },
     ],
   ];
   return (
@@ -99,7 +100,7 @@ export function Overview() {
                   <li key={key} className={`border-black/[0.06] max-lg:not-first:border-t lg:px-[15.5px] lg:first:pl-0 lg:last:pr-0 ${c > 0 ? "lg:border-l" : ""}`}>
                     <a href={href} className="group flex flex-col gap-2 p-4">
                       <span className="flex items-center gap-2 text-xl leading-[23px]">
-                        <Icon className="h-[18px] w-[18px] shrink-0 text-ink/70" />
+                        <Icon className="h-5 w-5 shrink-0 text-ink" />
                         {t(`${key}.title`)}
                         <ArrowRight className="h-4 w-4 text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-ink" />
                       </span>
@@ -120,11 +121,11 @@ export function Overview() {
 type FeatureKey = "contacts" | "email" | "social" | "volunteers" | "consent";
 
 const features: { key: FeatureKey; icon: IconType; bullets: string[]; Mock: ComponentType }[] = [
-  { key: "contacts", icon: Users, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: ContactMock },
-  { key: "email", icon: Mail, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: EmailMock },
-  { key: "social", icon: Chat, bullets: ["b1", "b2", "b3", "b4"], Mock: InboxMock },
-  { key: "volunteers", icon: Layers, bullets: ["b1", "b2", "b3", "b4"], Mock: TeamMock },
-  { key: "consent", icon: Shield, bullets: ["b1", "b2", "b3", "b4"], Mock: ConsentMock },
+  { key: "contacts", icon: UsersSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: ContactMock },
+  { key: "email", icon: MailSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: EmailMock },
+  { key: "social", icon: ChatSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: InboxMock },
+  { key: "volunteers", icon: LayersSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: TeamMock },
+  { key: "consent", icon: ShieldSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: ConsentMock },
 ];
 
 // One product area: text on one side, a mock-up on sky on the other,
