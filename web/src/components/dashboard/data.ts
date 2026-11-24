@@ -102,17 +102,9 @@ export const statuses = [
 ] as const;
 export type StatusKey = (typeof statuses)[number]["key"];
 
-/** The moment the activity feed is measured from. */
+/** "Now" for the fictional data: noon in Toronto on the last day. */
 export const NOW = "2026-11-23T17:00:00Z";
 
-/** What happened lately in the office. Names and numbers are made up. */
-export const activity = [
-  { key: "resolved", who: "Priya S.", number: "2026-0398", count: 0, at: "2026-11-23T15:40:00Z" },
-  { key: "signup", who: "", number: "", count: 14, at: "2026-11-23T13:05:00Z" },
-  { key: "opened", who: "Marc T.", number: "2026-0533", count: 0, at: "2026-11-23T10:20:00Z" },
-  { key: "note", who: "Dana K.", number: "2026-0471", count: 0, at: "2026-11-22T16:10:00Z" },
-  { key: "email", who: "", number: "", count: 4218, at: "2026-11-17T14:00:00Z" },
-] as const;
 
 /** The oldest open cases, with fictional case numbers and staff. */
 export const oldestCases = [
@@ -123,12 +115,6 @@ export const oldestCases = [
   { key: "c8", number: "2026-0519", issue: "taxes", days: 39, owner: "Sam O." },
 ] as const;
 
-/** Recent emails: subjects are messages (mock.emails.*). */
-export const recentEmails = [
-  { key: "e1", sent: "2026-11-17", recipients: 4218, opened: 0.46 },
-  { key: "e2", sent: "2026-11-03", recipients: 4105, opened: 0.41 },
-  { key: "e3", sent: "2026-10-20", recipients: 3990, opened: 0.52 },
-] as const;
 
 /** Offices the signed-in person belongs to. Fictional. */
 export const offices = [
@@ -137,3 +123,31 @@ export const offices = [
 ] as const;
 
 export const account = { name: "Jordan Lee", email: "jordan@example.ca", initials: "JL" };
+
+/** Social accounts connected to the office. Handles and numbers are made up. */
+export const channels = [
+  { key: "facebook", handle: "Riverside Centre office", followers: 6840, unread: 8, autoReplied: 41 },
+  { key: "instagram", handle: "@riverside.office", followers: 3215, unread: 4, autoReplied: 17 },
+] as const;
+export type Platform = (typeof channels)[number]["key"];
+
+/**
+ * Direct messages, newest first. Texts are messages (mock.dms.*); names
+ * are fictional. "auto" means an auto-reply went out and staff still owe
+ * an answer; "new" has had nothing yet.
+ */
+export const dms = [
+  { key: "m1", platform: "facebook", name: "Alex Moreau", at: "2026-11-23T16:42:00Z", state: "new" },
+  { key: "m2", platform: "instagram", name: "Sam Okafor", at: "2026-11-23T15:58:00Z", state: "auto" },
+  { key: "m3", platform: "facebook", name: "Lee Tremblay", at: "2026-11-23T14:11:00Z", state: "new" },
+  { key: "m4", platform: "instagram", name: "Chris Nadeau", at: "2026-11-23T11:30:00Z", state: "auto" },
+  { key: "m5", platform: "facebook", name: "Jamie Gill", at: "2026-11-22T19:05:00Z", state: "replied" },
+] as const;
+
+/** Posts planned for the coming days. Texts are messages (mock.posts.*). */
+export const scheduledPosts = [
+  { key: "p1", at: "2026-11-23T18:30:00Z", platforms: ["facebook", "instagram"], status: "approved" },
+  { key: "p2", at: "2026-11-24T14:00:00Z", platforms: ["facebook"], status: "approval" },
+  { key: "p3", at: "2026-11-25T16:00:00Z", platforms: ["instagram"], status: "approved" },
+  { key: "p4", at: "2026-11-27T15:00:00Z", platforms: ["facebook", "instagram"], status: "draft" },
+] as const;

@@ -409,15 +409,66 @@
     },
     "overview": {
       "eyebrow": "{date} · {office}",
-      "title": "Bon retour, {name}",
-      "showing": "Les derniers {range}, comparés à la période précédente.",
+      "title": "Content de vous revoir, {name}",
+      "summary": "{cases, plural, one {# dossier attend} other {# dossiers attendent}} depuis plus de deux mois, {messages, plural, one {# message attend} other {# messages attendent}} une réponse, et {posts, plural, =0 {aucune publication ne sort} one {# publication sort} other {# publications sortent}} aujourd'hui.",
+      "showing": "Les derniers {range}, comparés à la période précédente",
       "range": "Période",
-      "vsBefore": "par rapport à la période précédente",
       "actions": {
         "newCase": "Nouveau dossier",
-        "addContact": "Ajouter un contact",
-        "writeEmail": "Rédiger un courriel"
+        "schedulePost": "Planifier une publication"
       }
+    },
+    "queue": {
+      "title": "À faire",
+      "tabs": {
+        "messages": "Messages",
+        "cases": "Plus vieux dossiers"
+      },
+      "states": {
+        "new": "À répondre",
+        "auto": "Réponse auto envoyée",
+        "replied": "Répondu"
+      },
+      "openInbox": "Ouvrir la messagerie",
+      "allCases": "Tous les dossiers",
+      "dayUnit": "jours",
+      "daysOpen": "Ouvert depuis {days} jours"
+    },
+    "upNext": {
+      "title": "À venir",
+      "hint": "Publications planifiées",
+      "all": "Calendrier",
+      "today": "Aujourd'hui",
+      "tomorrow": "Demain",
+      "status": {
+        "approved": "Approuvée",
+        "approval": "En attente d'approbation",
+        "draft": "Brouillon"
+      }
+    },
+    "channels": {
+      "title": "Réseaux sociaux",
+      "manage": "Gérer",
+      "followers": "{count, plural, one {# abonné} other {# abonnés}}",
+      "unread": "{count} non lus",
+      "autoReplies": "réponses automatiques cette semaine"
+    },
+    "status": {
+      "title": "Dossiers ouverts",
+      "all": "Dossiers",
+      "total": "ouverts",
+      "new": "Nouveaux",
+      "progress": "En cours",
+      "agency": "En attente d'un organisme",
+      "constituent": "En attente de la personne"
+    },
+    "topIssues": {
+      "title": "Principaux enjeux",
+      "hint": "Dossiers ouverts pendant la période"
+    },
+    "platforms": {
+      "facebook": "Facebook",
+      "instagram": "Instagram"
     },
     "flow": {
       "title": "Flux des dossiers",
@@ -430,45 +481,6 @@
       "resolved": "Réglés",
       "net": "Variation nette",
       "label": "Dossiers ouverts et réglés, derniers {period}"
-    },
-    "status": {
-      "title": "Dossiers ouverts",
-      "hint": "Où en est chaque dossier ouvert aujourd'hui.",
-      "all": "Dossiers",
-      "total": "ouverts",
-      "new": "Nouveaux",
-      "progress": "En cours",
-      "agency": "En attente d'un organisme",
-      "constituent": "En attente de la personne"
-    },
-    "attention": {
-      "title": "À traiter en priorité",
-      "hint": "Les dossiers ouverts qui attendent depuis le plus longtemps.",
-      "all": "Tous les dossiers",
-      "dayUnit": "jours",
-      "daysOpen": "Ouvert depuis {days} jours"
-    },
-    "topIssues": {
-      "title": "Principaux enjeux",
-      "hint": "Dossiers ouverts pendant la période, par enjeu."
-    },
-    "emails": {
-      "title": "Courriels récents",
-      "hint": "Infolettres et mises à jour envoyées par ce bureau.",
-      "all": "Courriel",
-      "openRate": "Part des destinataires qui l'ont ouvert",
-      "line": "Envoyé le {date} · {recipients} destinataires"
-    },
-    "activity": {
-      "title": "Activité",
-      "hint": "Les dernières nouvelles de votre équipe.",
-      "items": {
-        "resolved": "{who} a réglé le dossier no {number}",
-        "opened": "{who} a ouvert le dossier no {number}",
-        "note": "{who} a ajouté une note au dossier no {number}",
-        "signup": "Un formulaire d'inscription a ajouté {count, plural, one {# contact} other {# contacts}}",
-        "email": "Une infolettre a été envoyée à {count, number} personnes"
-      }
     },
     "metrics": {
       "opened": "Dossiers ouverts",
@@ -503,10 +515,18 @@
         "c7": "Réparations refusées en logement social",
         "c8": "Avis de nouvelle cotisation non expliqué"
       },
-      "emails": {
-        "e1": "Mise à jour de novembre : heures d'ouverture pendant les fêtes",
-        "e2": "De l'aide pour les frais de chauffage cet hiver",
-        "e3": "Assemblée publique sur le transport local, résumé"
+      "dms": {
+        "m1": "Bonjour, la pension de ma mère a cessé depuis qu'elle habite chez nous. Qui dois-je appeler?",
+        "m2": "Le bureau est-il ouvert samedi? J'ai besoin d'une lettre pour ma demande de passeport.",
+        "m3": "Merci pour l'assemblée publique de la semaine dernière. Les diapositives seront-elles publiées?",
+        "m4": "Le renouvellement de mon permis de travail est bloqué depuis quatre mois. Pouvez-vous m'aider?",
+        "m5": "J'ai reçu l'appel de votre agente aujourd'hui, merci beaucoup."
+      },
+      "posts": {
+        "p1": "Heures d'ouverture pendant les fêtes : ouvert les 22 et 23 décembre, fermé jusqu'au 2 janvier.",
+        "p2": "Besoin d'aide pour les frais de chauffage cet hiver? Voici ce qui existe et comment en faire la demande.",
+        "p3": "Merci à toutes les personnes venues au grand ménage du quartier samedi.",
+        "p4": "Assemblée publique sur le transport local : rejoignez-nous jeudi à la bibliothèque Riverside."
       }
     }
   }

@@ -5,240 +5,406 @@ import { useMemo, useState, type ReactNode } from "react";
 
 import { Link } from "@/i18n/navigation";
 
-import { account, activity, issues, LAST_DATE, NOW, offices, oldestCases, recentEmails, statuses, summarize, type Metric } from "./data";
+import {
+  account,
+  channels,
+  dms,
+  issues,
+  LAST_DATE,
+  NOW,
+  offices,
+  oldestCases,
+  scheduledPosts,
+  statuses,
+  summarize,
+  type Metric,
+  type Platform,
+} from "./data";
 import { FlowChart } from "./flow-chart";
 import { Card, CardLink, Delta, Glyph, Initials, Segmented } from "./kit";
-import { bucket, periods, type Grain, type Point } from "./range";
+import { bucket, periods, type Grain } from "./range";
 
-// The overview: a greeting with quick actions, four stat cards, casework
-// flow and status, then what needs attention and what happened lately.
+// The overview, laid out around the day's work: a banner with the numbers,
+// then a queue of what needs doing and the casework trend, with a rail for
+// social (posts going out, channels) and where cases stand.
 
 const RANGES = ["28d", "3m", "12m"] as const;
 type Range = (typeof RANGES)[number];
-/** Each range's bars: days for four weeks, weeks for three months, months for a year. */
 const GRAIN: Record<Range, Grain> = { "28d": "day", "3m": "week", "12m": "month" };
+/** The office's own clock, for post times and "today". */
+const ZONE = "America/Toronto";
 
 const change = (cur: number, prev: number | undefined) => (prev ? (cur - prev) / prev : null);
+const localDay = (iso: string) => new Intl.DateTimeFormat("en-CA", { timeZone: ZONE }).format(new Date(iso));
 
-/** One icon per metric, on a 20-unit grid. */
-const ICONS: Record<Metric, string> = {
-  opened: "M4 3.5h9l3 3v10H4zM13 3.5v3h3M10 9v5M7.5 11.5h5",
-  resolved: "M4 3.5h9l3 3v10H4zM13 3.5v3h3M7 12l2 2 4-4.5",
-  days: "M10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM10 6v4l2.5 2",
-  contacts: "M8 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2.5 17c0-3 2.5-5 5.5-5s5.5 2 5.5 5M15 6v5M12.5 8.5h5",
-};
-
-/** A small trend line under a stat. Drawn in a stretched box. */
-function Sparkline({ values }: { values: number[] }) {
-  if (values.length < 2) return null;
-  const lo = Math.min(...values);
-  const hi = Math.max(...values);
-  const span = hi - lo || 1;
-  const pts = values.map((v, i) => [(i / (values.length - 1)) * 100, 30 - ((v - lo) / span) * 26]);
-  const line = pts.map(([x, y], i) => `${i ? "L" : "M"}${x!.toFixed(2)} ${y!.toFixed(2)}`).join("");
-  return (
-    <svg viewBox="0 0 100 32" preserveAspectRatio="none" className="h-10 w-full overflow-visible" aria-hidden="true">
-      <path d={`${line}L100 32L0 32Z`} className="fill-accent-soft" />
-      <path d={line} fill="none" className="stroke-accent" strokeWidth="1.75" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function StatCard({
-  metric,
-  value,
-  delta,
-  trend,
-}: {
-  metric: Metric;
-  value: string;
-  delta: ReactNode;
-  trend: number[];
-}) {
-  const t = useTranslations("Dashboard");
-  return (
-    <Card className="gap-3 !p-0">
-      <div className="flex items-start justify-between gap-3 px-5 pt-5">
-        <div>
-          <p className="text-[13px] text-muted">{t(`metrics.${metric}`)}</p>
-          <p className="mt-2 text-[30px] leading-none font-semibold tracking-[-0.02em] tabular-nums">{value}</p>
-        </div>
-        <span className="flex size-9 items-center justify-center rounded-xl bg-chrome text-accent">
-          <Glyph vb={20} className="size-[18px]" d={ICONS[metric]} />
-        </span>
-      </div>
-      <div className="flex items-center gap-2 px-5 text-[12px] text-muted">
-        {delta}
-        {t("overview.vsBefore")}
-      </div>
-      <div className="overflow-hidden rounded-b-[20px]">
-        <Sparkline values={trend} />
-      </div>
-    </Card>
-  );
-}
-
-const STATUS_TONE = ["stroke-accent-deep", "stroke-accent", "stroke-accent-bright", "stroke-mist"] as const;
-const STATUS_DOT = ["bg-accent-deep", "bg-accent", "bg-accent-bright", "bg-mist"] as const;
-
-/** Open cases as a ring, one arc per status, with the total in the middle. */
-function StatusRing() {
-  const t = useTranslations("Dashboard.status");
-  const format = useFormatter();
-  const total = statuses.reduce((n, s) => n + s.count, 0);
-  const R = 54;
-  const C = 2 * Math.PI * R;
-  const GAP = 4;
-  // Where each arc starts along the ring.
-  const starts = statuses.map((_, i) => statuses.slice(0, i).reduce((n, x) => n + (x.count / total) * C, 0));
-
-  return (
-    <Card title={t("title")} hint={t("hint")} action={<CardLink href="/app/casework">{t("all")}</CardLink>}>
-      <div className="flex flex-1 flex-col items-center justify-center gap-6 sm:flex-row lg:flex-col xl:flex-row">
-        <div className="relative size-[148px] shrink-0">
-          <svg viewBox="0 0 140 140" className="size-full -rotate-90" aria-hidden="true">
-            <circle cx="70" cy="70" r={R} fill="none" className="stroke-chrome" strokeWidth="14" />
-            {statuses.map((s, i) => {
-              const len = (s.count / total) * C;
-              return (
-                <circle
-                  key={s.key}
-                  cx="70"
-                  cy="70"
-                  r={R}
-                  fill="none"
-                  strokeWidth="14"
-                  strokeLinecap="round"
-                  className={STATUS_TONE[i]}
-                  strokeDasharray={`${Math.max(len - GAP - 14, 0.5)} ${C}`}
-                  strokeDashoffset={-(starts[i]! + 7 + GAP / 2)}
-                />
-              );
-            })}
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-[30px] leading-none font-semibold tracking-[-0.02em] tabular-nums">{format.number(total)}</span>
-            <span className="mt-1 text-[12px] text-muted">{t("total")}</span>
-          </div>
-        </div>
-        <ul className="flex w-full min-w-0 flex-col gap-2.5">
-          {statuses.map((s, i) => (
-            <li key={s.key} className="flex items-center gap-2.5 text-[13px]">
-              <span className={`size-2.5 shrink-0 rounded-full ${STATUS_DOT[i]}`} />
-              <span className="min-w-0 flex-1 truncate text-ink/80">{t(s.key)}</span>
-              <span className="font-medium tabular-nums">{format.number(s.count)}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </Card>
-  );
-}
-
-/** Age badge: red past two months, amber past five weeks. */
-function Age({ days }: { days: number }) {
-  const t = useTranslations("Dashboard.attention");
-  const tone = days >= 60 ? "bg-bad/10 text-bad" : days >= 35 ? "bg-star/10 text-star" : "bg-accent-soft text-accent-deep";
+/** A platform's mark in its colour: Facebook blue, Instagram's gradient. */
+function PlatformBadge({ platform, size = "md" }: { platform: Platform; size?: "sm" | "md" }) {
+  const t = useTranslations("Dashboard.platforms");
+  const box = size === "sm" ? "size-5 rounded-md" : "size-8 rounded-[10px]";
+  const icon = size === "sm" ? "size-3" : "size-4";
   return (
     <span
-      title={t("daysOpen", { days })}
-      className={`flex h-11 w-12 shrink-0 flex-col items-center justify-center rounded-xl leading-none ${tone}`}
+      title={t(platform)}
+      className={`flex shrink-0 items-center justify-center text-white ${box}`}
+      style={{ background: platform === "facebook" ? "#0866FF" : "linear-gradient(135deg,#F58529,#DD2A7B 55%,#8134AF)" }}
     >
-      <span className="text-[15px] font-semibold tabular-nums">{days}</span>
-      <span className="mt-0.5 text-[10.5px] font-medium">{t("dayUnit")}</span>
+      {platform === "facebook" ? (
+        <svg viewBox="0 0 16 16" className={icon} fill="currentColor" aria-hidden="true">
+          <path d="M9.2 15V8.9h2l.3-2.4H9.2V5c0-.7.2-1.2 1.2-1.2h1.3V1.7c-.2 0-1-.1-1.9-.1-1.9 0-3.2 1.2-3.2 3.3v1.6H4.5v2.4h2.1V15z" />
+        </svg>
+      ) : (
+        <svg viewBox="0 0 16 16" className={icon} fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+          <rect x="2" y="2" width="12" height="12" rx="3.5" />
+          <circle cx="8" cy="8" r="2.8" />
+          <circle cx="11.6" cy="4.4" r=".6" fill="currentColor" stroke="none" />
+        </svg>
+      )}
     </span>
   );
 }
 
-const ACTIVITY_ICON: Record<(typeof activity)[number]["key"], { d: string; tone: string }> = {
-  resolved: { d: "M4 8.5l2.5 2.5L12 5.5", tone: "bg-good/10 text-good" },
-  opened: { d: "M8 4v8M4 8h8", tone: "bg-accent-soft text-accent" },
-  note: { d: "M3.5 12.5l1-3 6-6 2 2-6 6zM9.5 4.5l2 2", tone: "bg-chrome text-ink/70" },
-  signup: { d: "M6 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM2.5 12.5c0-2 1.5-3.5 3.5-3.5s3.5 1.5 3.5 3.5M12 5v4M10 7h4", tone: "bg-accent-soft text-accent" },
-  email: { d: "M2.5 4h11v8h-11zM2.5 4L8 8.5 13.5 4", tone: "bg-star/10 text-star" },
-};
+/* ---------- Banner ---------- */
 
-export function Overview() {
+function Banner({ range, onRange }: { range: Range; onRange: (r: Range) => void }) {
   const t = useTranslations("Dashboard");
   const format = useFormatter();
-  const [range, setRange] = useState<Range>("28d");
-
   const per = useMemo(() => periods(range), [range]);
   const s = useMemo(() => summarize(per.cur), [per]);
   const sp = useMemo(() => (per.prev.length ? summarize(per.prev) : null), [per]);
-  const points: Point[] = useMemo(() => bucket(per.cur, per.prev, GRAIN[range]).points, [per, range]);
-  // Sparklines by week, whatever the range, so they stay smooth.
-  const weekly: Point[] = useMemo(() => (range === "28d" ? points : bucket(per.cur, per.prev, "week").points), [per, points, range]);
 
-  const day = (iso: string, o: DateTimeFormatOptions) => format.dateTime(new Date(iso + "T00:00:00Z"), { ...o, timeZone: "UTC" });
-  const rangeLabel = t(`range.presets.${range}`);
+  const today = localDay(NOW);
+  const counts = {
+    cases: oldestCases.filter((c) => c.days >= 60).length,
+    messages: dms.filter((m) => m.state !== "replied").length,
+    posts: scheduledPosts.filter((p) => localDay(p.at) === today && p.status === "approved").length,
+  };
 
-  const topIssues = useMemo(() => {
-    const sw = issues.reduce((a, d) => a + d.share * d.growth, 0);
-    const shareSum = issues.reduce((a, d) => a + d.share, 0);
-    return issues
-      .map((d) => {
-        const cur = Math.round(s.opened * ((d.share * d.growth) / sw));
-        const prev = sp ? Math.round(sp.opened * (d.share / shareSum)) : 0;
-        return { key: d.key, cur, change: change(cur, prev) };
-      })
-      .sort((a, b) => b.cur - a.cur)
-      .slice(0, 6);
-  }, [s, sp]);
-  const issueTop = topIssues[0]?.cur ?? 1;
+  const stats: { metric: Metric; value: string; delta: ReactNode }[] = [
+    { metric: "opened", value: format.number(s.opened), delta: <Delta value={change(s.opened, sp?.opened)} /> },
+    { metric: "resolved", value: format.number(s.resolved), delta: <Delta value={change(s.resolved, sp?.resolved)} /> },
+    {
+      metric: "days",
+      value: format.number(s.days, { maximumFractionDigits: 1 }),
+      delta: <Delta value={sp ? s.days - sp.days : null} invert percent={false} />,
+    },
+    { metric: "contacts", value: format.number(s.contacts), delta: <Delta value={change(s.contacts, sp?.contacts)} /> },
+  ];
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* Greeting and quick actions */}
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="min-w-0">
-          <p className="text-[13px] font-medium text-accent">
-            {t("overview.eyebrow", { date: day(LAST_DATE, { weekday: "long", month: "long", day: "numeric" }), office: offices[0].name })}
+    <section className="bg-sky relative overflow-hidden rounded-[28px] p-6 ring-1 ring-ink/[0.06] sm:p-8">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="max-w-xl min-w-0">
+          <p className="text-[13px] font-medium text-ink/55">
+            {t("overview.eyebrow", {
+              date: format.dateTime(new Date(LAST_DATE + "T12:00:00Z"), { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" }),
+              office: offices[0].name,
+            })}
           </p>
-          <h1 className="mt-1 text-[28px] font-semibold tracking-[-0.025em]">{t("overview.title", { name: account.name.split(" ")[0]! })}</h1>
+          <h1 className="mt-2 text-[30px] leading-[1.15] font-semibold tracking-[-0.03em] sm:text-[34px]">
+            {t("overview.title", { name: account.name.split(" ")[0]! })}
+          </h1>
+          <p className="mt-2 text-[14.5px] leading-[1.55] text-ink/70">{t("overview.summary", counts)}</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Link href="/app/contacts" className="flex h-9 items-center gap-1.5 rounded-full bg-white px-3.5 text-[13px] font-medium ring-1 ring-line hover:bg-panel">
-            <Glyph className="size-3.5" d="M6.5 7.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM2 13.5c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4M12.5 5v4M10.5 7h4" />
-            {t("overview.actions.addContact")}
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/app/posts"
+            className="flex h-9 items-center gap-1.5 rounded-full bg-white/80 px-3.5 text-[13px] font-medium ring-1 ring-ink/[0.08] backdrop-blur hover:bg-white"
+          >
+            <Glyph className="size-3.5" d="M2.5 3.5h11v10h-11zM2.5 6.5h11M5.5 2v3M10.5 2v3" />
+            {t("overview.actions.schedulePost")}
           </Link>
-          <Link href="/app/email" className="flex h-9 items-center gap-1.5 rounded-full bg-white px-3.5 text-[13px] font-medium ring-1 ring-line hover:bg-panel">
-            <Glyph className="size-3.5" d="M2.5 4h11v8h-11zM2.5 4L8 8.5 13.5 4" />
-            {t("overview.actions.writeEmail")}
-          </Link>
-          <Link href="/app/casework" className="flex h-9 items-center gap-1.5 rounded-full bg-ink px-4 text-[13px] font-medium text-white hover:bg-ink-soft/85">
+          <Link href="/app/casework" className="flex h-9 items-center gap-1.5 rounded-full bg-ink px-4 text-[13px] font-medium text-white hover:bg-ink/85">
             <Glyph className="size-3.5" d="M8 3.5v9M3.5 8h9" />
             {t("overview.actions.newCase")}
           </Link>
         </div>
       </div>
 
-      {/* Range, for everything below */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line/70 pt-4">
-        <p className="text-[13px] text-muted">{t("overview.showing", { range: rangeLabel })}</p>
+      <div className="mt-7 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-[12.5px] font-medium text-ink/55">{t("overview.showing", { range: t(`range.presets.${range}`) })}</p>
         <Segmented
           label={t("overview.range")}
           value={range}
           options={RANGES.map((r) => ({ key: r, label: t(`range.presets.${r}`) }))}
-          onChange={setRange}
+          onChange={onRange}
         />
       </div>
+      <dl className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-ink/[0.06] ring-1 ring-ink/[0.06] lg:grid-cols-4">
+        {stats.map((st) => (
+          <div key={st.metric} className="bg-white/85 px-4 py-4 backdrop-blur sm:px-5">
+            <dt className="text-[12.5px] text-muted">{t(`metrics.${st.metric}`)}</dt>
+            <dd className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span className="text-[26px] leading-none font-semibold tracking-[-0.02em] tabular-nums">{st.value}</span>
+              {st.delta}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}
 
-      {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard metric="opened" value={format.number(s.opened)} delta={<Delta value={change(s.opened, sp?.opened)} />} trend={weekly.map((p) => p.opened)} />
-        <StatCard metric="resolved" value={format.number(s.resolved)} delta={<Delta value={change(s.resolved, sp?.resolved)} />} trend={weekly.map((p) => p.resolved)} />
-        <StatCard
-          metric="days"
-          value={format.number(s.days, { maximumFractionDigits: 1 })}
-          delta={<Delta value={sp ? s.days - sp.days : null} invert percent={false} />}
-          trend={weekly.map((p) => p.days)}
-        />
-        <StatCard metric="contacts" value={format.number(s.contacts)} delta={<Delta value={change(s.contacts, sp?.contacts)} />} trend={weekly.map((p) => p.contacts)} />
+/* ---------- Queue ---------- */
+
+type QueueTab = "messages" | "cases";
+
+const DM_STATE = {
+  new: "bg-bad/10 text-bad",
+  auto: "bg-star/10 text-star",
+  replied: "bg-good/10 text-good",
+} as const;
+
+function Queue() {
+  const t = useTranslations("Dashboard");
+  const format = useFormatter();
+  const [tab, setTab] = useState<QueueTab>("messages");
+  const waiting = dms.filter((m) => m.state !== "replied").length;
+
+  return (
+    <Card className="!p-0">
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line/70 px-5 pt-4">
+        <div role="tablist" aria-label={t("queue.title")} className="flex gap-5">
+          {(["messages", "cases"] as const).map((k) => {
+            const on = tab === k;
+            const n = k === "messages" ? waiting : oldestCases.length;
+            return (
+              <button
+                key={k}
+                type="button"
+                role="tab"
+                aria-selected={on}
+                onClick={() => setTab(k)}
+                className={`-mb-px flex items-center gap-2 border-b-2 pb-3 text-[14px] transition-colors ${
+                  on ? "border-ink font-semibold text-ink" : "border-transparent text-muted hover:text-ink"
+                }`}
+              >
+                {t(`queue.tabs.${k}`)}
+                <span className={`rounded-full px-1.5 text-[11px] font-medium tabular-nums ${on ? "bg-ink text-white" : "bg-chrome text-muted"}`}>{n}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="pb-3">
+          {tab === "messages" ? <CardLink href="/app/inbox">{t("queue.openInbox")}</CardLink> : <CardLink href="/app/casework">{t("queue.allCases")}</CardLink>}
+        </div>
+      </header>
+
+      {tab === "messages" ? (
+        <ul role="tabpanel" className="divide-y divide-line/60">
+          {dms.map((m) => (
+            <li key={m.key}>
+              <Link href="/app/inbox" className="flex items-start gap-3.5 px-5 py-3.5 hover:bg-panel">
+                <span className="relative">
+                  <Initials name={m.name} />
+                  <span className="absolute -right-1.5 -bottom-1.5 rounded-md ring-2 ring-white">
+                    <PlatformBadge platform={m.platform} size="sm" />
+                  </span>
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-baseline justify-between gap-3">
+                    <span className={`truncate text-[13.5px] ${m.state === "new" ? "font-semibold" : "font-medium text-ink/85"}`}>{m.name}</span>
+                    <span className="shrink-0 text-[12px] text-faint">{format.relativeTime(new Date(m.at), new Date(NOW))}</span>
+                  </span>
+                  <span className="mt-0.5 block truncate text-[13px] text-muted">{t(`mock.dms.${m.key}`)}</span>
+                </span>
+                <span className={`mt-0.5 hidden shrink-0 rounded-full px-2 py-0.5 text-[11.5px] font-medium sm:block ${DM_STATE[m.state]}`}>
+                  {t(`queue.states.${m.state}`)}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ul role="tabpanel" className="divide-y divide-line/60">
+          {oldestCases.map((c) => {
+            const tone = c.days >= 60 ? "text-bad" : c.days >= 35 ? "text-star" : "text-accent";
+            return (
+              <li key={c.key}>
+                <Link href="/app/casework" className="flex items-center gap-4 px-5 py-3.5 hover:bg-panel">
+                  <span className="w-14 shrink-0" title={t("queue.daysOpen", { days: c.days })}>
+                    <span className={`block text-[18px] leading-none font-semibold tabular-nums ${tone}`}>{c.days}</span>
+                    <span className="text-[11px] text-faint">{t("queue.dayUnit")}</span>
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[13.5px] font-medium text-ink/90">{t(`mock.cases.${c.key}`)}</span>
+                    <span className="mt-0.5 block text-[12px] text-muted">
+                      <span className="tabular-nums">#{c.number}</span> · {t(`issues.${c.issue}`)}
+                    </span>
+                  </span>
+                  <Initials name={c.owner} />
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </Card>
+  );
+}
+
+/* ---------- Rail ---------- */
+
+const POST_STATUS = { approved: "bg-good", approval: "bg-star", draft: "bg-faint" } as const;
+
+function UpNext() {
+  const t = useTranslations("Dashboard.upNext");
+  const m = useTranslations("Dashboard.mock.posts");
+  const format = useFormatter();
+  const today = localDay(NOW);
+  const tomorrow = localDay(new Date(Date.parse(NOW) + 86_400_000).toISOString());
+  const dayLabel = (iso: string) => {
+    const d = localDay(iso);
+    if (d === today) return t("today");
+    if (d === tomorrow) return t("tomorrow");
+    return format.dateTime(new Date(iso), { weekday: "long", month: "short", day: "numeric", timeZone: ZONE });
+  };
+  const time = (iso: string, o: DateTimeFormatOptions = { hour: "numeric", minute: "2-digit" }) => format.dateTime(new Date(iso), { ...o, timeZone: ZONE });
+
+  return (
+    <Card title={t("title")} hint={t("hint")} action={<CardLink href="/app/posts">{t("all")}</CardLink>}>
+      <ol className="flex flex-col gap-4">
+        {scheduledPosts.map((p, i) => {
+          const label = dayLabel(p.at);
+          const first = i === 0 || dayLabel(scheduledPosts[i - 1]!.at) !== label;
+          return (
+            <li key={p.key}>
+              {first && <p className="mb-2 text-[11.5px] font-semibold tracking-[0.04em] text-faint uppercase">{label}</p>}
+              <Link href="/app/posts" className="-m-2 flex gap-3 rounded-xl p-2 hover:bg-panel">
+                <span className="w-14 shrink-0 pt-0.5 text-[12.5px] font-medium tabular-nums">{time(p.at)}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="line-clamp-2 text-[13px] leading-[1.45] text-ink/85">{m(p.key)}</span>
+                  <span className="mt-1.5 flex items-center gap-2">
+                    <span className="flex -space-x-1">
+                      {p.platforms.map((pl) => (
+                        <span key={pl} className="rounded-md ring-2 ring-white">
+                          <PlatformBadge platform={pl} size="sm" />
+                        </span>
+                      ))}
+                    </span>
+                    <span className="flex items-center gap-1.5 text-[11.5px] text-muted">
+                      <span className={`size-1.5 rounded-full ${POST_STATUS[p.status]}`} />
+                      {t(`status.${p.status}`)}
+                    </span>
+                  </span>
+                </span>
+              </Link>
+            </li>
+          );
+        })}
+      </ol>
+    </Card>
+  );
+}
+
+function Channels() {
+  const t = useTranslations("Dashboard.channels");
+  const format = useFormatter();
+  const auto = channels.reduce((n, c) => n + c.autoReplied, 0);
+  return (
+    <Card title={t("title")} action={<CardLink href="/app/settings">{t("manage")}</CardLink>}>
+      <ul className="flex flex-col gap-3">
+        {channels.map((c) => (
+          <li key={c.key} className="flex items-center gap-3">
+            <PlatformBadge platform={c.key} />
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[13.5px] font-medium">{c.handle}</span>
+              <span className="text-[12px] text-muted">{t("followers", { count: c.followers })}</span>
+            </span>
+            <Link
+              href="/app/inbox"
+              className="shrink-0 rounded-full bg-accent-soft px-2 py-0.5 text-[11.5px] font-medium text-accent-deep tabular-nums hover:bg-accent-bright/40"
+            >
+              {t("unread", { count: c.unread })}
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <Link href="/app/replies" className="mt-4 flex items-center gap-3 rounded-2xl bg-chrome px-3.5 py-3 hover:bg-mist/60">
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white text-accent">
+          <Glyph d="M6.5 4L3 7.5 6.5 11M3 7.5h6.5a3.5 3.5 0 0 1 3.5 3.5v1.5" />
+        </span>
+        <span className="min-w-0 flex-1 text-[12.5px] leading-[1.4] text-muted">
+          <span className="block text-[18px] leading-none font-semibold text-ink tabular-nums">{format.number(auto)}</span>
+          {t("autoReplies")}
+        </span>
+      </Link>
+    </Card>
+  );
+}
+
+const STATUS_BAR = ["bg-accent-deep", "bg-accent", "bg-accent-bright", "bg-mist"] as const;
+
+function CaseStatus() {
+  const t = useTranslations("Dashboard.status");
+  const format = useFormatter();
+  const total = statuses.reduce((n, s) => n + s.count, 0);
+  return (
+    <Card title={t("title")} action={<CardLink href="/app/casework">{t("all")}</CardLink>}>
+      <p className="flex items-baseline gap-1.5">
+        <span className="text-[28px] leading-none font-semibold tracking-[-0.02em] tabular-nums">{format.number(total)}</span>
+        <span className="text-[13px] text-muted">{t("total")}</span>
+      </p>
+      <div className="mt-3 flex h-2.5 gap-1" aria-hidden="true">
+        {statuses.map((s, i) => (
+          <span key={s.key} className={`rounded-full ${STATUS_BAR[i]}`} style={{ flexGrow: s.count }} />
+        ))}
       </div>
+      <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5">
+        {statuses.map((s, i) => (
+          <li key={s.key} className="flex min-w-0 items-start gap-2 text-[12.5px]">
+            <span className={`mt-1 size-2 shrink-0 rounded-full ${STATUS_BAR[i]}`} />
+            <span className="min-w-0">
+              <span className="block font-medium tabular-nums">{format.number(s.count)}</span>
+              <span className="block leading-[1.35] text-muted">{t(s.key)}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </Card>
+  );
+}
 
-      {/* Flow and status */}
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+function TopIssues({ range }: { range: Range }) {
+  const t = useTranslations("Dashboard");
+  const format = useFormatter();
+  const per = useMemo(() => periods(range), [range]);
+  const opened = useMemo(() => summarize(per.cur).opened, [per]);
+  const rows = useMemo(() => {
+    const sw = issues.reduce((a, d) => a + d.share * d.growth, 0);
+    return issues
+      .map((d) => ({ key: d.key, n: Math.round(opened * ((d.share * d.growth) / sw)) }))
+      .sort((a, b) => b.n - a.n)
+      .slice(0, 5);
+  }, [opened]);
+  const top = rows[0]?.n || 1;
+  return (
+    <Card title={t("topIssues.title")} hint={t("topIssues.hint")}>
+      <ol className="flex flex-col gap-1">
+        {rows.map((r) => (
+          <li key={r.key} className="relative flex h-8 items-center justify-between overflow-hidden rounded-lg px-2.5 text-[13px]">
+            <span className="absolute inset-y-0 left-0 rounded-lg bg-accent-soft transition-[width] duration-500" style={{ width: `${(r.n / top) * 100}%` }} aria-hidden="true" />
+            <span className="relative truncate text-ink/85">{t(`issues.${r.key}`)}</span>
+            <span className="relative font-medium tabular-nums">{format.number(r.n)}</span>
+          </li>
+        ))}
+      </ol>
+    </Card>
+  );
+}
+
+/* ---------- Page ---------- */
+
+export function Overview() {
+  const t = useTranslations("Dashboard");
+  const [range, setRange] = useState<Range>("28d");
+  const per = useMemo(() => periods(range), [range]);
+  const points = useMemo(() => bucket(per.cur, per.prev, GRAIN[range]).points, [per, range]);
+
+  return (
+    <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="flex min-w-0 flex-col gap-5">
+        <Banner range={range} onRange={setRange} />
+        <Queue />
         <Card
           title={t("flow.title")}
           hint={t(`flow.hint.${GRAIN[range]}`)}
@@ -255,105 +421,16 @@ export function Overview() {
             </div>
           }
         >
-          <FlowChart points={points} grain={GRAIN[range]} label={t("flow.label", { period: rangeLabel })} />
-        </Card>
-        <StatusRing />
-      </div>
-
-      {/* Needs attention and top issues */}
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-        <Card title={t("attention.title")} hint={t("attention.hint")} action={<CardLink href="/app/casework">{t("attention.all")}</CardLink>}>
-          <ul className="-mx-2 flex flex-col">
-            {oldestCases.map((c) => (
-              <li key={c.key}>
-                <Link href="/app/casework" className="flex items-center gap-3.5 rounded-2xl px-2 py-2.5 hover:bg-panel">
-                  <Age days={c.days} />
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[13.5px] font-medium text-ink/90">{t(`mock.cases.${c.key}`)}</span>
-                    <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[12px] text-muted">
-                      <span className="tabular-nums">#{c.number}</span>
-                      <span className="size-[3px] rounded-full bg-faint" />
-                      {t(`issues.${c.issue}`)}
-                    </span>
-                  </span>
-                  <Initials name={c.owner} />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Card>
-
-        <Card title={t("topIssues.title")} hint={t("topIssues.hint")}>
-          <ol className="flex flex-col gap-3.5">
-            {topIssues.map((r, i) => (
-              <li key={r.key}>
-                <div className="flex items-baseline gap-2 text-[13px]">
-                  <span className="w-4 text-[11.5px] text-faint tabular-nums">{i + 1}</span>
-                  <span className="min-w-0 flex-1 truncate text-ink/85">{t(`issues.${r.key}`)}</span>
-                  <span className="font-medium tabular-nums">{format.number(r.cur)}</span>
-                  <span className={`w-10 text-right text-[11.5px] tabular-nums ${r.change == null ? "" : r.change >= 0 ? "text-good" : "text-bad"}`}>
-                    {r.change == null ? "" : format.number(r.change, { style: "percent", signDisplay: "exceptZero" })}
-                  </span>
-                </div>
-                <div className="mt-1.5 ml-6 h-1.5 overflow-hidden rounded-full bg-chrome">
-                  <div className="h-full rounded-full bg-accent transition-[width] duration-500" style={{ width: `${(r.cur / issueTop) * 100}%`, opacity: 1 - i * 0.12 }} />
-                </div>
-              </li>
-            ))}
-          </ol>
+          <FlowChart points={points} grain={GRAIN[range]} label={t("flow.label", { period: t(`range.presets.${range}`) })} />
         </Card>
       </div>
 
-      {/* Email and activity */}
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card title={t("emails.title")} hint={t("emails.hint")} action={<CardLink href="/app/email">{t("emails.all")}</CardLink>}>
-          <ul className="flex flex-col divide-y divide-line/70">
-            {recentEmails.map((e) => {
-              const C = 2 * Math.PI * 15;
-              return (
-                <li key={e.key} className="flex items-center gap-3.5 py-3 first:pt-0 last:pb-0">
-                  <span className="relative size-11 shrink-0" title={t("emails.openRate")}>
-                    <svg viewBox="0 0 36 36" className="size-full -rotate-90" aria-hidden="true">
-                      <circle cx="18" cy="18" r="15" fill="none" strokeWidth="3.5" className="stroke-chrome" />
-                      <circle cx="18" cy="18" r="15" fill="none" strokeWidth="3.5" strokeLinecap="round" className="stroke-accent" strokeDasharray={`${e.opened * C} ${C}`} />
-                    </svg>
-                    <span className="absolute inset-0 flex items-center justify-center text-[10.5px] font-semibold tabular-nums">
-                      {format.number(e.opened, { style: "percent" })}
-                    </span>
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block truncate text-[13.5px] font-medium text-ink/90">{t(`mock.emails.${e.key}`)}</span>
-                    <span className="mt-0.5 block text-[12px] text-muted">
-                      {t("emails.line", { date: day(e.sent, { month: "short", day: "numeric" }), recipients: format.number(e.recipients) })}
-                    </span>
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        </Card>
-
-        <Card title={t("activity.title")} hint={t("activity.hint")}>
-          <ol className="relative flex flex-col gap-4 before:absolute before:top-2 before:bottom-2 before:left-[13px] before:w-px before:bg-line">
-            {activity.map((a) => {
-              const icon = ACTIVITY_ICON[a.key];
-              return (
-                <li key={a.at} className="relative flex items-start gap-3">
-                  <span className={`flex size-7 shrink-0 items-center justify-center rounded-full ring-4 ring-white ${icon.tone}`}>
-                    <Glyph className="size-3.5" d={icon.d} />
-                  </span>
-                  <span className="min-w-0 pt-1">
-                    <span className="block text-[13px] leading-[1.45] text-ink/85">
-                      {t(`activity.items.${a.key}`, { who: a.who, number: a.number, count: a.count })}
-                    </span>
-                    <span className="text-[12px] text-muted">{format.relativeTime(new Date(a.at), new Date(NOW))}</span>
-                  </span>
-                </li>
-              );
-            })}
-          </ol>
-        </Card>
-      </div>
+      <aside className="grid content-start gap-5 sm:grid-cols-2 xl:grid-cols-1">
+        <UpNext />
+        <Channels />
+        <CaseStatus />
+        <TopIssues range={range} />
+      </aside>
     </div>
   );
 }

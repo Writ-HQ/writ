@@ -409,15 +409,66 @@
     },
     "overview": {
       "eyebrow": "{date} · {office}",
-      "title": "Welcome back, {name}",
-      "showing": "Showing the last {range}, compared with the period before.",
+      "title": "Good to see you, {name}",
+      "summary": "{cases, plural, one {# case has} other {# cases have}} waited over two months, {messages, plural, one {# message needs} other {# messages need}} a reply, and {posts, plural, =0 {no posts go} one {# post goes} other {# posts go}} out today.",
+      "showing": "Last {range}, compared with the period before",
       "range": "Range",
-      "vsBefore": "vs. period before",
       "actions": {
         "newCase": "New case",
-        "addContact": "Add contact",
-        "writeEmail": "Write email"
+        "schedulePost": "Schedule a post"
       }
+    },
+    "queue": {
+      "title": "Your queue",
+      "tabs": {
+        "messages": "Messages",
+        "cases": "Oldest cases"
+      },
+      "states": {
+        "new": "Needs a reply",
+        "auto": "Auto-replied",
+        "replied": "Replied"
+      },
+      "openInbox": "Open inbox",
+      "allCases": "All cases",
+      "dayUnit": "days",
+      "daysOpen": "Open for {days} days"
+    },
+    "upNext": {
+      "title": "Up next",
+      "hint": "Scheduled posts",
+      "all": "Calendar",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "status": {
+        "approved": "Approved",
+        "approval": "Awaiting approval",
+        "draft": "Draft"
+      }
+    },
+    "channels": {
+      "title": "Social channels",
+      "manage": "Manage",
+      "followers": "{count, plural, one {# follower} other {# followers}}",
+      "unread": "{count} unread",
+      "autoReplies": "auto-replies sent this week"
+    },
+    "status": {
+      "title": "Open cases",
+      "all": "Casework",
+      "total": "open",
+      "new": "New",
+      "progress": "In progress",
+      "agency": "Waiting on an agency",
+      "constituent": "Waiting on the constituent"
+    },
+    "topIssues": {
+      "title": "Top issues",
+      "hint": "Cases opened in this range"
+    },
+    "platforms": {
+      "facebook": "Facebook",
+      "instagram": "Instagram"
     },
     "flow": {
       "title": "Casework flow",
@@ -430,45 +481,6 @@
       "resolved": "Resolved",
       "net": "Net change",
       "label": "Cases opened and resolved, last {period}"
-    },
-    "status": {
-      "title": "Open cases",
-      "hint": "Where every open case stands today.",
-      "all": "Casework",
-      "total": "open",
-      "new": "New",
-      "progress": "In progress",
-      "agency": "Waiting on an agency",
-      "constituent": "Waiting on the constituent"
-    },
-    "attention": {
-      "title": "Needs attention",
-      "hint": "Open cases that have waited longest.",
-      "all": "All cases",
-      "dayUnit": "days",
-      "daysOpen": "Open for {days} days"
-    },
-    "topIssues": {
-      "title": "Top issues",
-      "hint": "Cases opened in this range, by issue."
-    },
-    "emails": {
-      "title": "Recent emails",
-      "hint": "Newsletters and updates sent from this office.",
-      "all": "Email",
-      "openRate": "Share of recipients who opened it",
-      "line": "Sent {date} · {recipients} recipients"
-    },
-    "activity": {
-      "title": "Activity",
-      "hint": "The latest from your team.",
-      "items": {
-        "resolved": "{who} resolved case #{number}",
-        "opened": "{who} opened case #{number}",
-        "note": "{who} added a note to case #{number}",
-        "signup": "A signup form added {count, plural, one {# contact} other {# contacts}}",
-        "email": "A newsletter went to {count, number} people"
-      }
     },
     "metrics": {
       "opened": "Cases opened",
@@ -503,10 +515,18 @@
         "c7": "Repairs refused in social housing",
         "c8": "Tax reassessment letter not explained"
       },
-      "emails": {
-        "e1": "November update: office hours over the holidays",
-        "e2": "Help with winter heating costs",
-        "e3": "Town hall on local transit, recap"
+      "dms": {
+        "m1": "Hi, my mother's pension stopped after she moved in with us. Who do I call?",
+        "m2": "Is the office open on Saturday? I need a letter for my passport application.",
+        "m3": "Thank you for the town hall last week. Will the slides be posted?",
+        "m4": "My work permit renewal has been stuck for four months. Can you help?",
+        "m5": "Got the call from your caseworker today, thanks so much."
+      },
+      "posts": {
+        "p1": "Office hours over the holidays: we're open Dec. 22 and 23, closed until Jan. 2.",
+        "p2": "Need help with winter heating costs? Here's what's available and how to apply.",
+        "p3": "Thanks to everyone who came out to the community clean-up on Saturday.",
+        "p4": "Town hall on local transit: join us Thursday at the Riverside library."
       }
     }
   }
