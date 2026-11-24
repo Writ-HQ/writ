@@ -362,6 +362,11 @@
       "submit": "Créer le compte",
       "hasAccount": "Vous avez déjà un compte?",
       "login": "Se connecter"
+    },
+    "social": {
+      "google": "Continuer avec Google",
+      "facebook": "Continuer avec Facebook",
+      "or": "ou"
     }
   }
 }

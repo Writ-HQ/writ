@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
 import { AuthShell } from "@/components/auth/auth-shell";
-import { AuthForm, PasswordField, TextField } from "@/components/auth/fields";
+import { AuthForm, PasswordField, SocialLogin, TextField } from "@/components/auth/fields";
 import { Link } from "@/i18n/navigation";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -31,6 +31,7 @@ export default function LoginPage() {
         </>
       }
     >
+      <SocialLogin />
       <AuthForm submit={t("submit")}>
         <TextField label={auth("email")} name="email" type="email" autoComplete="username" placeholder={auth("emailPlaceholder")} required />
         <PasswordField
