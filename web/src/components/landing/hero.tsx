@@ -36,7 +36,9 @@ export function Hero() {
           <HeroTitle />
           <p className="mt-6 max-w-[398px] text-base leading-[21px]">{t("subtitle")}</p>
           <div className="mt-11">
-            <Pill size="lg">{t("cta")}</Pill>
+            <Pill size="lg" href="/signup">
+              {t("cta")}
+            </Pill>
           </div>
         </div>
         <Band />

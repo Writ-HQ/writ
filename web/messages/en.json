@@ -322,5 +322,46 @@
       "noAnswer": "Not asked",
       "consentNote": "Recorded with source and date for every change."
     }
+  },
+  "Auth": {
+    "home": "Writ home",
+    "email": "Email",
+    "emailPlaceholder": "name@example.ca",
+    "password": "Password",
+    "showPassword": "Show",
+    "hidePassword": "Hide",
+    "notConnected": "Not connected yet: nothing was sent.",
+    "panel": {
+      "title": "Your team, your contacts and your messages, in one place.",
+      "points": {
+        "canada": "Hosted in Canada",
+        "languages": "English and French throughout",
+        "mfa": "Two-step verification on every account"
+      }
+    },
+    "login": {
+      "metaTitle": "Log in",
+      "title": "Welcome back",
+      "subtitle": "Log in to your Writ account.",
+      "forgot": "Forgot password?",
+      "submit": "Log in",
+      "mfaNote": "You will confirm with your second step next.",
+      "noAccount": "New to Writ?",
+      "signup": "Create an account"
+    },
+    "signup": {
+      "metaTitle": "Create an account",
+      "title": "Create your account",
+      "subtitle": "Set up Writ for your campaign or office.",
+      "name": "Full name",
+      "email": "Work email",
+      "organisation": "Campaign or office",
+      "organisationHint": "You can invite your team once it is set up.",
+      "passwordHint": "At least 12 characters.",
+      "terms": "I agree to the Terms of Service and the Privacy Policy.",
+      "submit": "Create account",
+      "hasAccount": "Already have an account?",
+      "login": "Log in"
+    }
   }
 }

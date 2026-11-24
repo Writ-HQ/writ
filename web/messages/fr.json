@@ -322,5 +322,46 @@
       "noAnswer": "Non demandé",
       "consentNote": "Consigné avec la source et la date à chaque changement."
     }
+  },
+  "Auth": {
+    "home": "Accueil de Writ",
+    "email": "Courriel",
+    "emailPlaceholder": "nom@exemple.ca",
+    "password": "Mot de passe",
+    "showPassword": "Afficher",
+    "hidePassword": "Masquer",
+    "notConnected": "Pas encore branché : rien n'a été envoyé.",
+    "panel": {
+      "title": "Votre équipe, vos contacts et vos messages, au même endroit.",
+      "points": {
+        "canada": "Hébergé au Canada",
+        "languages": "En français et en anglais, partout",
+        "mfa": "Vérification en deux étapes pour chaque compte"
+      }
+    },
+    "login": {
+      "metaTitle": "Se connecter",
+      "title": "Bon retour",
+      "subtitle": "Connectez-vous à votre compte Writ.",
+      "forgot": "Mot de passe oublié?",
+      "submit": "Se connecter",
+      "mfaNote": "Vous confirmerez ensuite avec votre deuxième étape.",
+      "noAccount": "Nouveau sur Writ?",
+      "signup": "Créer un compte"
+    },
+    "signup": {
+      "metaTitle": "Créer un compte",
+      "title": "Créez votre compte",
+      "subtitle": "Configurez Writ pour votre campagne ou votre bureau.",
+      "name": "Nom complet",
+      "email": "Courriel professionnel",
+      "organisation": "Campagne ou bureau",
+      "organisationHint": "Vous pourrez inviter votre équipe une fois la configuration terminée.",
+      "passwordHint": "Au moins 12 caractères.",
+      "terms": "J'accepte les conditions d'utilisation et la politique de confidentialité.",
+      "submit": "Créer le compte",
+      "hasAccount": "Vous avez déjà un compte?",
+      "login": "Se connecter"
+    }
   }
 }

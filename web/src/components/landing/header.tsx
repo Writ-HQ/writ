@@ -188,13 +188,15 @@ export function Navbar() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <button type="button" className="hidden h-8 rounded-full px-4 text-sm leading-[18px] font-medium hover:bg-ink/5 md:block">
+          <Link href="/login" className="hidden h-8 items-center rounded-full px-4 text-sm leading-[18px] font-medium hover:bg-ink/5 md:inline-flex">
             {t("login")}
-          </button>
+          </Link>
           <Pill variant="outline" size="sm" className="hidden md:inline-flex">
             {t("demo")}
           </Pill>
-          <Pill size="sm">{t("start")}</Pill>
+          <Pill size="sm" href="/signup">
+            {t("start")}
+          </Pill>
 
           {/* Small screens: the same links in a disclosure. */}
           <details className="group relative lg:hidden">
@@ -220,9 +222,9 @@ export function Navbar() {
               ))}
               <div className="flex items-center justify-end gap-3 pt-3">
                 <div className="flex gap-2">
-                  <button type="button" className="text-[13px] font-medium">
+                  <Link href="/login" className="inline-flex items-center text-[13px] font-medium">
                     {t("login")}
-                  </button>
+                  </Link>
                   <Pill variant="outline" size="sm">
                     {t("demo")}
                   </Pill>
