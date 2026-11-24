@@ -143,21 +143,26 @@ export function Overview() {
                 {row.map(({ key, icon: Icon, href }, c) => (
                   <li key={key} className={`border-black/[0.06] max-lg:not-first:border-t lg:px-[15.5px] lg:first:pl-0 lg:last:pr-0 ${c > 0 ? "lg:border-l" : ""}`}>
                     {(() => {
+                      // On hover: a soft tile behind, the icon lifts and tilts,
+                      // the title nudges right and the text darkens. Still for
+                      // people who ask for less motion.
+                      const motion = "transition duration-300 ease-out motion-reduce:transition-none motion-reduce:transform-none";
                       const body = (
                         <>
                           <span className="flex items-center gap-2 text-xl leading-[23px]">
-                            <Icon className="h-5 w-5 shrink-0 text-ink" />
-                            {t(`${key}.title`)}
+                            <Icon className={`h-5 w-5 shrink-0 text-ink ${motion} group-hover:-translate-y-0.5 group-hover:scale-110 group-hover:-rotate-6`} />
+                            <span className={`${motion} group-hover:translate-x-0.5`}>{t(`${key}.title`)}</span>
                           </span>
-                          <span className="max-w-[380px] text-base leading-[21px]">{t(`${key}.desc`)}</span>
+                          <span className={`max-w-[380px] text-base leading-[21px] text-ink/80 ${motion} group-hover:text-ink`}>{t(`${key}.desc`)}</span>
                         </>
                       );
+                      const tile = `group flex flex-col gap-2 rounded-2xl p-4 transition-colors duration-300 hover:bg-panel motion-reduce:transition-none`;
                       return href ? (
-                        <a href={href} className="group flex flex-col gap-2 p-4">
+                        <a href={href} className={tile}>
                           {body}
                         </a>
                       ) : (
-                        <div className="flex flex-col gap-2 p-4">{body}</div>
+                        <div className={tile}>{body}</div>
                       );
                     })()}
                   </li>
