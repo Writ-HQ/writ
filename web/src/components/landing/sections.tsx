@@ -256,7 +256,7 @@ export function Features() {
 // customers yet, and no quote is invented.
 export function BuiltFor() {
   const t = useTranslations("Landing.builtFor");
-  const cards: { key: "candidates" | "ridings" | "advocacy"; icon: IconType; className: string; inverse?: boolean }[] = [
+  const cards: { key: "candidates" | "ridings" | "offices" | "advocacy"; icon: IconType; className: string; inverse?: boolean }[] = [
     {
       key: "candidates",
       icon: UsersSolid,
@@ -264,6 +264,7 @@ export function BuiltFor() {
       inverse: true,
     },
     { key: "ridings", icon: BuildingSolid, className: "bg-mist" },
+    { key: "offices", icon: BriefcaseSolid, className: "bg-sage" },
     { key: "advocacy", icon: ChatSolid, className: "bg-sky" },
   ];
   return (
@@ -274,7 +275,7 @@ export function BuiltFor() {
           <br />
           {t("title2")}
         </SectionTitle>
-        <div className="mt-14 grid gap-5 md:grid-cols-3">
+        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {cards.map(({ key, icon: Icon, className, inverse }) => (
             <article key={key} className={`flex min-h-[380px] flex-col justify-between rounded-[6px] p-7 lg:min-h-[440px] ${className}`}>
               <div>

@@ -85,6 +85,7 @@ export function Footer() {
                 links={[
                   { label: t("builtFor.candidates.title"), href: "/#built-for" },
                   { label: t("builtFor.ridings.title"), href: "/#built-for" },
+                  { label: t("builtFor.offices.title"), href: "/#built-for" },
                   { label: t("builtFor.advocacy.title"), href: "/#built-for" },
                 ]}
               />

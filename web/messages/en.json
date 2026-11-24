@@ -1,7 +1,7 @@
 {
   "Metadata": {
     "title": "Writ — The campaign CRM built for Canada",
-    "description": "Contacts, lists, bilingual email and your social inbox in one place, for candidates, riding associations and advocacy groups. Hosted in Canada."
+    "description": "Contacts, lists, bilingual email and your social inbox in one place, for candidates, riding associations, constituency offices and advocacy groups. Hosted in Canada."
   },
   "LocaleSwitcher": {
     "label": "Language",
@@ -186,7 +186,7 @@
     },
     "builtFor": {
       "title1": "Built for the people",
-      "title2": "who run Canadian campaigns.",
+      "title2": "who run campaigns and serve constituents.",
       "candidates": {
         "title": "Candidates",
         "desc": "Get from nomination to election day with every supporter, volunteer and conversation in one place.",
@@ -196,6 +196,11 @@
         "title": "Riding associations",
         "desc": "Keep your members, donors and volunteers organized between elections, not only during them.",
         "cta": "For riding associations"
+      },
+      "offices": {
+        "title": "Constituency offices",
+        "desc": "Answer every constituent who writes, keep track of each case and send updates in both languages, all year round.",
+        "cta": "For constituency offices"
       },
       "advocacy": {
         "title": "Advocacy groups",
@@ -234,7 +239,7 @@
       },
       "q2": {
         "q": "Who is Writ for?",
-        "a": "Candidates, riding associations and advocacy groups of any size, at any level of government. Writ is non-partisan and works with campaigns across the political spectrum."
+        "a": "Candidates, riding associations, constituency offices and advocacy groups of any size, at any level of government. Writ is non-partisan and works with campaigns and offices across the political spectrum."
       },
       "q3": {
         "q": "Where is our data stored?",
