@@ -10,7 +10,7 @@
  * before launch (docs/before-launch.md).
  */
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Host Grotesk Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-serif: var(--font-instrument-serif), ui-serif, Georgia, "Times New Roman", serif;
 
   --color-ink: #000000;
@@ -90,8 +90,9 @@
 
 /*
  * FAQ answers ease open and shut: the details element's content animates
- * between no height and its own height, and the answer fades in. Where a
- * browser cannot animate to an automatic height, answers open at once.
+ * between no height and its own height. Nothing else moves, so opening one
+ * answer while another closes stays smooth. Where a browser cannot animate
+ * to an automatic height, answers open at once.
  */
 .faq-item {
   interpolate-size: allow-keywords;
@@ -106,21 +107,129 @@
 .faq-item[open]::details-content {
   block-size: auto;
 }
-.faq-item > p {
-  transition: opacity 320ms ease;
+/* An answer closing above shouldn't make the browser scroll the page. */
+.faq-list {
+  overflow-anchor: none;
 }
-.faq-item:not([open]) > p {
+@media (prefers-reduced-motion: reduce) {
+  .faq-item::details-content {
+    transition: none;
+  }
+}
+
+/* The manifesto's colour field (components/manifesto/field.tsx): four
+   blues from the landing page's sky, and the glow along the horizon. */
+:root {
+  --field-1: #6fa8d6;
+  --field-2: #4f8fc4;
+  --field-3: #8cc2e6;
+  --field-4: #3d79ad;
+  --field-rim: hsl(205, 80%, 90%);
+}
+
+/*
+ * Product mock-ups beside each feature (components/landing/mock-reveal.tsx):
+ * once armed by the script, the card waits below and faded; when it scrolls
+ * into view it rises in, its rows follow one by one, then it floats gently.
+ */
+.mock-reveal[data-armed] > * {
   opacity: 0;
+  transform: translateY(28px) scale(0.97);
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-@starting-style {
-  .faq-item[open] > p {
-    opacity: 0;
+.mock-reveal[data-armed] > * > *,
+.mock-reveal[data-armed] li {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 600ms ease,
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mock-reveal[data-shown] > *,
+.mock-reveal[data-shown] > * > *,
+.mock-reveal[data-shown] li {
+  opacity: 1;
+  transform: none;
+}
+.mock-reveal[data-shown] > * > *:nth-child(1) { transition-delay: 250ms; }
+.mock-reveal[data-shown] > * > *:nth-child(2) { transition-delay: 350ms; }
+.mock-reveal[data-shown] > * > *:nth-child(3) { transition-delay: 450ms; }
+.mock-reveal[data-shown] > * > *:nth-child(4) { transition-delay: 550ms; }
+.mock-reveal[data-shown] > * > *:nth-child(n + 5) { transition-delay: 650ms; }
+.mock-reveal[data-shown] li:nth-child(1) { transition-delay: 450ms; }
+.mock-reveal[data-shown] li:nth-child(2) { transition-delay: 580ms; }
+.mock-reveal[data-shown] li:nth-child(3) { transition-delay: 710ms; }
+.mock-reveal[data-shown] li:nth-child(4) { transition-delay: 840ms; }
+.mock-reveal[data-shown] li:nth-child(n + 5) { transition-delay: 970ms; }
+.mock-reveal[data-shown] {
+  animation: mock-float 7s ease-in-out 1.6s infinite;
+}
+@keyframes mock-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .faq-item::details-content,
-  .faq-item > p {
+  .mock-reveal[data-armed] > *,
+  .mock-reveal[data-armed] > * > *,
+  .mock-reveal[data-armed] li {
+    opacity: 1;
+    transform: none;
     transition: none;
+  }
+  .mock-reveal[data-shown] {
+    animation: none;
+  }
+}
+
+/* The live product mock-ups (components/landing/live-mocks.tsx). */
+.live-in {
+  animation: live-in 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.live-shift {
+  animation: live-shift 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.live-fade {
+  animation: live-fade 500ms ease both;
+}
+.live-pop {
+  display: inline-flex;
+  animation: live-pop 450ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes live-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+@keyframes live-shift {
+  from {
+    transform: translateY(-14px);
+  }
+}
+@keyframes live-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes live-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-in,
+  .live-shift,
+  .live-fade,
+  .live-pop {
+    animation: none;
   }
 }
 
@@ -154,6 +263,76 @@ body {
       rgb(201 222 233),
       rgb(189 216 232),
       rgb(157 207 235)
+    );
+}
+
+/* More skies for the feature panels, each with the same clouds: dawn,
+   lavender, sage and dusk. Pastel only, so none reads as a party colour. */
+@utility bg-dawn {
+  background-color: rgb(244 214 190);
+  background-image:
+    radial-gradient(ellipse 38% 22% at 18% 26%, rgb(255 255 255 / 0.85), transparent 70%),
+    radial-gradient(ellipse 30% 16% at 72% 18%, rgb(255 255 255 / 0.7), transparent 70%),
+    radial-gradient(ellipse 45% 20% at 60% 78%, rgb(255 255 255 / 0.75), transparent 70%),
+    radial-gradient(ellipse 25% 14% at 8% 86%, rgb(255 255 255 / 0.6), transparent 70%),
+    linear-gradient(
+      rgb(244 214 190),
+      rgb(247 224 204),
+      rgb(249 232 214),
+      rgb(246 226 210),
+      rgb(240 212 192),
+      rgb(236 196 170)
+    );
+}
+
+@utility bg-lavender {
+  background-color: rgb(214 206 238);
+  background-image:
+    radial-gradient(ellipse 38% 22% at 18% 26%, rgb(255 255 255 / 0.85), transparent 70%),
+    radial-gradient(ellipse 30% 16% at 72% 18%, rgb(255 255 255 / 0.7), transparent 70%),
+    radial-gradient(ellipse 45% 20% at 60% 78%, rgb(255 255 255 / 0.75), transparent 70%),
+    radial-gradient(ellipse 25% 14% at 8% 86%, rgb(255 255 255 / 0.6), transparent 70%),
+    linear-gradient(
+      rgb(214 206 238),
+      rgb(224 218 242),
+      rgb(230 225 244),
+      rgb(226 220 240),
+      rgb(216 208 236),
+      rgb(200 190 230)
+    );
+}
+
+@utility bg-sage {
+  background-color: rgb(204 224 204);
+  background-image:
+    radial-gradient(ellipse 38% 22% at 18% 26%, rgb(255 255 255 / 0.85), transparent 70%),
+    radial-gradient(ellipse 30% 16% at 72% 18%, rgb(255 255 255 / 0.7), transparent 70%),
+    radial-gradient(ellipse 45% 20% at 60% 78%, rgb(255 255 255 / 0.75), transparent 70%),
+    radial-gradient(ellipse 25% 14% at 8% 86%, rgb(255 255 255 / 0.6), transparent 70%),
+    linear-gradient(
+      rgb(204 224 204),
+      rgb(216 232 214),
+      rgb(224 236 220),
+      rgb(219 233 216),
+      rgb(206 226 204),
+      rgb(186 214 186)
+    );
+}
+
+@utility bg-dusk {
+  background-color: rgb(214 200 222);
+  background-image:
+    radial-gradient(ellipse 38% 22% at 18% 26%, rgb(255 255 255 / 0.85), transparent 70%),
+    radial-gradient(ellipse 30% 16% at 72% 18%, rgb(255 255 255 / 0.7), transparent 70%),
+    radial-gradient(ellipse 45% 20% at 60% 78%, rgb(255 255 255 / 0.75), transparent 70%),
+    radial-gradient(ellipse 25% 14% at 8% 86%, rgb(255 255 255 / 0.6), transparent 70%),
+    linear-gradient(
+      rgb(214 200 222),
+      rgb(222 212 228),
+      rgb(214 218 236),
+      rgb(200 212 234),
+      rgb(184 200 228),
+      rgb(166 188 222)
     );
 }
 

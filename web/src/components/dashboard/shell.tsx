@@ -15,8 +15,8 @@ import { useStored } from "./use-stored";
 function Wordmark({ hideWhenSlim = false }: { hideWhenSlim?: boolean }) {
   return (
     <span className="flex items-center gap-2 px-1">
-      <WritMark className="h-[17px] w-auto shrink-0" />
-      <span className={`text-[19px] font-semibold tracking-[-0.02em] ${hideWhenSlim ? "lg:hidden" : ""}`}>Writ</span>
+      <WritMark withDot className="h-[17px] w-auto shrink-0" />
+      <span className={`font-serif text-[25px] leading-5 font-normal tracking-[-0.01em] ${hideWhenSlim ? "lg:hidden" : ""}`}>Writ</span>
     </span>
   );
 }
@@ -131,7 +131,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
       >
         <div className={`flex h-full flex-col overflow-y-auto px-4 pt-5 pb-5 lg:overflow-visible ${slim ? "lg:px-3" : ""}`}>
           <div className={`flex items-center justify-between gap-2 ${slim ? "lg:flex-col lg:gap-3" : ""}`}>
-            <Link href="/" aria-label={t("shell.home")}>
+            <Link href="/app" aria-label={t("shell.home")}>
               <Wordmark hideWhenSlim={slim} />
             </Link>
             <button
@@ -223,7 +223,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
             >
               <Glyph d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11" />
             </button>
-            <Link href="/" aria-label={t("shell.home")}>
+            <Link href="/app" aria-label={t("shell.home")}>
               <Wordmark />
             </Link>
           </div>

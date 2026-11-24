@@ -308,6 +308,43 @@ export const BoltSolid = (p: IconProps) => (
   </Solid>
 );
 
+/** A solid building with its windows and door cut out. */
+export const BuildingSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M5.5 2.5h8a1.5 1.5 0 0 1 1.5 1.5v4.5h3.5A1.5 1.5 0 0 1 20 10v11.5H4V4a1.5 1.5 0 0 1 1.5-1.5zM7.3 6h1.8v1.8H7.3zM10.4 6h1.8v1.8h-1.8zM7.3 9.6h1.8v1.8H7.3zM10.4 9.6h1.8v1.8h-1.8zM7.3 13.2h1.8V15H7.3zM10.4 13.2h1.8V15h-1.8zM16.2 11.6H18v1.8h-1.8zM16.2 15.2H18V17h-1.8zM8.6 21.5v-3.3h3.2v3.3z" />
+  </Solid>
+);
+
+/** A solid circle with a white "i". */
+export const InfoSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zM10.9 10.4h2.2v7.1h-2.2zM12 6.3a1.35 1.35 0 1 0 0 2.7 1.35 1.35 0 0 0 0-2.7z" />
+  </Solid>
+);
+
+/** A solid newspaper with white headline and lines. */
+export const NewspaperSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M4.5 3.5h11A1.5 1.5 0 0 1 17 5v14.5c0 .6.2 1.1.5 1.5H5a2.5 2.5 0 0 1-2.5-2.5V5.5a2 2 0 0 1 2-2zM5.5 6.5h8.5v4H5.5zM5.5 13h8.5v1.6H5.5zM5.5 16.4h8.5V18H5.5z" />
+    <path d="M18.6 8H21v11a1.6 1.6 0 0 1-3.2 0V8.8a.8.8 0 0 1 .8-.8z" />
+  </Solid>
+);
+
+/** A solid lifebuoy: a ring cut in four by white bands. */
+export const LifebuoySolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zM12 7.6a4.4 4.4 0 1 0 0 8.8 4.4 4.4 0 0 0 0-8.8z" />
+    <path d="M4.9 4.9l3.9 3.9M15.2 15.2l3.9 3.9M19.1 4.9l-3.9 3.9M8.8 15.2l-3.9 3.9" fill="none" stroke="#fff" strokeWidth="2" />
+  </Solid>
+);
+
+/** A solid house with its door cut out. */
+export const HomeSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M11.3 2.6a1 1 0 0 1 1.4 0l8.4 8a1 1 0 0 1-.7 1.7H19V20a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 20v-7.7H3.6a1 1 0 0 1-.7-1.7zM10 15.5v6h4v-6z" />
+  </Solid>
+);
+
 export const Layers = (p: IconProps) => (
   <Icon {...p}>
     <path d="m12 3 9 5-9 5-9-5 9-5Z" />

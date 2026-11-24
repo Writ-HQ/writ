@@ -2,13 +2,11 @@ import { useTranslations } from "next-intl";
 import type { ComponentType, SVGProps } from "react";
 
 import {
-  ArrowRight,
   BoltSolid,
   BriefcaseSolid,
   BrowserSolid,
-  Building,
+  BuildingSolid,
   CalendarSolid,
-  Chat,
   ChatSolid,
   Check,
   GlobeSolid,
@@ -23,13 +21,15 @@ import {
   Plus,
   ShieldSolid,
   StarSolid,
-  Users,
   UsersSolid,
 } from "@/components/ui/icons";
 import { Pill } from "@/components/ui/pill";
 
+import { CampaignBox } from "./campaign-box";
 import { Container, SectionTitle } from "./container";
-import { ConsentMock, ContactMock, EmailMock, InboxMock, TeamMock } from "./mocks";
+import { CountUp } from "./count-up";
+import { MockReveal } from "./mock-reveal";
+import { ConsentPanel, ContactsPanel, EmailPanel, SocialPanel, TeamPanel } from "./live-mocks";
 
 type IconType = ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -49,7 +49,9 @@ export function Stats() {
             <Icon className="h-6 w-6 text-ink" />
             <dt className="sr-only">{t(`${key}.unit`)}</dt>
             <dd className="mt-6">
-              <span className="text-[52px] leading-none tracking-[-0.04em] lg:text-[60px]">{t(`${key}.value`)}</span>{" "}
+              <span className="text-[52px] leading-none tracking-[-0.04em] lg:text-[60px]">
+                <CountUp value={t(`${key}.value`)} />
+              </span>{" "}
               <span className="text-xl tracking-[-0.02em]">{t(`${key}.unit`)}</span>
             </dd>
             <dd className="mt-4 max-w-[280px] text-[13px] leading-snug text-ink/80">{t(`${key}.note`)}</dd>
@@ -108,11 +110,8 @@ export function Overview() {
     <section id="overview" className="py-24 lg:py-32">
       <Container>
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-          {/* A small stack of cards on sky, in place of an illustration. */}
-          <div aria-hidden="true" className="bg-sky relative h-[110px] w-[108px] shrink-0 overflow-hidden rounded-[6px] sm:h-[138px] sm:w-[135px]">
-            <span className="absolute top-[22%] left-[16%] h-[34%] w-[52%] rounded-md bg-white/90 shadow-sm" />
-            <span className="absolute top-[42%] left-[34%] h-[34%] w-[52%] rounded-md bg-white shadow-md" />
-          </div>
+          {/* A box of a campaign's everyday tools (campaign-box.tsx). */}
+          <CampaignBox className="h-[120px] w-[120px] shrink-0 sm:h-[150px] sm:w-[150px]" />
           <SectionTitle>
             {t("title1")}
             <br />
@@ -128,22 +127,26 @@ export function Overview() {
                 {row.map(({ key, icon: Icon, href }, c) => (
                   <li key={key} className={`border-black/[0.06] max-lg:not-first:border-t lg:px-[15.5px] lg:first:pl-0 lg:last:pr-0 ${c > 0 ? "lg:border-l" : ""}`}>
                     {(() => {
+                      // On hover: a soft tile behind, the icon lifts and tilts,
+                      // the title nudges right and the text darkens. Still for
+                      // people who ask for less motion.
+                      const motion = "transition duration-300 ease-out motion-reduce:transition-none motion-reduce:transform-none";
                       const body = (
                         <>
                           <span className="flex items-center gap-2 text-xl leading-[23px]">
-                            <Icon className="h-5 w-5 shrink-0 text-ink" />
-                            {t(`${key}.title`)}
-                            {href && <ArrowRight className="h-4 w-4 text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-ink" />}
+                            <Icon className={`h-5 w-5 shrink-0 text-ink ${motion} group-hover:-translate-y-0.5 group-hover:scale-110 group-hover:-rotate-6`} />
+                            <span className={`${motion} group-hover:translate-x-0.5`}>{t(`${key}.title`)}</span>
                           </span>
-                          <span className="max-w-[380px] text-base leading-[21px]">{t(`${key}.desc`)}</span>
+                          <span className={`max-w-[380px] text-base leading-[21px] text-ink/80 ${motion} group-hover:text-ink`}>{t(`${key}.desc`)}</span>
                         </>
                       );
+                      const tile = `group flex flex-col gap-2 rounded-2xl p-4 transition-colors duration-300 hover:bg-panel motion-reduce:transition-none`;
                       return href ? (
-                        <a href={href} className="group flex flex-col gap-2 p-4">
+                        <a href={href} className={tile}>
                           {body}
                         </a>
                       ) : (
-                        <div className="flex flex-col gap-2 p-4">{body}</div>
+                        <div className={tile}>{body}</div>
                       );
                     })()}
                   </li>
@@ -160,12 +163,14 @@ export function Overview() {
 
 type FeatureKey = "contacts" | "email" | "social" | "volunteers" | "consent";
 
-const features: { key: FeatureKey; icon: IconType; bullets: string[]; Mock: ComponentType }[] = [
-  { key: "contacts", icon: UsersSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: ContactMock },
-  { key: "email", icon: MailSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: EmailMock },
-  { key: "social", icon: ChatSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: InboxMock },
-  { key: "volunteers", icon: LayersSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: TeamMock },
-  { key: "consent", icon: ShieldSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: ConsentMock },
+// Each feature has its own sky behind its picture and on its icon tile.
+// `fill`: the picture fills its panel instead of sitting centred in it.
+const features: { key: FeatureKey; icon: IconType; bullets: string[]; Mock: ComponentType; sky: string; fill?: boolean }[] = [
+  { key: "contacts", icon: UsersSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: ContactsPanel, sky: "bg-sky", fill: true },
+  { key: "email", icon: MailSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: EmailPanel, sky: "bg-dawn", fill: true },
+  { key: "social", icon: ChatSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: SocialPanel, sky: "bg-lavender", fill: true },
+  { key: "volunteers", icon: LayersSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: TeamPanel, sky: "bg-sage", fill: true },
+  { key: "consent", icon: ShieldSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: ConsentPanel, sky: "bg-dusk", fill: true },
 ];
 
 // One product area: text on one side, a mock-up on sky on the other,
@@ -174,7 +179,23 @@ const features: { key: FeatureKey; icon: IconType; bullets: string[]; Mock: Comp
 // 16px eyebrow 36px below it; a 44px heading on 40px lines; then, pushed
 // to the bottom so the button lines up with the panel's foot, 17px
 // bullets 8px apart and a 42px outline button.
-function Feature({ featureKey, icon: Icon, bullets, Mock, flip }: { featureKey: FeatureKey; icon: IconType; bullets: string[]; Mock: ComponentType; flip: boolean }) {
+function Feature({
+  featureKey,
+  icon: Icon,
+  bullets,
+  Mock,
+  sky,
+  fill = false,
+  flip,
+}: {
+  featureKey: FeatureKey;
+  icon: IconType;
+  bullets: string[];
+  Mock: ComponentType;
+  sky: string;
+  fill?: boolean;
+  flip: boolean;
+}) {
   const t = useTranslations(`Landing.features.${featureKey}`);
   return (
     <section id={featureKey} className="py-12 lg:py-16">
@@ -182,9 +203,7 @@ function Feature({ featureKey, icon: Icon, bullets, Mock, flip }: { featureKey: 
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
           <div className={`flex flex-col border-t border-line pt-9 ${flip ? "lg:order-2" : ""}`}>
             <p className="flex items-center gap-3 text-base leading-5">
-              <span className="bg-sky flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px]">
-                <Icon className="h-3.5 w-3.5" />
-              </span>
+              <Icon className="h-5 w-5 shrink-0" />
               {t("eyebrow")}
             </p>
             <h2 className="mt-7 max-w-[600px] text-[34px] leading-[34px] font-normal tracking-[-0.035em] text-balance sm:text-[44px] sm:leading-[40px]">
@@ -206,10 +225,16 @@ function Feature({ featureKey, icon: Icon, bullets, Mock, flip }: { featureKey: 
               </div>
             </div>
           </div>
-          <div aria-hidden="true" className="bg-sky relative flex h-[340px] items-center justify-center overflow-hidden rounded-[6px] sm:h-[440px] lg:h-[544px]">
-            <div className="scale-[0.8] sm:scale-100 lg:scale-110">
+          <div aria-hidden="true" className={`${sky} relative flex h-[340px] items-center justify-center overflow-hidden sm:h-[440px] lg:h-[544px]`}>
+            {fill ? (
               <Mock />
-            </div>
+            ) : (
+              <div className="scale-[0.8] sm:scale-100 lg:scale-110">
+                <MockReveal>
+                  <Mock />
+                </MockReveal>
+              </div>
+            )}
           </div>
         </div>
       </Container>
@@ -220,8 +245,8 @@ function Feature({ featureKey, icon: Icon, bullets, Mock, flip }: { featureKey: 
 export function Features() {
   return (
     <>
-      {features.map(({ key, icon, bullets, Mock }, i) => (
-        <Feature key={key} featureKey={key} icon={icon} bullets={bullets} Mock={Mock} flip={i % 2 === 1} />
+      {features.map(({ key, icon, bullets, Mock, sky, fill }, i) => (
+        <Feature key={key} featureKey={key} icon={icon} bullets={bullets} Mock={Mock} sky={sky} fill={fill} flip={i % 2 === 1} />
       ))}
     </>
   );
@@ -234,12 +259,12 @@ export function BuiltFor() {
   const cards: { key: "candidates" | "ridings" | "advocacy"; icon: IconType; className: string; inverse?: boolean }[] = [
     {
       key: "candidates",
-      icon: Users,
+      icon: UsersSolid,
       className: "bg-ink-soft text-white bg-[radial-gradient(ellipse_80%_60%_at_80%_100%,rgb(255_255_255/0.14),transparent_70%)]",
       inverse: true,
     },
-    { key: "ridings", icon: Building, className: "bg-mist" },
-    { key: "advocacy", icon: Chat, className: "bg-sky" },
+    { key: "ridings", icon: BuildingSolid, className: "bg-mist" },
+    { key: "advocacy", icon: ChatSolid, className: "bg-sky" },
   ];
   return (
     <section id="built-for" className="py-28 sm:py-36">
@@ -253,7 +278,7 @@ export function BuiltFor() {
           {cards.map(({ key, icon: Icon, className, inverse }) => (
             <article key={key} className={`flex min-h-[380px] flex-col justify-between rounded-[6px] p-7 lg:min-h-[440px] ${className}`}>
               <div>
-                <Icon className="h-6 w-6 opacity-80" />
+                <Icon className="h-6 w-6" />
                 <h3 className="mt-6 text-[28px] leading-none tracking-[-0.03em]">{t(`${key}.title`)}</h3>
                 <p className={`mt-4 max-w-[340px] text-[14px] leading-snug ${inverse ? "text-white/80" : "text-ink/80"}`}>{t(`${key}.desc`)}</p>
               </div>
@@ -330,7 +355,8 @@ export function Security() {
 
 // Questions and answers, sized from the reference: a 416px column, 64px
 // gap; a 32px medium heading; 20px medium questions with 24px above and
-// below, between solid black lines. Native disclosure elements: they open
+// below, between solid black lines. Native disclosure elements sharing one
+// name, so opening an answer closes the one that was open; they open
 // and close without JavaScript and are announced correctly by screen
 // readers.
 export function Faq() {
@@ -351,14 +377,14 @@ export function Faq() {
               {t("cta")}
             </Pill>
           </div>
-          <div>
+          <div className="faq-list">
             {questions.map((q) => (
-              <details key={q} className="faq-item group border-b border-ink last:border-0">
+              <details key={q} name="faq" className="faq-item group border-b border-ink last:border-0">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-6 text-xl leading-[23px] font-medium [&::-webkit-details-marker]:hidden">
                   {t(`${q}.q`)}
                   <Plus className="h-3 w-3 shrink-0 transition-transform group-open:rotate-45" strokeWidth={2.5} />
                 </summary>
-                <p className="-mt-2 max-w-[680px] pb-6 text-base leading-[21px] text-ink/80">{t(`${q}.a`)}</p>
+                <p className="max-w-[680px] pb-6 text-base leading-[21px] text-ink/80">{t(`${q}.a`)}</p>
               </details>
             ))}
           </div>

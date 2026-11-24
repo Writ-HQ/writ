@@ -24,12 +24,14 @@
       "menu": "Menu",
       "about": "About",
       "blog": "Blog",
-      "careers": "Careers",
       "contact": "Contact",
       "help": "Help centre",
       "privacy": "Privacy",
       "security": "Security",
-      "featureCard": "Read about the pilot"
+      "featureCard": "Read about the pilot",
+      "manifesto": "Manifesto",
+      "solutionsCard": "See who Writ is for",
+      "companyCard": "Read our manifesto"
     },
     "hero": {
       "title": "Contacts, supporters, newsletters and your social inbox in one CRM built for advocacy campaigns.",
@@ -289,7 +291,8 @@
       "copyright": "© {year} Writ",
       "closingLine": "Built in Canada, for the people who show up.",
       "cookies": "Cookie policy",
-      "subprocessors": "Subprocessors"
+      "subprocessors": "Subprocessors",
+      "manifesto": "Manifesto"
     },
     "mock": {
       "campaign": "Example Riding Association",
@@ -337,14 +340,12 @@
       "subjectValue": "Town hall on Thursday",
       "audience": "Lakeview North supporters · 1,284 people",
       "bodyPreview": "Join us Thursday at 7 pm at the community centre to talk about what matters in Lakeview North.",
-      "sendsIn": "Each person receives their own language",
       "schedule": "Schedule",
       "inboxAll": "All messages",
       "matched": "Matched to contact",
       "m1": "Is there a town hall in Lakeview this week?",
       "m2": "Happy to help with the canvass on Saturday!",
       "m3": "Where can I get a lawn sign?",
-      "team": "Team",
       "roles": {
         "owner": "Owner",
         "admin": "Admin",
@@ -353,7 +354,6 @@
       },
       "mfaOn": "MFA on",
       "assigned": "2 lists",
-      "consentFor": "Consent · Marie Gagnon",
       "channels": {
         "email": "Email",
         "sms": "Text messages",
@@ -362,7 +362,87 @@
       "optedIn": "Opted in",
       "optedOut": "Opted out",
       "noAnswer": "Not asked",
-      "consentNote": "Recorded with source and date for every change."
+      "justNow": "Just now",
+      "tl4": "Replied to “Help with winter heating”",
+      "tl5": "Asked for a lawn sign",
+      "tl6": "Joined the Saturday canvass",
+      "subjectOther": "Assemblée publique jeudi",
+      "bodyOther": "Joignez-vous à nous jeudi à 19 h au centre communautaire pour parler de ce qui compte à Lakeview-Nord.",
+      "m4": "Can someone call me about my pension?",
+      "m5": "Thanks for the newsletter, see you Thursday.",
+      "contacts": {
+        "importSheet": "Import a spreadsheet",
+        "addContact": "Add contact",
+        "status": "Status",
+        "lastContact": "Last contact",
+        "states": {
+          "volunteer": "Volunteer",
+          "followUp": "Needs follow-up",
+          "supporter": "Supporter",
+          "duplicate": "Possible duplicate"
+        },
+        "when": {
+          "today": "Today",
+          "yesterday": "Yesterday",
+          "twoDays": "2 days ago",
+          "threeDays": "3 days ago"
+        },
+        "importing": "Importing contacts",
+        "chips": {
+          "volunteer": "Volunteer",
+          "lawnSign": "Lawn sign",
+          "french": "Prefers French",
+          "signup": "Signup form",
+          "canvass": "Canvass",
+          "townHall": "Town hall",
+          "newsletter": "Newsletter",
+          "ward3": "Ward 3",
+          "ward7": "Ward 7",
+          "email": "Email"
+        }
+      },
+      "social": {
+        "conversation": "Conversation",
+        "received": "Received",
+        "receivedValue": "Nov 23, 2026",
+        "channel": "Channel",
+        "from": "From",
+        "matchedTo": "Matched to",
+        "directMessage": "Direct message",
+        "contactMeta": "Supporter · Lakeview",
+        "reply": "Reply",
+        "replied": "Replied"
+      },
+      "access": {
+        "role": "Role",
+        "member": "Member",
+        "lists": "Lists",
+        "exports": "Exports",
+        "allLists": "All lists",
+        "notAllowed": "Not allowed",
+        "canvass": "Lakeview canvass",
+        "phoneBank": "Ward 3 phone bank",
+        "contacts": "{count} contacts",
+        "nothingElse": "Nothing else is visible to her"
+      },
+      "emailPanel": {
+        "english": "English version",
+        "french": "French version",
+        "sentTo": "Sent to",
+        "people": "{count, number} people",
+        "opened": "Opened",
+        "unsubscribed": "Unsubscribed"
+      },
+      "consentPanel": {
+        "consent": "Consent",
+        "latest": "Latest change",
+        "source": "Source",
+        "sourceForm": "Sign-up form",
+        "sourceUnsubscribe": "Unsubscribe link",
+        "recorded": "Recorded",
+        "shared": "Sold or shared",
+        "never": "Never"
+      }
     }
   },
   "Auth": {
@@ -374,11 +454,7 @@
     "hidePassword": "Hide",
     "notConnected": "Not connected yet: nothing was sent.",
     "panel": {
-      "title": "Your team, your contacts and your messages, in one place.",
-      "points": {
-        "canada": "Hosted in Canada",
-        "mfa": "Two-step verification on every account"
-      }
+      "title": "Bring your whole campaign together on Writ."
     },
     "login": {
       "metaTitle": "Log in",
@@ -408,7 +484,8 @@
       "google": "Continue with Google",
       "facebook": "Continue with Facebook",
       "or": "or"
-    }
+    },
+    "backHome": "Home"
   },
   "Dashboard": {
     "nav": {
@@ -634,6 +711,78 @@
       "province": "province",
       "siteHost": "website host and location",
       "waitlistHost": "waitlist database host and location"
+    }
+  },
+  "Manifesto": {
+    "metaTitle": "Our manifesto",
+    "metaDescription": "Why we are building Writ: reaching people around a cause, without the extra work.",
+    "eyebrow": "Our manifesto",
+    "entry": {
+      "word": "writ",
+      "sound": "/rɪt/",
+      "kind": "noun.",
+      "meaning": "The order that starts an election.",
+      "reveal": "And the place to run what comes next."
+    },
+    "parts": {
+      "p1": {
+        "title": "It is time to rethink how campaigns reach people.",
+        "s1": "Newsletters and door knocks. Phone calls and town halls. Facebook messages, emails to the office, a note on the back of a petition.",
+        "s2": "People reach out in more ways than ever, and every message deserves an answer. The work behind each one never stops.",
+        "s3": "For years, campaigns and offices have faced the same choice: stay small, or drown in software built for someone else.",
+        "s4": "Every new channel meant another login, another spreadsheet and another tool only one volunteer understood.",
+        "s5": "We were told that is just how organizing works."
+      },
+      "p2": {
+        "title": "Times have changed.",
+        "s1": "The tools campaigns were given were built for marketers and sales teams, full of funnels, pipelines and settings nobody asked for.",
+        "s2": "The people doing this work deserve tools that are clear the first time they open them, whatever their age or experience.",
+        "s3": "They deserve software that does the busywork, so they can spend their time with people."
+      },
+      "p3": {
+        "title": "What does organizing without the extra work mean?",
+        "s1": "It means every supporter, conversation and case in one place, kept in Canada.",
+        "s2": "It means mailings, messages and follow-ups that send themselves, and results you can read at a glance.",
+        "s3": "It means rejecting the idea that reaching more people must mean more work.",
+        "s4": "It means:"
+      }
+    },
+    "beliefs": {
+      "b1": {
+        "before": "Software should feel ",
+        "em": "simple",
+        "after": ".",
+        "because": "Because the people doing this work have better things to learn than menus."
+      },
+      "b2": {
+        "before": "Every voice should be ",
+        "em": "heard",
+        "after": ".",
+        "because": "Because no message, call or case should be left waiting."
+      },
+      "b3": {
+        "before": "Your data should stay ",
+        "em": "yours",
+        "after": ".",
+        "because": "Because supporter lists are never sold, shared or mixed with anyone else’s."
+      },
+      "b4": {
+        "before": "Results should be ",
+        "em": "clear",
+        "after": ".",
+        "because": "Because you should see that it is working, not how the machinery works."
+      }
+    },
+    "close": {
+      "title": "This is organizing without the extra work.",
+      "s1": "That is why we are here. That is what we are building:",
+      "s2": "One simple place to stay in touch with the people you serve, built in Canada.",
+      "sign": "The Writ team"
+    },
+    "finale": {
+      "first": "Reach more people,",
+      "second": "do less busywork.",
+      "action": "Join the waitlist"
     }
   }
 }

@@ -85,6 +85,12 @@ and verified, with the date.
   database host in the privacy policy. Move the waitlist into the API
   when it is deployed.
 
+- **Dashboard picture in the landing page hero.** The hero shows the
+  real dashboard by framing /app (web/src/components/landing/dashboard-preview.tsx).
+  Once /app needs sign-in, the frame will show the sign-in page instead.
+  Before that, point it at a public route that renders the dashboard with
+  fictional data only, never a real tenant's.
+
 - **Features named on the landing page.** The band
   (web/src/lib/built-with.ts) and the feature grid (Overview in
   web/src/components/landing/sections.tsx) name SMS and calls, WhatsApp,

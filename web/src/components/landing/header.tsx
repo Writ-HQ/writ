@@ -3,20 +3,19 @@ import type { ComponentType, SVGProps } from "react";
 
 import {
   ArrowRight,
-  Briefcase,
-  Building,
-  Chat,
+  BuildingSolid,
+  ChatSolid,
   ChevronDown,
-  ContactBook,
-  Info,
-  Layers,
-  Lifebuoy,
-  ListIcon,
-  Lock,
-  Mail,
-  Newspaper,
-  Shield,
-  Users,
+  InfoSolid,
+  LayersSolid,
+  LedgerSolid,
+  LifebuoySolid,
+  ListSolid,
+  LockSolid,
+  MailSolid,
+  NewspaperSolid,
+  ShieldSolid,
+  UsersSolid,
 } from "@/components/ui/icons";
 import { Logo } from "@/components/ui/logo";
 import { Pill } from "@/components/ui/pill";
@@ -31,8 +30,8 @@ type MenuItem = {
   icon?: ComponentType<SVGProps<SVGSVGElement>>;
 };
 
-// One entry in a menu: an 18px outline icon, drawn a little heavier than
-// elsewhere, and a 15px medium label, 12px apart, in a row that turns pale
+// One entry in a menu: an 18px solid icon, like the rest of the site, and
+// a 15px medium label, 12px apart, in a row that turns pale
 // grey on hover.
 // Descriptions show only in the small-screen menu, where there is no card.
 function MenuEntry({ item, compact = true }: { item: MenuItem; compact?: boolean }) {
@@ -40,7 +39,7 @@ function MenuEntry({ item, compact = true }: { item: MenuItem; compact?: boolean
   const body = (
     <>
       {Icon && (
-        <Icon strokeWidth={1.8} className="h-[18px] w-[18px] shrink-0 text-ink" />
+        <Icon className="h-[18px] w-[18px] shrink-0 text-ink" />
       )}
       <span>
         <span className="block text-[15px] leading-5 font-medium">{item.label}</span>
@@ -66,33 +65,58 @@ const ArrowUpRight = (p: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-// The card beside the Product menu: a dusk sky with a caption, as in the
-// reference's announcement card. Not wired to a page yet.
-function FeatureCard({ caption }: { caption: string }) {
-  return (
-    <button
-      type="button"
-      className="group/card relative flex h-[277px] w-[242px] shrink-0 flex-col justify-between overflow-hidden rounded-[6px] p-4 text-left text-white"
-      style={{
-        backgroundImage: [
-          "linear-gradient(to top, rgb(16 28 26 / 0.92), rgb(16 28 26 / 0.25) 38%, transparent 55%)",
-          "radial-gradient(ellipse 70% 28% at 78% 58%, rgb(214 160 170 / 0.75), transparent 70%)",
-          "radial-gradient(ellipse 60% 22% at 22% 72%, rgb(196 150 166 / 0.6), transparent 70%)",
-          "radial-gradient(ellipse 80% 30% at 50% 46%, rgb(236 222 222 / 0.85), transparent 70%)",
-          "linear-gradient(rgb(104 104 150), rgb(160 140 172) 35%, rgb(214 190 196) 55%, rgb(60 72 70) 80%, rgb(28 40 38))",
-        ].join(","),
-      }}
-    >
+// Skies for the cards beside the menus: dusk (Product), day (Solutions)
+// and dawn (Company). Muted, so none reads as a party colour.
+const SKIES = {
+  dusk: [
+    "linear-gradient(to top, rgb(16 28 26 / 0.92), rgb(16 28 26 / 0.25) 38%, transparent 55%)",
+    "radial-gradient(ellipse 70% 28% at 78% 58%, rgb(214 160 170 / 0.75), transparent 70%)",
+    "radial-gradient(ellipse 60% 22% at 22% 72%, rgb(196 150 166 / 0.6), transparent 70%)",
+    "radial-gradient(ellipse 80% 30% at 50% 46%, rgb(236 222 222 / 0.85), transparent 70%)",
+    "linear-gradient(rgb(104 104 150), rgb(160 140 172) 35%, rgb(214 190 196) 55%, rgb(60 72 70) 80%, rgb(28 40 38))",
+  ],
+  day: [
+    "linear-gradient(to top, rgb(18 40 60 / 0.85), rgb(18 40 60 / 0.2) 38%, transparent 55%)",
+    "radial-gradient(ellipse 70% 26% at 74% 40%, rgb(255 255 255 / 0.8), transparent 70%)",
+    "radial-gradient(ellipse 60% 20% at 24% 58%, rgb(255 255 255 / 0.6), transparent 70%)",
+    "linear-gradient(rgb(92 150 204), rgb(140 190 230) 40%, rgb(190 220 240) 60%, rgb(60 96 122) 82%, rgb(24 44 60))",
+  ],
+  dawn: [
+    "linear-gradient(to top, rgb(40 30 24 / 0.9), rgb(40 30 24 / 0.2) 38%, transparent 55%)",
+    "radial-gradient(ellipse 70% 26% at 70% 60%, rgb(250 214 170 / 0.8), transparent 70%)",
+    "radial-gradient(ellipse 60% 22% at 26% 48%, rgb(244 226 206 / 0.7), transparent 70%)",
+    "linear-gradient(rgb(120 132 160), rgb(196 176 170) 38%, rgb(236 204 168) 58%, rgb(92 80 68) 82%, rgb(40 32 26))",
+  ],
+} as const;
+
+export type MenuCard = { caption: string; sky: keyof typeof SKIES; href?: string };
+
+// The card beside a menu: a sky with a caption, as in the reference's
+// announcement card. A link when it has somewhere to go.
+function FeatureCard({ caption, sky, href }: MenuCard) {
+  const classes = "group/card relative flex h-[277px] w-[242px] shrink-0 flex-col justify-between overflow-hidden rounded-[6px] p-4 text-left text-white";
+  const style = { backgroundImage: SKIES[sky].join(",") };
+  const body = (
+    <>
       <ArrowUpRight className="ml-auto h-6 w-6 transition-transform group-hover/card:translate-x-0.5 group-hover/card:-translate-y-0.5" />
       <span className="max-w-[200px] text-base leading-[21px] font-medium">{caption}</span>
+    </>
+  );
+  return href ? (
+    <Link href={href} className={classes} style={style}>
+      {body}
+    </Link>
+  ) : (
+    <button type="button" className={classes} style={style}>
+      {body}
     </button>
   );
 }
 
 // A menu that opens on hover and on keyboard focus, without JavaScript: a
-// white panel with a 220px column of entries and, for Product, a card.
+// white panel with a 220px column of entries and a card beside it.
 // Beside the card the entries spread out to its full height.
-function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; card?: string }) {
+function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; card?: MenuCard }) {
   return (
     <div className="group relative">
       <button
@@ -110,7 +134,7 @@ function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; ca
               <MenuEntry key={item.label} item={item} />
             ))}
           </div>
-          {card && <FeatureCard caption={card} />}
+          {card && <FeatureCard {...card} />}
         </div>
       </div>
     </div>
@@ -120,26 +144,26 @@ function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; ca
 function useMenus() {
   const t = useTranslations("Landing");
   const product: MenuItem[] = [
-    { label: t("overview.contacts.title"), desc: t("overview.contacts.desc"), href: "/#contacts", icon: Users },
-    { label: t("overview.lists.title"), desc: t("overview.lists.desc"), href: "/#overview", icon: ListIcon },
-    { label: t("overview.email.title"), desc: t("overview.email.desc"), href: "/#email", icon: Mail },
-    { label: t("overview.social.title"), desc: t("overview.social.desc"), href: "/#social", icon: Chat },
-    { label: t("overview.volunteers.title"), desc: t("overview.volunteers.desc"), href: "/#volunteers", icon: Layers },
-    { label: t("overview.consent.title"), desc: t("overview.consent.desc"), href: "/#consent", icon: Shield },
+    { label: t("overview.contacts.title"), desc: t("overview.contacts.desc"), href: "/#contacts", icon: UsersSolid },
+    { label: t("overview.lists.title"), desc: t("overview.lists.desc"), href: "/#overview", icon: ListSolid },
+    { label: t("overview.email.title"), desc: t("overview.email.desc"), href: "/#email", icon: MailSolid },
+    { label: t("overview.social.title"), desc: t("overview.social.desc"), href: "/#social", icon: ChatSolid },
+    { label: t("overview.volunteers.title"), desc: t("overview.volunteers.desc"), href: "/#volunteers", icon: LayersSolid },
+    { label: t("overview.consent.title"), desc: t("overview.consent.desc"), href: "/#consent", icon: ShieldSolid },
   ];
   const solutions: MenuItem[] = [
-    { label: t("builtFor.candidates.title"), href: "/#built-for", icon: Users },
-    { label: t("builtFor.ridings.title"), href: "/#built-for", icon: Building },
-    { label: t("builtFor.advocacy.title"), href: "/#built-for", icon: Chat },
+    { label: t("builtFor.candidates.title"), href: "/#built-for", icon: UsersSolid },
+    { label: t("builtFor.ridings.title"), href: "/#built-for", icon: BuildingSolid },
+    { label: t("builtFor.advocacy.title"), href: "/#built-for", icon: ChatSolid },
   ];
   const company: MenuItem[] = [
-    { label: t("nav.about"), icon: Info },
-    { label: t("nav.blog"), icon: Newspaper },
-    { label: t("nav.careers"), icon: Briefcase },
-    { label: t("nav.help"), icon: Lifebuoy },
-    { label: t("nav.contact"), icon: ContactBook },
-    { label: t("nav.security"), icon: Shield },
-    { label: t("nav.privacy"), href: "/privacy", icon: Lock },
+    { label: t("nav.about"), icon: InfoSolid },
+    { label: t("nav.manifesto"), href: "/manifesto", icon: LedgerSolid },
+    { label: t("nav.blog"), icon: NewspaperSolid },
+    { label: t("nav.help"), icon: LifebuoySolid },
+    { label: t("nav.contact"), icon: MailSolid },
+    { label: t("nav.security"), icon: ShieldSolid },
+    { label: t("nav.privacy"), href: "/privacy", icon: LockSolid },
   ];
   return { product, solutions, company };
 }
@@ -205,9 +229,9 @@ export function Navbar() {
         </Link>
 
         <nav aria-label={t("menu")} className="hidden items-center gap-4 lg:flex [&:has(>div:hover)>div:not(:hover)>button]:text-ink/45 [&:has(>div:focus-within)>div:not(:focus-within)>button]:text-ink/45">
-          <Dropdown label={t("product")} items={menus.product} card={t("featureCard")} />
-          <Dropdown label={t("solutions")} items={menus.solutions} />
-          <Dropdown label={t("company")} items={menus.company} />
+          <Dropdown label={t("product")} items={menus.product} card={{ caption: t("featureCard"), sky: "dusk" }} />
+          <Dropdown label={t("solutions")} items={menus.solutions} card={{ caption: t("solutionsCard"), sky: "day", href: "/#built-for" }} />
+          <Dropdown label={t("company")} items={menus.company} card={{ caption: t("companyCard"), sky: "dawn", href: "/manifesto" }} />
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
