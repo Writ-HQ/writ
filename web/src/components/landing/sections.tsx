@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/icons";
 import { Pill } from "@/components/ui/pill";
 
+import { CampaignBox } from "./campaign-box";
 import { Container, SectionTitle } from "./container";
 import { CountUp } from "./count-up";
 import { ConsentMock, ContactMock, EmailMock, InboxMock, TeamMock } from "./mocks";
@@ -108,26 +109,8 @@ export function Overview() {
     <section id="overview" className="py-24 lg:py-32">
       <Container>
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-          {/* A small picture of the heading: a supporter's card, with a
-              message from them tucked behind it, on sky. Decorative. */}
-          <div aria-hidden="true" className="bg-sky relative h-[110px] w-[108px] shrink-0 overflow-hidden rounded-[6px] sm:h-[138px] sm:w-[135px]">
-            {/* The message, behind. */}
-            <span className="absolute top-[16%] left-[12%] flex h-[24%] w-[58%] items-center gap-[6%] rounded-[8px] rounded-bl-[2px] bg-white/85 px-[6%] shadow-sm">
-              <span className="h-[3px] w-[45%] rounded-full bg-ink/20" />
-              <span className="h-[3px] w-[25%] rounded-full bg-ink/15" />
-            </span>
-            {/* The supporter's card, in front. */}
-            <span className="absolute top-[40%] left-[24%] flex h-[44%] w-[64%] flex-col justify-center gap-[9%] rounded-[8px] bg-white px-[8%] shadow-md">
-              <span className="flex items-center gap-[8%]">
-                <span className="flex size-[18px] shrink-0 items-center justify-center rounded-full bg-[#cfdcc4] text-[7px] font-semibold text-ink/70 sm:size-[22px] sm:text-[8px]">MG</span>
-                <span className="flex flex-1 flex-col gap-[3px]">
-                  <span className="h-[3px] w-[90%] rounded-full bg-ink/60" />
-                  <span className="h-[3px] w-[60%] rounded-full bg-ink/20" />
-                </span>
-              </span>
-              <span className="w-fit rounded-full bg-good/10 px-[6px] py-[1px] text-[6.5px] font-medium text-good sm:text-[7.5px]">{t("pictureTag")}</span>
-            </span>
-          </div>
+          {/* A box of a campaign's everyday tools (campaign-box.tsx). */}
+          <CampaignBox className="h-[120px] w-[120px] shrink-0 sm:h-[150px] sm:w-[150px]" />
           <SectionTitle>
             {t("title1")}
             <br />

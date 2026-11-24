@@ -133,8 +133,7 @@
       "casework": {
         "title": "Gestion des dossiers",
         "desc": "Chaque demande suivie du premier contact jusqu’à son règlement, sans que rien ne reste en attente."
-      },
-      "pictureTag": "Bénévole"
+      }
     },
     "features": {
       "contacts": {
