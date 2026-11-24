@@ -15,8 +15,11 @@ them is the most important property of the system.
 - Staff: day-to-day CRM, messaging, social inbox
 - Volunteer: limited access to assigned lists only
 
-First customer type: [municipal / provincial / nomination — TBD]. Keep the
-schema jurisdiction-neutral until this is decided.
+First customer type: constituency offices (federal or provincial), then
+campaigns and advocacy groups; see /docs/decisions/0007. Keep the schema
+jurisdiction-neutral. Office and campaign data must never mix (product
+plan, Guardrails), and Writ does not connect to WhatsApp (its policy
+prohibits political use).
 
 ## Roadmap (15 weeks)
 - Weeks 1–3: Foundation — repo, CI, staging, auth with MFA, tenants, roles,
