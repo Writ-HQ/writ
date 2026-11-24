@@ -23,8 +23,12 @@
       "start": "Get started",
       "menu": "Menu",
       "about": "About",
+      "blog": "Blog",
+      "careers": "Careers",
       "contact": "Contact",
+      "help": "Help centre",
       "privacy": "Privacy",
+      "security": "Security",
       "featureCard": "Read about the pilot"
     },
     "hero": {
@@ -43,13 +47,11 @@
       "visualLabel": "A preview of the Writ dashboard, with fictional data"
     },
     "band": {
-      "label": "Built with",
+      "label": "Works with",
       "purposes": {
         "hosting": "Hosting and email, in Canada",
         "signIn": "Team sign-in",
-        "social": "Messages and scheduled posts",
-        "database": "Database",
-        "web": "Web app"
+        "social": "Messages and scheduled posts"
       }
     },
     "stats": {

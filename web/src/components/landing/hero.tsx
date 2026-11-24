@@ -199,15 +199,25 @@ function PhonePicture() {
 
 // Where the reference shows customer logos: a full-width band of logos
 // and names that scrolls in a loop (src/lib/built-with.ts). No visible
-// label; screen readers hear "Built with" before the list. The list is
+// label; screen readers hear "Works with" and each name once. The list is
 // drawn twice and slid by half its width, so the loop has no seam; the
 // copy is hidden from screen readers. It stops on hover, and stands still
 // for people who ask for less motion. 64px below the hairline, 50px tall.
+/** Times the list repeats in each half of the loop. */
+const REPEAT = 4;
+
 function Band() {
   const t = useTranslations("Landing.band");
-  const items = (hidden: boolean) =>
-    builtWith.map(({ name, logo }) => (
-      <li key={name} aria-hidden={hidden || undefined} className="flex shrink-0 items-center gap-2 pr-[100px] whitespace-nowrap text-ink">
+  // Each half of the loop repeats the list until it is wider than the
+  // widest screen, so the band never shows a gap.
+  const half = Array.from({ length: REPEAT }, () => builtWith).flat();
+  const items = (copy: number) =>
+    half.map(({ name, logo }, i) => (
+      <li
+        key={`${copy}-${i}`}
+        aria-hidden={copy > 0 || i >= builtWith.length || undefined}
+        className="flex shrink-0 items-center gap-2 pr-[100px] whitespace-nowrap text-ink"
+      >
         {logo && <BrandLogo name={logo} className="size-5 shrink-0" />}
         <span className="text-[17px] font-semibold tracking-[-0.02em]">{name}</span>
       </li>
@@ -215,8 +225,8 @@ function Band() {
   return (
     <div className="group mt-16 flex min-h-[50px] items-center overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
       <ul aria-label={t("label")} className="animate-marquee flex w-max [animation-duration:40s] group-hover:[animation-play-state:paused]">
-        {items(false)}
-        {items(true)}
+        {items(0)}
+        {items(1)}
       </ul>
     </div>
   );

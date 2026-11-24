@@ -3,16 +3,20 @@ import type { ComponentType, SVGProps } from "react";
 
 import {
   ArrowRight,
-  BuildingSolid,
-  ChatSolid,
+  Briefcase,
+  Building,
+  Chat,
   ChevronDown,
-  InfoSolid,
-  LayersSolid,
-  ListSolid,
-  LockSolid,
-  MailSolid,
-  ShieldSolid,
-  UsersSolid,
+  ContactBook,
+  Info,
+  Layers,
+  Lifebuoy,
+  ListIcon,
+  Lock,
+  Mail,
+  Newspaper,
+  Shield,
+  Users,
 } from "@/components/ui/icons";
 import { Logo } from "@/components/ui/logo";
 import { Pill } from "@/components/ui/pill";
@@ -26,23 +30,24 @@ type MenuItem = {
   icon?: ComponentType<SVGProps<SVGSVGElement>>;
 };
 
-// One entry in a menu: a 20px solid icon and a 17px medium label, 14px
-// apart, in a row that turns pale grey on hover.
+// One entry in a menu: an 18px outline icon, drawn a little heavier than
+// elsewhere, and a 15px medium label, 12px apart, in a row that turns pale
+// grey on hover.
 // Descriptions show only in the small-screen menu, where there is no card.
 function MenuEntry({ item, compact = true }: { item: MenuItem; compact?: boolean }) {
   const Icon = item.icon;
   const body = (
     <>
       {Icon && (
-        <Icon className="h-5 w-5 shrink-0 text-ink" />
+        <Icon strokeWidth={1.8} className="h-[18px] w-[18px] shrink-0 text-ink" />
       )}
       <span>
-        <span className="block text-[17px] leading-[22px] font-medium tracking-[-0.01em]">{item.label}</span>
+        <span className="block text-[15px] leading-5 font-medium">{item.label}</span>
         {!compact && item.desc && <span className="mt-0.5 block text-[12px] leading-snug text-muted">{item.desc}</span>}
       </span>
     </>
   );
-  const classes = "flex w-full items-center gap-3.5 rounded-[10px] px-3 py-2.5 text-left transition-colors hover:bg-[#f3f3f3]";
+  const classes = "flex w-full items-center gap-3 rounded-[8px] px-2.5 py-2 text-left transition-colors hover:bg-[#f3f3f3]";
   return item.href ? (
     <a href={item.href} className={classes}>
       {body}
@@ -84,7 +89,7 @@ function FeatureCard({ caption }: { caption: string }) {
 }
 
 // A menu that opens on hover and on keyboard focus, without JavaScript: a
-// white panel with a 250px column of entries and, for Product, a card.
+// white panel with a 220px column of entries and, for Product, a card.
 // Beside the card the entries spread out to its full height.
 function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; card?: string }) {
   return (
@@ -98,8 +103,8 @@ function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; ca
         <ChevronDown className="h-3 w-3 transition-transform group-focus-within:rotate-180 group-hover:rotate-180" />
       </button>
       <div className="invisible absolute top-full -left-2.5 -mt-3 translate-y-1 opacity-0 transition-all duration-150 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-        <div className="flex gap-4 rounded-[24px] bg-white p-3.5 shadow-[0_0_0_1px_rgb(0_0_0/0.04),0_24px_48px_-16px_rgb(0_0_0/0.18),0_8px_16px_-8px_rgb(0_0_0/0.08)]">
-          <div className={`flex w-[250px] flex-col gap-0.5 ${card ? "justify-between" : "py-0.5"}`}>
+        <div className="flex gap-3 rounded-[20px] bg-white p-3 shadow-[0_0_0_1px_rgb(0_0_0/0.04),0_24px_48px_-16px_rgb(0_0_0/0.18),0_8px_16px_-8px_rgb(0_0_0/0.08)]">
+          <div className={`flex w-[220px] flex-col gap-0.5 ${card ? "justify-between" : "py-0.5"}`}>
             {items.map((item) => (
               <MenuEntry key={item.label} item={item} />
             ))}
@@ -114,22 +119,26 @@ function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; ca
 function useMenus() {
   const t = useTranslations("Landing");
   const product: MenuItem[] = [
-    { label: t("overview.contacts.title"), desc: t("overview.contacts.desc"), href: "#contacts", icon: UsersSolid },
-    { label: t("overview.lists.title"), desc: t("overview.lists.desc"), href: "#overview", icon: ListSolid },
-    { label: t("overview.email.title"), desc: t("overview.email.desc"), href: "#email", icon: MailSolid },
-    { label: t("overview.social.title"), desc: t("overview.social.desc"), href: "#social", icon: ChatSolid },
-    { label: t("overview.volunteers.title"), desc: t("overview.volunteers.desc"), href: "#volunteers", icon: LayersSolid },
-    { label: t("overview.consent.title"), desc: t("overview.consent.desc"), href: "#consent", icon: ShieldSolid },
+    { label: t("overview.contacts.title"), desc: t("overview.contacts.desc"), href: "#contacts", icon: Users },
+    { label: t("overview.lists.title"), desc: t("overview.lists.desc"), href: "#overview", icon: ListIcon },
+    { label: t("overview.email.title"), desc: t("overview.email.desc"), href: "#email", icon: Mail },
+    { label: t("overview.social.title"), desc: t("overview.social.desc"), href: "#social", icon: Chat },
+    { label: t("overview.volunteers.title"), desc: t("overview.volunteers.desc"), href: "#volunteers", icon: Layers },
+    { label: t("overview.consent.title"), desc: t("overview.consent.desc"), href: "#consent", icon: Shield },
   ];
   const solutions: MenuItem[] = [
-    { label: t("builtFor.candidates.title"), href: "#built-for", icon: UsersSolid },
-    { label: t("builtFor.ridings.title"), href: "#built-for", icon: BuildingSolid },
-    { label: t("builtFor.advocacy.title"), href: "#built-for", icon: ChatSolid },
+    { label: t("builtFor.candidates.title"), href: "#built-for", icon: Users },
+    { label: t("builtFor.ridings.title"), href: "#built-for", icon: Building },
+    { label: t("builtFor.advocacy.title"), href: "#built-for", icon: Chat },
   ];
   const company: MenuItem[] = [
-    { label: t("nav.about"), icon: InfoSolid },
-    { label: t("nav.contact"), icon: MailSolid },
-    { label: t("nav.privacy"), icon: LockSolid },
+    { label: t("nav.about"), icon: Info },
+    { label: t("nav.blog"), icon: Newspaper },
+    { label: t("nav.careers"), icon: Briefcase },
+    { label: t("nav.help"), icon: Lifebuoy },
+    { label: t("nav.contact"), icon: ContactBook },
+    { label: t("nav.security"), icon: Shield },
+    { label: t("nav.privacy"), icon: Lock },
   ];
   return { product, solutions, company };
 }
