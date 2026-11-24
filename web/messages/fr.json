@@ -340,14 +340,12 @@
       "subjectValue": "Assemblée publique jeudi",
       "audience": "Sympathisants de Lakeview-Nord · 1 284 personnes",
       "bodyPreview": "Joignez-vous à nous jeudi à 19 h au centre communautaire pour parler de ce qui compte à Lakeview-Nord.",
-      "sendsIn": "Chaque personne reçoit sa propre langue",
       "schedule": "Planifier",
       "inboxAll": "Tous les messages",
       "matched": "Associé au contact",
       "m1": "Y a-t-il une assemblée publique à Lakeview cette semaine?",
       "m2": "Avec plaisir pour le porte-à-porte samedi!",
       "m3": "Où puis-je obtenir une affiche de pelouse?",
-      "team": "Équipe",
       "roles": {
         "owner": "Propriétaire",
         "admin": "Administrateur",
@@ -356,7 +354,6 @@
       },
       "mfaOn": "AMF activée",
       "assigned": "2 listes",
-      "consentFor": "Consentement · Marie Gagnon",
       "channels": {
         "email": "Courriel",
         "sms": "Messages texte",
@@ -365,7 +362,6 @@
       "optedIn": "Accepté",
       "optedOut": "Refusé",
       "noAnswer": "Non demandé",
-      "consentNote": "Consigné avec la source et la date à chaque changement.",
       "justNow": "À l’instant",
       "tl4": "A répondu à « Aide pour le chauffage cet hiver »",
       "tl5": "A demandé une pancarte",
@@ -374,13 +370,6 @@
       "bodyOther": "Join us Thursday at 7 pm at the community centre to talk about what matters in Lakeview North.",
       "m4": "Quelqu’un peut-il m’appeler au sujet de ma pension?",
       "m5": "Merci pour l’infolettre, à jeudi!",
-      "perms": {
-        "owner": "Contrôle total, facturation et exportations",
-        "admin": "Équipe, paramètres et exportations",
-        "staff": "Contacts, courriels et messagerie",
-        "volunteer": "Ses 2 listes seulement"
-      },
-      "consentChanged": "{channel} mis à jour à l’instant",
       "contacts": {
         "importSheet": "Importer un tableur",
         "addContact": "Ajouter un contact",
@@ -411,6 +400,48 @@
           "ward7": "Quartier 7",
           "email": "Courriel"
         }
+      },
+      "social": {
+        "conversation": "Conversation",
+        "received": "Reçu",
+        "receivedValue": "23 nov. 2026",
+        "channel": "Canal",
+        "from": "De",
+        "matchedTo": "Associé à",
+        "directMessage": "Message privé",
+        "contactMeta": "Partisane · Lakeview",
+        "reply": "Répondre",
+        "replied": "Répondu"
+      },
+      "access": {
+        "role": "Rôle",
+        "member": "Membre",
+        "lists": "Listes",
+        "exports": "Exportations",
+        "allLists": "Toutes les listes",
+        "notAllowed": "Non autorisé",
+        "canvass": "Porte-à-porte à Lakeview",
+        "phoneBank": "Appels, quartier 3",
+        "contacts": "{count} contacts",
+        "nothingElse": "Elle ne voit rien d’autre"
+      },
+      "emailPanel": {
+        "english": "Version anglaise",
+        "french": "Version française",
+        "sentTo": "Envoyé à",
+        "people": "{count, number} personnes",
+        "opened": "Ouvert",
+        "unsubscribed": "Désabonnements"
+      },
+      "consentPanel": {
+        "consent": "Consentement",
+        "latest": "Dernier changement",
+        "source": "Source",
+        "sourceForm": "Formulaire d’inscription",
+        "sourceUnsubscribe": "Lien de désabonnement",
+        "recorded": "Consigné",
+        "shared": "Vendu ou partagé",
+        "never": "Jamais"
       }
     }
   },

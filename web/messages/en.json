@@ -340,14 +340,12 @@
       "subjectValue": "Town hall on Thursday",
       "audience": "Lakeview North supporters · 1,284 people",
       "bodyPreview": "Join us Thursday at 7 pm at the community centre to talk about what matters in Lakeview North.",
-      "sendsIn": "Each person receives their own language",
       "schedule": "Schedule",
       "inboxAll": "All messages",
       "matched": "Matched to contact",
       "m1": "Is there a town hall in Lakeview this week?",
       "m2": "Happy to help with the canvass on Saturday!",
       "m3": "Where can I get a lawn sign?",
-      "team": "Team",
       "roles": {
         "owner": "Owner",
         "admin": "Admin",
@@ -356,7 +354,6 @@
       },
       "mfaOn": "MFA on",
       "assigned": "2 lists",
-      "consentFor": "Consent · Marie Gagnon",
       "channels": {
         "email": "Email",
         "sms": "Text messages",
@@ -365,7 +362,6 @@
       "optedIn": "Opted in",
       "optedOut": "Opted out",
       "noAnswer": "Not asked",
-      "consentNote": "Recorded with source and date for every change.",
       "justNow": "Just now",
       "tl4": "Replied to “Help with winter heating”",
       "tl5": "Asked for a lawn sign",
@@ -374,13 +370,6 @@
       "bodyOther": "Joignez-vous à nous jeudi à 19 h au centre communautaire pour parler de ce qui compte à Lakeview-Nord.",
       "m4": "Can someone call me about my pension?",
       "m5": "Thanks for the newsletter, see you Thursday.",
-      "perms": {
-        "owner": "Full control, billing and exports",
-        "admin": "Team, settings and exports",
-        "staff": "Contacts, email and inbox",
-        "volunteer": "Their 2 assigned lists only"
-      },
-      "consentChanged": "{channel} updated just now",
       "contacts": {
         "importSheet": "Import a spreadsheet",
         "addContact": "Add contact",
@@ -411,6 +400,48 @@
           "ward7": "Ward 7",
           "email": "Email"
         }
+      },
+      "social": {
+        "conversation": "Conversation",
+        "received": "Received",
+        "receivedValue": "Nov 23, 2026",
+        "channel": "Channel",
+        "from": "From",
+        "matchedTo": "Matched to",
+        "directMessage": "Direct message",
+        "contactMeta": "Supporter · Lakeview",
+        "reply": "Reply",
+        "replied": "Replied"
+      },
+      "access": {
+        "role": "Role",
+        "member": "Member",
+        "lists": "Lists",
+        "exports": "Exports",
+        "allLists": "All lists",
+        "notAllowed": "Not allowed",
+        "canvass": "Lakeview canvass",
+        "phoneBank": "Ward 3 phone bank",
+        "contacts": "{count} contacts",
+        "nothingElse": "Nothing else is visible to her"
+      },
+      "emailPanel": {
+        "english": "English version",
+        "french": "French version",
+        "sentTo": "Sent to",
+        "people": "{count, number} people",
+        "opened": "Opened",
+        "unsubscribed": "Unsubscribed"
+      },
+      "consentPanel": {
+        "consent": "Consent",
+        "latest": "Latest change",
+        "source": "Source",
+        "sourceForm": "Sign-up form",
+        "sourceUnsubscribe": "Unsubscribe link",
+        "recorded": "Recorded",
+        "shared": "Sold or shared",
+        "never": "Never"
       }
     }
   },

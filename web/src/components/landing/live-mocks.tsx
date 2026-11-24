@@ -1,12 +1,13 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 
-import { CalendarSolid, Check, ClipboardSolid, HomeSolid, MailSolid, Users } from "@/components/ui/icons";
+import { CalendarSolid, Check, ClipboardSolid, HomeSolid, ListSolid, MailSolid } from "@/components/ui/icons";
 import { useReducedMotion } from "@/lib/motion";
 
-import { Avatar, Card, people, Tag, type Person } from "./mocks";
+import { BrandLogo } from "./brand-logos";
+import { Avatar, people, type Person } from "./mocks";
 
 // The product mock-ups beside each feature, as small living demos after
 // altitude.xyz: every few seconds something happens, the way it would in
@@ -42,209 +43,405 @@ function useTick(ms = STEP) {
   return [ref, tick] as const;
 }
 
-/** The newest `count` items after `tick` steps: item `tick` first, then the ones before it. */
-const latest = <T,>(list: readonly T[], tick: number, count: number) =>
-  Array.from({ length: count }, (_, i) => list[(((tick - i) % list.length) + list.length) % list.length]!);
-
-// Email: the EN/FR switch flips, and the subject and preview swap with it.
-export function LiveEmailMock() {
+// Email: the English and French versions of one email as two cards, fanned
+// like the team panel, taking turns at the front every few seconds. Each
+// says who it goes to and how it did. In the corner, a contact with the
+// language they get, changing with the card in front.
+export function EmailPanel() {
   const t = useTranslations("Landing.mock");
+  const e = useTranslations("Landing.mock.emailPanel");
+  const format = useFormatter();
   const locale = useLocale();
   const [ref, tick] = useTick(3200);
-  const other = tick % 2 === 1;
-  // Which pill is lit: the page's language first, then the other one.
-  const frLit = (locale === "fr") !== other;
+  // The page's own language starts in front.
+  const frFront = (locale === "fr") !== (tick % 2 === 1);
+  // In each message file, subjectValue and bodyPreview are in the page's
+  // language and subjectOther and bodyOther in the other one.
+  const own = { subject: t("subjectValue"), body: t("bodyPreview") };
+  const other = { subject: t("subjectOther"), body: t("bodyOther") };
+  const versions = {
+    en: { ...(locale === "fr" ? other : own), title: e("english"), sent: 703, opened: 0.58, out: 3 },
+    fr: { ...(locale === "fr" ? own : other), title: e("french"), sent: 581, opened: 0.63, out: 2 },
+  };
+  const card = (lang: "en" | "fr") => {
+    const v = versions[lang];
+    const front = (lang === "fr") === frFront;
+    return (
+      <div
+        key={lang}
+        className={`absolute w-[56%] min-w-[320px] rounded-[26px] bg-white p-2.5 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+          front ? "top-[38%] left-[36%] z-10 shadow-[0_14px_44px_-10px_rgb(24_39_75/0.28)]" : "top-[9%] left-[10%] z-0 shadow-[0_10px_40px_-10px_rgb(24_39_75/0.16)]"
+        }`}
+      >
+        <div className="rounded-[18px] bg-panel px-6 pt-5 pb-4">
+          <p className="flex items-center gap-2.5 text-[13px] text-muted">
+            <span className="rounded-full bg-ink px-2.5 py-0.5 text-[12px] font-medium text-white">{lang.toUpperCase()}</span>
+            {v.title}
+          </p>
+          <p className="mt-3 truncate text-[24px] leading-8 tracking-[-0.03em]">{v.subject}</p>
+          <p className="mt-1.5 line-clamp-2 text-[15px] leading-[21px] text-ink/65">{v.body}</p>
+          <div className="mt-4 border-t border-dashed border-ink/15 pt-3">
+            <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-6 gap-y-2 text-[15px]">
+              <dt className="text-muted">{e("sentTo")}</dt>
+              <dd className="truncate">{e("people", { count: v.sent })}</dd>
+              <dt className="text-muted">{e("opened")}</dt>
+              <dd className="truncate">{format.number(v.opened, { style: "percent" })}</dd>
+              <dt className="text-muted">{e("unsubscribed")}</dt>
+              <dd className="truncate">{format.number(v.out)}</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  const who = frFront ? { person: people.marie, lang: "FR" } : { person: people.owen, lang: "EN" };
   return (
-    <div ref={ref}>
-      <Card className="w-[380px] overflow-hidden text-ink">
-        <div className="flex items-center justify-between border-b border-line px-4 py-2.5">
-          <div className="relative flex rounded-full bg-panel p-0.5 text-[10px] font-medium ring-1 ring-line">
-            <span
-              className={`absolute top-0.5 bottom-0.5 left-0.5 w-[calc(50%-2px)] rounded-full bg-white shadow-sm transition-transform duration-500 ease-out ${frLit ? "translate-x-full" : ""}`}
-            />
-            <span className={`relative w-9 py-0.5 text-center transition-colors ${frLit ? "text-muted" : ""}`}>EN</span>
-            <span className={`relative w-9 py-0.5 text-center transition-colors ${frLit ? "" : "text-muted"}`}>FR</span>
-          </div>
-          <span className="rounded-full bg-ink px-3 py-1 text-[10px] font-medium text-white">{t("schedule")}</span>
-        </div>
-        <div className="space-y-3 p-4 text-[11px]">
-          <div key={`s-${other}`} className="live-fade">
-            <p className="text-[10px] text-muted">{t("subject")}</p>
-            <p className="mt-0.5 font-medium">{other ? t("subjectOther") : t("subjectValue")}</p>
-          </div>
-          <p key={`b-${other}`} className="live-fade min-h-[3.4em] leading-relaxed text-ink/80">
-            {other ? t("bodyOther") : t("bodyPreview")}
-          </p>
-          <div className="flex items-center gap-2 rounded-lg bg-panel px-3 py-2 ring-1 ring-line">
-            <Users className="h-3.5 w-3.5 text-muted" />
-            <span className="truncate">{t("audience")}</span>
-          </div>
-          <p className="flex items-center gap-1.5 text-positive">
-            <Check className="h-3.5 w-3.5" />
-            {t("sendsIn")}
-          </p>
-        </div>
-      </Card>
+    <div ref={ref} className="absolute inset-0 text-ink">
+      {card("en")}
+      {card("fr")}
+      {/* A contact and the language they get. */}
+      <div className="absolute bottom-[7%] left-[5%] z-20 flex items-center gap-2.5 rounded-full bg-white py-1.5 pr-2 pl-1.5 shadow-[0_8px_24px_-10px_rgb(24_39_75/0.3)]">
+        <span key={who.lang} className="live-fade flex items-center gap-2.5">
+          <MemberTile person={who.person} size="size-7 text-[10px] rounded-full" />
+          <span className="text-[15px] whitespace-nowrap">{who.person.name}</span>
+          <svg viewBox="0 0 16 16" className="size-3.5 text-muted" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" />
+          </svg>
+          <span className="rounded-full bg-ink px-2.5 py-1 text-[12px] leading-4 font-medium text-white">{who.lang}</span>
+        </span>
+      </div>
     </div>
   );
 }
 
-type Platform = "fb" | "ig" | "wa";
+type Platform = "facebook" | "instagram" | "whatsapp";
 
-function PlatformBadge({ platform }: { platform: Platform }) {
-  if (platform === "fb")
-    return <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#1877f2] text-[8px] font-bold text-white">f</span>;
-  if (platform === "wa")
+/** A platform's own mark in its own colours. */
+function PlatformMark({ platform, size = 18 }: { platform: Platform; size?: number }) {
+  if (platform === "instagram")
     return (
-      <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#25d366] text-white">
-        <svg viewBox="0 0 16 16" className="h-2.5 w-2.5" fill="currentColor" aria-hidden="true">
-          <path d="M8 1.5a6.5 6.5 0 0 0-5.6 9.8L1.5 14.5l3.3-.9A6.5 6.5 0 1 0 8 1.5zm3.2 8.9c-.1.4-.8.7-1.1.8-.3 0-.6.1-2-.5-1.7-.7-2.8-2.5-2.9-2.6-.1-.1-.7-.9-.7-1.8s.4-1.3.6-1.5c.1-.2.3-.2.4-.2h.3c.1 0 .2 0 .4.3l.5 1.3c0 .1.1.2 0 .3l-.2.3-.3.3c-.1.1-.2.2-.1.4.1.2.5.9 1.1 1.4.8.7 1.4.9 1.6 1 .2.1.3 0 .4-.1l.5-.6c.1-.2.2-.1.4-.1l1.2.6c.2.1.3.1.3.2.1.1.1.4 0 .8z" />
-        </svg>
+      <span
+        className="flex shrink-0 items-center justify-center rounded-[28%] text-white"
+        style={{ width: size, height: size, background: "radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%)" }}
+      >
+        <BrandLogo name="instagram" style={{ width: size * 0.64, height: size * 0.64 }} />
       </span>
     );
   return (
-    <span className="inline-flex h-4 w-4 items-center justify-center rounded-[5px] bg-gradient-to-tr from-[#f9a03f] via-[#e1306c] to-[#833ab4] text-[8px] font-bold text-white">
-      ◎
-    </span>
+    <BrandLogo
+      name={platform}
+      className={`shrink-0 ${platform === "facebook" ? "text-[#0866FF]" : "text-[#25D366]"}`}
+      style={{ width: size, height: size }}
+    />
   );
 }
 
-// Social: a new message arrives at the top of the inbox and is matched to a
-// contact a moment later.
-export function LiveInboxMock() {
+/** A status pill at the large mock-up size. */
+function Status({ children, tone = "positive" }: { children: ReactNode; tone?: "positive" | "warning" | "neutral" }) {
+  const tones = {
+    positive: "bg-positive-soft text-positive ring-positive/10",
+    warning: "bg-[#fff4e5] text-warning ring-warning/10",
+    neutral: "bg-panel text-ink/60 ring-line",
+  };
+  return <span className={`inline-block rounded-full px-2.5 py-1 text-[13px] leading-4 font-medium whitespace-nowrap ring-1 ${tones[tone]}`}>{children}</span>;
+}
+
+// Social, laid out after the reference's invoicing picture: a card near the
+// top with one conversation, where it came from and the contact it was
+// matched to; below it, the inbox in a large card running off the left and
+// bottom edges, its messages' first letters cut off by the left edge. The newest message has a Reply button; the rest are
+// answered. Every 2.8s the matched contact fades in again, as it would
+// when a message arrives.
+export function SocialPanel() {
   const t = useTranslations("Landing.mock");
+  const s = useTranslations("Landing.mock.social");
   const [ref, tick] = useTick();
   const [matched, setMatched] = useState(-1);
   useEffect(() => {
-    const id = window.setTimeout(() => setMatched(tick), 900);
+    const id = window.setTimeout(() => setMatched(tick), 700);
     return () => window.clearTimeout(id);
   }, [tick]);
-  const pool: { person: Person; platform: Platform; text: string }[] = [
-    { person: people.priya, platform: "ig", text: t("m1") },
-    { person: people.sam, platform: "wa", text: t("m4") },
-    { person: people.owen, platform: "fb", text: t("m2") },
-    { person: people.jordan, platform: "wa", text: t("m5") },
-    { person: people.dev, platform: "ig", text: t("m3") },
+  const shown = matched === tick;
+  const rows: { text: string; person: Person; platform: Platform; when: string; replied: boolean }[] = [
+    { text: t("m1"), person: people.priya, platform: "instagram", when: t("t1"), replied: false },
+    { text: t("m2"), person: people.owen, platform: "facebook", when: t("t3"), replied: true },
+    { text: t("m4"), person: people.sam, platform: "whatsapp", when: t("t4"), replied: true },
+    { text: t("m5"), person: people.jordan, platform: "whatsapp", when: t("t5"), replied: true },
+    { text: t("m3"), person: people.dev, platform: "instagram", when: t("t5"), replied: true },
   ];
-  const times = [t("justNow"), t("t3"), t("t4")];
-  const shown = latest(pool, tick, 3);
-  return (
-    <div ref={ref}>
-      <Card className="w-[380px] overflow-hidden text-ink">
-        <p className="border-b border-line px-4 py-2.5 text-[11px] font-medium">{t("inboxAll")}</p>
-        <ul>
-          {shown.map(({ person, platform, text }, i) => (
-            <li
-              key={`${tick}-${person.initials}`}
-              className={`flex gap-3 border-b border-line/70 px-4 py-3 last:border-0 ${i === 0 ? "live-in bg-panel" : "live-shift"}`}
-            >
-              <span className="relative">
-                <Avatar person={person} size="h-8 w-8 text-[10px]" />
-                <span className="absolute -right-1 -bottom-1">
-                  <PlatformBadge platform={platform} />
-                </span>
-              </span>
-              <div className="min-w-0 flex-1 text-[11px]">
-                <p className="flex justify-between gap-2">
-                  <span className="font-medium">{person.name}</span>
-                  <span className="text-[10px] text-muted">{times[i]}</span>
-                </p>
-                <p className="mt-0.5 truncate text-ink/75">{text}</p>
-                {i === 0 && (
-                  <p className={`mt-1.5 transition-opacity duration-500 ${matched === tick ? "opacity-100" : "opacity-0"}`}>
-                    <Tag tone="positive">✓ {t("matched")}</Tag>
-                  </p>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </Card>
-    </div>
-  );
-}
+  const label = "text-[11px] leading-4 font-medium tracking-[0.02em] text-muted uppercase";
 
-// Volunteers: a highlight moves down the team, showing what each role can do.
-export function LiveTeamMock() {
-  const t = useTranslations("Landing.mock");
-  const [ref, tick] = useTick();
-  const team = [
-    { person: people.jordan, role: t("roles.owner"), can: t("perms.owner") },
-    { person: people.priya, role: t("roles.admin"), can: t("perms.admin") },
-    { person: people.owen, role: t("roles.staff"), can: t("perms.staff") },
-    { person: people.marie, role: t("roles.volunteer"), can: t("perms.volunteer") },
-  ];
-  const on = tick % team.length;
   return (
-    <div ref={ref}>
-      <Card className="w-[360px] overflow-hidden text-ink">
-        <p className="border-b border-line px-4 py-2.5 text-[11px] font-medium">{t("team")}</p>
+    <div ref={ref} className="absolute inset-0 text-ink">
+      {/* The conversation card. */}
+      <div className="absolute top-[12%] left-[17.5%] w-[65%] bg-white shadow-[0_8px_24px_-12px_rgb(24_39_75/0.18)]">
+        <div className="flex items-start gap-8 border-b border-line px-[6%] py-3">
+          <div className="min-w-0 flex-1">
+            <p className={label}>{s("conversation")}</p>
+            <p className="mt-0.5 text-[12.5px] font-medium">C-00418</p>
+          </div>
+          <div>
+            <p className={label}>{s("received")}</p>
+            <p className="mt-0.5 text-[12.5px] font-medium whitespace-nowrap">{s("receivedValue")}</p>
+          </div>
+          <div className="max-sm:hidden">
+            <p className={label}>{s("channel")}</p>
+            <p className="mt-0.5 text-[12.5px] font-medium">Instagram</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2">
+          <div className="border-r border-line px-[12%] pt-3.5 pb-4">
+            <p className={label}>{s("from")}</p>
+            <span className="mt-2 flex size-10 items-center justify-center rounded-[8px] bg-[#fbe3ef]">
+              <PlatformMark platform="instagram" size={22} />
+            </span>
+            <p className="mt-3 truncate text-[17px] leading-6 tracking-[-0.02em]">@priya.lakeview</p>
+            <p className="truncate text-[12px] text-muted">{s("directMessage")}</p>
+          </div>
+          <div className="px-[12%] pt-3.5 pb-4">
+            <p className={label}>{s("matchedTo")}</p>
+            <div className={`transition-opacity duration-500 ${shown ? "opacity-100" : "opacity-0"} motion-reduce:opacity-100`}>
+              <span className={`mt-2 flex size-10 items-center justify-center rounded-[8px] text-[13px] font-semibold text-ink/70 ${people.priya.tint}`}>
+                {people.priya.initials}
+              </span>
+              <p className="mt-3 truncate text-[17px] leading-6 tracking-[-0.02em]">{people.priya.name}</p>
+              <p className="truncate text-[12px] text-muted">{s("contactMeta")}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* The inbox, running off the left and bottom edges. */}
+      <div className="absolute top-[45%] bottom-0 -left-12 w-[calc(94%+3rem)] rounded-tr-[32px] bg-white pt-3 pr-5 pl-6 shadow-[0_-4px_10px_0_rgb(0_0_0/0.03),0_12px_40px_-8px_rgb(24_39_75/0.18)]">
         <ul>
-          {team.map(({ person, role, can }, i) => (
-            <li
-              key={person.initials}
-              className={`flex items-center gap-3 border-b border-line/70 px-4 py-2.5 text-[11px] transition-colors duration-500 last:border-0 ${i === on ? "bg-panel" : ""}`}
-            >
-              <Avatar person={person} size="h-7 w-7 text-[9px]" />
-              <span className="min-w-0 flex-1">
-                <span className="block font-medium">{person.name}</span>
-                {i === on ? (
-                  <span key={`${tick}`} className="live-fade block truncate text-[10px] text-ink/70">
-                    {can}
-                  </span>
+          {rows.map(({ text, person, platform, when, replied }) => (
+            <li key={person.initials + platform} className="grid h-[62px] grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-5 text-[14px] sm:grid-cols-[minmax(0,1fr)_8.5rem_auto]">
+              <span className="truncate text-ink/80">{text}</span>
+              <span className="flex min-w-0 items-center gap-2 max-sm:hidden">
+                <PlatformMark platform={platform} />
+                <span className="truncate font-medium">{person.name}</span>
+              </span>
+              <span className="flex items-center gap-2.5 whitespace-nowrap">
+                <span className="text-muted">{when}</span>
+                {replied ? (
+                  <Status>{s("replied")}</Status>
                 ) : (
-                  <span className="text-[10px] text-positive">{t("mfaOn")}</span>
+                  <span className="rounded-full px-3.5 py-1.5 text-[13px] leading-4 font-medium ring-1 ring-line">{s("reply")}</span>
                 )}
               </span>
-              <Tag>{role}</Tag>
             </li>
           ))}
         </ul>
-      </Card>
+      </div>
     </div>
   );
 }
 
-// Consent: one channel at a time changes, and the note says what changed.
-export function LiveConsentMock() {
+// Volunteers, laid out after the reference's accounts picture: a card with
+// the team, one volunteer selected and the two lists she is assigned
+// opened under her; over it, two role cards, staff behind and volunteer in
+// front, each saying what that role can and cannot do.
+
+/** A member's initials on a rounded square tile. */
+function MemberTile({ person, size = "size-9 text-[12px]" }: { person: Person; size?: string }) {
+  return <span className={`flex shrink-0 items-center justify-center rounded-[9px] font-semibold text-ink/70 ${person.tint} ${size}`}>{person.initials}</span>;
+}
+
+function Allowed({ yes }: { yes: boolean }) {
+  return yes ? (
+    <Check strokeWidth={2} className="size-[18px] shrink-0 text-positive" />
+  ) : (
+    <svg viewBox="0 0 16 16" className="size-[18px] shrink-0 text-ink/35" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
+      <rect x="3.5" y="7" width="9" height="6.5" rx="1.5" />
+      <path d="M5.5 7V5.2a2.5 2.5 0 0 1 5 0V7" />
+    </svg>
+  );
+}
+
+function RoleCard({
+  role,
+  member,
+  rows,
+  className,
+}: {
+  role: string;
+  member: Person;
+  rows: { label: string; value: ReactNode; yes: boolean }[];
+  className: string;
+}) {
   const t = useTranslations("Landing.mock");
-  const [ref, tick] = useTick(3000);
-  const states = [
-    { label: t("optedIn"), tone: "positive" as const },
-    { label: t("optedOut"), tone: "warning" as const },
-    { label: t("noAnswer"), tone: "neutral" as const },
-  ];
-  const channels = [t("channels.email"), t("channels.sms"), t("channels.phone")];
-  // Each channel starts in its own state; on every tick one channel moves on.
-  const changed = tick === 0 ? -1 : (tick - 1) % channels.length;
-  const stateOf = (c: number) => {
-    const moves = tick === 0 ? 0 : Math.floor((tick - 1 - c) / channels.length) + 1;
-    return states[(c + Math.max(0, moves)) % states.length]!;
-  };
+  const a = useTranslations("Landing.mock.access");
   return (
-    <div ref={ref}>
-      <Card className="w-[340px] overflow-hidden text-ink">
-        <p className="border-b border-line px-4 py-2.5 text-[11px] font-medium">{t("consentFor")}</p>
+    <div className={`absolute rounded-[26px] bg-white p-2.5 shadow-[0_10px_40px_-10px_rgb(24_39_75/0.22)] ${className}`}>
+      <div className="rounded-[18px] bg-panel px-6 pt-5 pb-4">
+        <p className="flex items-center justify-between gap-3 text-[13px] text-muted">
+          {a("role")}
+          <span className="flex items-center gap-1.5 text-[13px] font-medium text-positive">
+            <Check strokeWidth={2.2} className="size-3.5" />
+            {t("mfaOn")}
+          </span>
+        </p>
+        <p className="mt-2 text-[26px] leading-8 tracking-[-0.03em]">{role}</p>
+        <div className="mt-4 border-t border-dashed border-ink/15 pt-3">
+          <dl className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-6 gap-y-2.5 text-[15px]">
+            <dt className="text-muted">{a("member")}</dt>
+            <dd className="flex min-w-0 items-center gap-2">
+              <MemberTile person={member} size="size-5 text-[8px] rounded-[5px]" />
+              <span className="truncate">{member.name}</span>
+            </dd>
+            <Allowed yes />
+            {rows.map(({ label, value, yes }) => (
+              <Fragment key={label}>
+                <dt className="text-muted">{label}</dt>
+                <dd className="truncate">{value}</dd>
+                <Allowed yes={yes} />
+              </Fragment>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function TeamPanel() {
+  const t = useTranslations("Landing.mock");
+  const a = useTranslations("Landing.mock.access");
+  const lists = [
+    { name: a("canvass"), count: a("contacts", { count: 412 }) },
+    { name: a("phoneBank"), count: a("contacts", { count: 186 }) },
+  ];
+  return (
+    <div className="absolute inset-0 text-ink">
+      {/* The team, with Marie selected and her lists open. */}
+      <div className="absolute top-[10%] left-[11.5%] w-[50%] min-w-[300px] rounded-[26px] bg-white p-2.5 shadow-[0_10px_40px_-10px_rgb(24_39_75/0.18)]">
         <ul>
-          {channels.map((channel, c) => {
-            const s = stateOf(c);
+          {[
+            { person: people.jordan, role: t("roles.owner") },
+            { person: people.owen, role: t("roles.staff") },
+          ].map(({ person, role }) => (
+            <li key={person.initials} className="flex items-center gap-3.5 px-3 py-2.5">
+              <MemberTile person={person} />
+              <span className="min-w-0 flex-1 truncate text-[21px] tracking-[-0.025em]">{person.name}</span>
+              <span className="text-[13px] text-muted">{role}</span>
+            </li>
+          ))}
+          <li className="flex items-center gap-3.5 rounded-[14px] bg-panel px-3 py-3">
+            <MemberTile person={people.marie} />
+            <span className="min-w-0 flex-1 truncate text-[21px] tracking-[-0.025em]">{people.marie.name}</span>
+            <span className="text-[13px] text-muted">{t("roles.volunteer")}</span>
+          </li>
+        </ul>
+        <ul className="mt-1 ml-[30px] space-y-2.5 border-l border-line pt-2 pb-3 pl-6">
+          {lists.map(({ name, count }) => (
+            <li key={name} className="flex items-center gap-2.5 text-[16px]">
+              <ListSolid className="size-[18px] shrink-0 text-ink/70" />
+              <span className="min-w-0 flex-1 truncate">{name}</span>
+              <span className="pr-3 text-muted">{count}</span>
+            </li>
+          ))}
+          <li className="text-[15px] text-faint">{a("nothingElse")}</li>
+        </ul>
+      </div>
+
+      <RoleCard
+        role={t("roles.staff")}
+        member={people.owen}
+        className="top-[50%] left-[31%] w-[53%] min-w-[320px]"
+        rows={[
+          { label: a("lists"), value: a("allLists"), yes: true },
+          { label: a("exports"), value: a("notAllowed"), yes: false },
+        ]}
+      />
+      <RoleCard
+        role={t("roles.volunteer")}
+        member={people.marie}
+        className="top-[40%] left-[40%] w-[51%] min-w-[320px]"
+        rows={[
+          { label: a("lists"), value: t("assigned"), yes: true },
+          { label: a("exports"), value: a("notAllowed"), yes: false },
+        ]}
+      />
+    </div>
+  );
+}
+
+// Consent, laid out like the team panel: a card with one contact's consent
+// per channel; over its corner, the record of the latest change: what it
+// is now, where it came from and when. Every few seconds one channel
+// changes, its row lights up and the record's values fade to the new
+// change; the card and its labels stay put.
+export function ConsentPanel() {
+  const t = useTranslations("Landing.mock");
+  const c = useTranslations("Landing.mock.consentPanel");
+  const [ref, tick] = useTick(3000);
+  const channels = [t("channels.email"), t("channels.sms"), t("channels.phone")];
+  type State = "in" | "out" | "none";
+  // Where each channel starts. On every tick one channel, in turn, flips
+  // between opted in and opted out (a channel never asked is opted in).
+  const start: State[] = ["in", "out", "none"];
+  const changed = tick === 0 ? 0 : (tick - 1) % channels.length;
+  const stateOf = (ch: number): State => {
+    const flips = tick === 0 ? 0 : Math.max(0, Math.floor((tick - 1 - ch) / channels.length) + 1);
+    if (flips === 0) return start[ch]!;
+    const first: State = start[ch] === "in" ? "out" : "in";
+    return flips % 2 === 1 ? first : first === "in" ? "out" : "in";
+  };
+  const label = { in: t("optedIn"), out: t("optedOut"), none: t("noAnswer") };
+  const tone = { in: "positive", out: "warning", none: "neutral" } as const;
+  const now = stateOf(changed);
+  const source = now === "in" ? c("sourceForm") : c("sourceUnsubscribe");
+
+  return (
+    <div ref={ref} className="absolute inset-0 text-ink">
+      {/* The contact's consent, channel by channel. */}
+      <div className="absolute top-[9%] left-[11.5%] w-[52%] min-w-[300px] rounded-[26px] bg-white p-2.5 shadow-[0_10px_40px_-10px_rgb(24_39_75/0.18)]">
+        <div className="flex items-center gap-3.5 px-3 pt-2 pb-3">
+          <MemberTile person={people.marie} />
+          <span className="min-w-0 flex-1 truncate text-[21px] tracking-[-0.025em]">{people.marie.name}</span>
+          <span className="text-[13px] text-muted">{c("consent")}</span>
+        </div>
+        <ul>
+          {channels.map((channel, ch) => {
+            const st = stateOf(ch);
             return (
               <li
                 key={channel}
-                className={`flex items-center justify-between border-b border-line/70 px-4 py-2.5 text-[11px] transition-colors duration-500 last:border-0 ${c === changed ? "bg-panel" : ""}`}
+                className={`flex items-center justify-between gap-3 rounded-[14px] px-3 py-3 text-[17px] transition-colors duration-500 ${tick > 0 && ch === changed ? "bg-panel" : ""}`}
               >
                 {channel}
-                <span key={`${c}-${s.label}`} className={c === changed ? "live-pop" : ""}>
-                  <Tag tone={s.tone}>{s.label}</Tag>
+                <span key={`${ch}-${st}`} className={tick > 0 && ch === changed ? "live-pop" : ""}>
+                  <Status tone={tone[st]}>{label[st]}</Status>
                 </span>
               </li>
             );
           })}
         </ul>
-        <p key={changed} className="live-fade bg-panel px-4 py-2.5 text-[10px] text-muted">
-          {changed < 0 ? t("consentNote") : t("consentChanged", { channel: channels[changed]! })}
-        </p>
-      </Card>
+      </div>
+
+      {/* The record of the latest change. */}
+      <div className="absolute top-[49%] left-[38%] w-[54%] min-w-[320px] rounded-[26px] bg-white p-2.5 shadow-[0_10px_40px_-10px_rgb(24_39_75/0.22)]">
+        <div className="rounded-[18px] bg-panel px-6 pt-5 pb-4">
+          <p className="flex items-center justify-between gap-3 text-[13px] text-muted">
+            {c("latest")}
+            <span key={`c-${tick}`} className="live-fade font-medium text-ink/70">{channels[changed]}</span>
+          </p>
+          <p key={`s-${tick}`} className="live-fade mt-2 text-[26px] leading-8 tracking-[-0.03em]">{label[now]}</p>
+          <div className="mt-4 border-t border-dashed border-ink/15 pt-3">
+            <dl className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-6 gap-y-2.5 text-[15px]">
+              <dt className="text-muted">{c("source")}</dt>
+              <dd key={`src-${tick}`} className="live-fade truncate">{tick === 0 ? c("sourceForm") : source}</dd>
+              <Allowed yes />
+              <dt className="text-muted">{c("recorded")}</dt>
+              <dd key={`at-${tick}`} className="live-fade truncate">{tick === 0 ? t("t5") : t("justNow")}</dd>
+              <Allowed yes />
+              <dt className="text-muted">{c("shared")}</dt>
+              <dd className="truncate">{c("never")}</dd>
+              <Allowed yes={false} />
+            </dl>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -292,13 +489,17 @@ function Spinner() {
 
 export function ContactsPanel() {
   const t = useTranslations("Landing.mock.contacts");
-  const fb = <span className="flex size-[22px] items-center justify-center rounded-full bg-[#1877f2] text-[10px] font-bold text-white">f</span>;
-  const ig = <span className="flex size-[22px] items-center justify-center rounded-[7px] bg-gradient-to-tr from-[#f9a03f] via-[#e1306c] to-[#833ab4] text-[10px] font-bold text-white">◎</span>;
-  const wa = (
-    <span className="flex size-[22px] items-center justify-center rounded-full bg-[#25d366] text-white">
-      <svg viewBox="0 0 16 16" className="size-3" fill="currentColor" aria-hidden="true">
-        <path d="M8 1.5a6.5 6.5 0 0 0-5.6 9.8L1.5 14.5l3.3-.9A6.5 6.5 0 1 0 8 1.5zm3.2 8.9c-.1.4-.8.7-1.1.8-.3 0-.6.1-2-.5-1.7-.7-2.8-2.5-2.9-2.6-.1-.1-.7-.9-.7-1.8s.4-1.3.6-1.5c.1-.2.3-.2.4-.2h.3c.1 0 .2 0 .4.3l.5 1.3c0 .1.1.2 0 .3l-.2.3-.3.3c-.1.1-.2.2-.1.4.1.2.5.9 1.1 1.4.8.7 1.4.9 1.6 1 .2.1.3 0 .4-.1l.5-.6c.1-.2.2-.1.4-.1l1.2.6c.2.1.3.1.3.2.1.1.1.4 0 .8z" />
-      </svg>
+  // The platforms' own marks in their own colours (shapes from Simple
+  // Icons, see brand-logos.tsx): Facebook's blue disc, WhatsApp's green
+  // bubble, and Instagram's glyph on its gradient tile.
+  const fb = <BrandLogo name="facebook" className="size-[22px] shrink-0 text-[#0866FF]" />;
+  const wa = <BrandLogo name="whatsapp" className="size-[22px] shrink-0 text-[#25D366]" />;
+  const ig = (
+    <span
+      className="flex size-[22px] shrink-0 items-center justify-center rounded-[6px] text-white"
+      style={{ background: "radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%)" }}
+    >
+      <BrandLogo name="instagram" className="size-[14px]" />
     </span>
   );
   const dot = (tint: string) => <ChipIcon tint={tint}><span className="size-2 rounded-full bg-white/90" /></ChipIcon>;

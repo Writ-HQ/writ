@@ -29,7 +29,7 @@ import { CampaignBox } from "./campaign-box";
 import { Container, SectionTitle } from "./container";
 import { CountUp } from "./count-up";
 import { MockReveal } from "./mock-reveal";
-import { ContactsPanel, LiveConsentMock, LiveEmailMock, LiveInboxMock, LiveTeamMock } from "./live-mocks";
+import { ConsentPanel, ContactsPanel, EmailPanel, SocialPanel, TeamPanel } from "./live-mocks";
 
 type IconType = ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -167,10 +167,10 @@ type FeatureKey = "contacts" | "email" | "social" | "volunteers" | "consent";
 // `fill`: the picture fills its panel instead of sitting centred in it.
 const features: { key: FeatureKey; icon: IconType; bullets: string[]; Mock: ComponentType; sky: string; fill?: boolean }[] = [
   { key: "contacts", icon: UsersSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: ContactsPanel, sky: "bg-sky", fill: true },
-  { key: "email", icon: MailSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: LiveEmailMock, sky: "bg-dawn" },
-  { key: "social", icon: ChatSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: LiveInboxMock, sky: "bg-lavender" },
-  { key: "volunteers", icon: LayersSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: LiveTeamMock, sky: "bg-sage" },
-  { key: "consent", icon: ShieldSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: LiveConsentMock, sky: "bg-dusk" },
+  { key: "email", icon: MailSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: EmailPanel, sky: "bg-dawn", fill: true },
+  { key: "social", icon: ChatSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: SocialPanel, sky: "bg-lavender", fill: true },
+  { key: "volunteers", icon: LayersSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: TeamPanel, sky: "bg-sage", fill: true },
+  { key: "consent", icon: ShieldSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: ConsentPanel, sky: "bg-dusk", fill: true },
 ];
 
 // One product area: text on one side, a mock-up on sky on the other,

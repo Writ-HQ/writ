@@ -17,7 +17,7 @@ import { bandItems, type FeatureKey } from "@/lib/built-with";
 
 import { BrandLogo } from "./brand-logos";
 import { Container } from "./container";
-import { DashboardMock } from "./mocks";
+import { DashboardPreview } from "./dashboard-preview";
 
 // Sizes follow the reference layout at 1470px wide: the text column is
 // 594px tall with a hairline underneath; the sky panel is half the width
@@ -39,7 +39,7 @@ export function Hero() {
             its left, ends about 40px above its bottom, and runs off its
             right edge, as if on a larger screen. */}
         <div aria-hidden="true" className="absolute top-12 left-6 origin-top-left scale-[0.62] sm:top-20 sm:scale-[0.85] lg:top-[136px] lg:left-10 xl:scale-100">
-          <DashboardMock />
+          <DashboardPreview />
         </div>
       </div>
 
