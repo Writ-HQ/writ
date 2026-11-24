@@ -1,7 +1,7 @@
 {
   "Metadata": {
     "title": "Writ — Le CRM de campagne conçu pour le Canada",
-    "description": "Contacts, listes, courriels bilingues et messagerie sociale au même endroit, pour les candidats, les associations de circonscription et les groupes de défense d'intérêts. Hébergé au Canada."
+    "description": "Contacts, listes, courriels bilingues et messagerie sociale au même endroit, pour les candidats, les associations de circonscription, les bureaux de circonscription et les groupes de défense d'intérêts. Hébergé au Canada."
   },
   "LocaleSwitcher": {
     "label": "Langue",
@@ -186,7 +186,7 @@
     },
     "builtFor": {
       "title1": "Conçu pour les personnes",
-      "title2": "qui mènent les campagnes canadiennes.",
+      "title2": "qui mènent des campagnes et servent la population.",
       "candidates": {
         "title": "Candidats",
         "desc": "De l'investiture au jour du scrutin, avec chaque sympathisant, bénévole et échange au même endroit.",
@@ -196,6 +196,11 @@
         "title": "Associations de circonscription",
         "desc": "Gardez vos membres, donateurs et bénévoles organisés entre les élections, pas seulement pendant.",
         "cta": "Pour les associations"
+      },
+      "offices": {
+        "title": "Bureaux de circonscription",
+        "desc": "Répondez à chaque citoyen qui vous écrit, suivez chaque dossier et envoyez des nouvelles dans les deux langues, toute l'année.",
+        "cta": "Pour les bureaux"
       },
       "advocacy": {
         "title": "Groupes de défense d'intérêts",
@@ -234,7 +239,7 @@
       },
       "q2": {
         "q": "À qui s'adresse Writ?",
-        "a": "Aux candidats, aux associations de circonscription et aux groupes de défense d'intérêts de toutes tailles, à tous les ordres de gouvernement. Writ est non partisan et travaille avec des campagnes de tous les horizons politiques."
+        "a": "Aux candidats, aux associations de circonscription, aux bureaux de circonscription et aux groupes de défense d'intérêts de toutes tailles, à tous les ordres de gouvernement. Writ est non partisan et travaille avec des campagnes et des bureaux de tous les horizons politiques."
       },
       "q3": {
         "q": "Où nos données sont-elles stockées?",

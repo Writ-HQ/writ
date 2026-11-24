@@ -3,6 +3,7 @@ import type { ComponentType, SVGProps } from "react";
 
 import {
   ArrowRight,
+  BriefcaseSolid,
   BuildingSolid,
   ChatSolid,
   ChevronDown,
@@ -154,6 +155,7 @@ function useMenus() {
   const solutions: MenuItem[] = [
     { label: t("builtFor.candidates.title"), href: "/#built-for", icon: UsersSolid },
     { label: t("builtFor.ridings.title"), href: "/#built-for", icon: BuildingSolid },
+    { label: t("builtFor.offices.title"), href: "/#built-for", icon: BriefcaseSolid },
     { label: t("builtFor.advocacy.title"), href: "/#built-for", icon: ChatSolid },
   ];
   const company: MenuItem[] = [

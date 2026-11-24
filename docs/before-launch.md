@@ -94,6 +94,7 @@ and verified, with the date.
 - **Features named on the landing page.** The band
   (web/src/lib/built-with.ts) and the feature grid (Overview in
   web/src/components/landing/sections.tsx) name SMS and calls, WhatsApp,
+  casework (also on the constituency offices card in Built for),
   surveys, websites, appointments, automatic follow-ups, reviews and
   reputation, and document signing. None of these are built, and some
   are not on the roadmap yet (docs/product-plan.md). Before promoting the
