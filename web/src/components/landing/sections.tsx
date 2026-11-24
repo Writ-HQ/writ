@@ -357,14 +357,14 @@ export function Faq() {
               {t("cta")}
             </Pill>
           </div>
-          <div>
+          <div className="faq-list">
             {questions.map((q) => (
               <details key={q} name="faq" className="faq-item group border-b border-ink last:border-0">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-6 text-xl leading-[23px] font-medium [&::-webkit-details-marker]:hidden">
                   {t(`${q}.q`)}
                   <Plus className="h-3 w-3 shrink-0 transition-transform group-open:rotate-45" strokeWidth={2.5} />
                 </summary>
-                <p className="-mt-2 max-w-[680px] pb-6 text-base leading-[21px] text-ink/80">{t(`${q}.a`)}</p>
+                <p className="max-w-[680px] pb-6 text-base leading-[21px] text-ink/80">{t(`${q}.a`)}</p>
               </details>
             ))}
           </div>

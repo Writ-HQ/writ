@@ -90,8 +90,9 @@
 
 /*
  * FAQ answers ease open and shut: the details element's content animates
- * between no height and its own height, and the answer fades in. Where a
- * browser cannot animate to an automatic height, answers open at once.
+ * between no height and its own height. Nothing else moves, so opening one
+ * answer while another closes stays smooth. Where a browser cannot animate
+ * to an automatic height, answers open at once.
  */
 .faq-item {
   interpolate-size: allow-keywords;
@@ -106,20 +107,12 @@
 .faq-item[open]::details-content {
   block-size: auto;
 }
-.faq-item > p {
-  transition: opacity 320ms ease;
-}
-.faq-item:not([open]) > p {
-  opacity: 0;
-}
-@starting-style {
-  .faq-item[open] > p {
-    opacity: 0;
-  }
+/* An answer closing above shouldn't make the browser scroll the page. */
+.faq-list {
+  overflow-anchor: none;
 }
 @media (prefers-reduced-motion: reduce) {
-  .faq-item::details-content,
-  .faq-item > p {
+  .faq-item::details-content {
     transition: none;
   }
 }
