@@ -197,32 +197,27 @@ function PhonePicture() {
   );
 }
 
-// Where the reference shows customer logos: a "Built with" label and a
-// band of names (and logos, where allowed) that scrolls in a loop
-// (src/lib/built-with.ts). The list is drawn twice and slid by half its
-// width, so the loop has no seam; the copy is hidden from screen readers.
-// It stops on hover, and stands still for people who ask for less motion.
-// Same place and height as before: 64px below the hairline, 50px tall.
+// Where the reference shows customer logos: a full-width band of logos
+// and names that scrolls in a loop (src/lib/built-with.ts). No visible
+// label; screen readers hear "Built with" before the list. The list is
+// drawn twice and slid by half its width, so the loop has no seam; the
+// copy is hidden from screen readers. It stops on hover, and stands still
+// for people who ask for less motion. 64px below the hairline, 50px tall.
 function Band() {
   const t = useTranslations("Landing.band");
   const items = (hidden: boolean) =>
     builtWith.map(({ name, logo }) => (
-      <li key={name} aria-hidden={hidden || undefined} className="flex shrink-0 items-center gap-3 pr-14 whitespace-nowrap">
-        <span className="flex items-center gap-2 text-ink/70">
-          {logo && <BrandLogo name={logo} className="size-[22px] shrink-0" />}
-          <span className="text-[19px] font-semibold tracking-[-0.03em]">{name}</span>
-        </span>
+      <li key={name} aria-hidden={hidden || undefined} className="flex shrink-0 items-center gap-2 pr-[100px] whitespace-nowrap text-ink">
+        {logo && <BrandLogo name={logo} className="size-5 shrink-0" />}
+        <span className="text-[17px] font-semibold tracking-[-0.02em]">{name}</span>
       </li>
     ));
   return (
-    <div className="mt-16 flex min-h-[50px] items-center gap-x-10">
-      <p className="shrink-0 text-sm leading-[18px] font-medium text-ink/45">{t("label")}</p>
-      <div className="group min-w-0 flex-1 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
-        <ul className="animate-marquee flex w-max [animation-duration:40s] group-hover:[animation-play-state:paused]">
-          {items(false)}
-          {items(true)}
-        </ul>
-      </div>
+    <div className="group mt-16 flex min-h-[50px] items-center overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+      <ul aria-label={t("label")} className="animate-marquee flex w-max [animation-duration:40s] group-hover:[animation-play-state:paused]">
+        {items(false)}
+        {items(true)}
+      </ul>
     </div>
   );
 }
