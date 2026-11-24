@@ -3,20 +3,19 @@ import type { ComponentType, SVGProps } from "react";
 
 import {
   ArrowRight,
-  Building,
-  Chat,
+  BuildingSolid,
+  ChatSolid,
   ChevronDown,
-  ContactBook,
-  Info,
-  Layers,
-  Ledger,
-  Lifebuoy,
-  ListIcon,
-  Lock,
-  Mail,
-  Newspaper,
-  Shield,
-  Users,
+  InfoSolid,
+  LayersSolid,
+  LedgerSolid,
+  LifebuoySolid,
+  ListSolid,
+  LockSolid,
+  MailSolid,
+  NewspaperSolid,
+  ShieldSolid,
+  UsersSolid,
 } from "@/components/ui/icons";
 import { Logo } from "@/components/ui/logo";
 import { Pill } from "@/components/ui/pill";
@@ -31,8 +30,8 @@ type MenuItem = {
   icon?: ComponentType<SVGProps<SVGSVGElement>>;
 };
 
-// One entry in a menu: an 18px outline icon, drawn a little heavier than
-// elsewhere, and a 15px medium label, 12px apart, in a row that turns pale
+// One entry in a menu: an 18px solid icon, like the rest of the site, and
+// a 15px medium label, 12px apart, in a row that turns pale
 // grey on hover.
 // Descriptions show only in the small-screen menu, where there is no card.
 function MenuEntry({ item, compact = true }: { item: MenuItem; compact?: boolean }) {
@@ -40,7 +39,7 @@ function MenuEntry({ item, compact = true }: { item: MenuItem; compact?: boolean
   const body = (
     <>
       {Icon && (
-        <Icon strokeWidth={1.8} className="h-[18px] w-[18px] shrink-0 text-ink" />
+        <Icon className="h-[18px] w-[18px] shrink-0 text-ink" />
       )}
       <span>
         <span className="block text-[15px] leading-5 font-medium">{item.label}</span>
@@ -145,26 +144,26 @@ function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; ca
 function useMenus() {
   const t = useTranslations("Landing");
   const product: MenuItem[] = [
-    { label: t("overview.contacts.title"), desc: t("overview.contacts.desc"), href: "/#contacts", icon: Users },
-    { label: t("overview.lists.title"), desc: t("overview.lists.desc"), href: "/#overview", icon: ListIcon },
-    { label: t("overview.email.title"), desc: t("overview.email.desc"), href: "/#email", icon: Mail },
-    { label: t("overview.social.title"), desc: t("overview.social.desc"), href: "/#social", icon: Chat },
-    { label: t("overview.volunteers.title"), desc: t("overview.volunteers.desc"), href: "/#volunteers", icon: Layers },
-    { label: t("overview.consent.title"), desc: t("overview.consent.desc"), href: "/#consent", icon: Shield },
+    { label: t("overview.contacts.title"), desc: t("overview.contacts.desc"), href: "/#contacts", icon: UsersSolid },
+    { label: t("overview.lists.title"), desc: t("overview.lists.desc"), href: "/#overview", icon: ListSolid },
+    { label: t("overview.email.title"), desc: t("overview.email.desc"), href: "/#email", icon: MailSolid },
+    { label: t("overview.social.title"), desc: t("overview.social.desc"), href: "/#social", icon: ChatSolid },
+    { label: t("overview.volunteers.title"), desc: t("overview.volunteers.desc"), href: "/#volunteers", icon: LayersSolid },
+    { label: t("overview.consent.title"), desc: t("overview.consent.desc"), href: "/#consent", icon: ShieldSolid },
   ];
   const solutions: MenuItem[] = [
-    { label: t("builtFor.candidates.title"), href: "/#built-for", icon: Users },
-    { label: t("builtFor.ridings.title"), href: "/#built-for", icon: Building },
-    { label: t("builtFor.advocacy.title"), href: "/#built-for", icon: Chat },
+    { label: t("builtFor.candidates.title"), href: "/#built-for", icon: UsersSolid },
+    { label: t("builtFor.ridings.title"), href: "/#built-for", icon: BuildingSolid },
+    { label: t("builtFor.advocacy.title"), href: "/#built-for", icon: ChatSolid },
   ];
   const company: MenuItem[] = [
-    { label: t("nav.about"), icon: Info },
-    { label: t("nav.manifesto"), href: "/manifesto", icon: Ledger },
-    { label: t("nav.blog"), icon: Newspaper },
-    { label: t("nav.help"), icon: Lifebuoy },
-    { label: t("nav.contact"), icon: ContactBook },
-    { label: t("nav.security"), icon: Shield },
-    { label: t("nav.privacy"), href: "/privacy", icon: Lock },
+    { label: t("nav.about"), icon: InfoSolid },
+    { label: t("nav.manifesto"), href: "/manifesto", icon: LedgerSolid },
+    { label: t("nav.blog"), icon: NewspaperSolid },
+    { label: t("nav.help"), icon: LifebuoySolid },
+    { label: t("nav.contact"), icon: MailSolid },
+    { label: t("nav.security"), icon: ShieldSolid },
+    { label: t("nav.privacy"), href: "/privacy", icon: LockSolid },
   ];
   return { product, solutions, company };
 }

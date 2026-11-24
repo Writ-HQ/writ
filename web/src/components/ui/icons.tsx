@@ -315,6 +315,29 @@ export const BuildingSolid = (p: IconProps) => (
   </Solid>
 );
 
+/** A solid circle with a white "i". */
+export const InfoSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zM10.9 10.4h2.2v7.1h-2.2zM12 6.3a1.35 1.35 0 1 0 0 2.7 1.35 1.35 0 0 0 0-2.7z" />
+  </Solid>
+);
+
+/** A solid newspaper with white headline and lines. */
+export const NewspaperSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M4.5 3.5h11A1.5 1.5 0 0 1 17 5v14.5c0 .6.2 1.1.5 1.5H5a2.5 2.5 0 0 1-2.5-2.5V5.5a2 2 0 0 1 2-2zM5.5 6.5h8.5v4H5.5zM5.5 13h8.5v1.6H5.5zM5.5 16.4h8.5V18H5.5z" />
+    <path d="M18.6 8H21v11a1.6 1.6 0 0 1-3.2 0V8.8a.8.8 0 0 1 .8-.8z" />
+  </Solid>
+);
+
+/** A solid lifebuoy: a ring cut in four by white bands. */
+export const LifebuoySolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zM12 7.6a4.4 4.4 0 1 0 0 8.8 4.4 4.4 0 0 0 0-8.8z" />
+    <path d="M4.9 4.9l3.9 3.9M15.2 15.2l3.9 3.9M19.1 4.9l-3.9 3.9M8.8 15.2l-3.9 3.9" fill="none" stroke="#fff" strokeWidth="2" />
+  </Solid>
+);
+
 export const Layers = (p: IconProps) => (
   <Icon {...p}>
     <path d="m12 3 9 5-9 5-9-5 9-5Z" />
