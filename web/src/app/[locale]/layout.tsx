@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { GeistSans } from "geist/font/sans";
 import { Instrument_Serif } from "next/font/google";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
@@ -8,10 +7,13 @@ import type { ReactNode } from "react";
 
 import { routing } from "@/i18n/routing";
 
+// Host Grotesk for headings and body, as on the tokensupply site: the
+// variable font from Fontsource ships with the app and is served from this
+// site. Set as --font-sans in globals.css.
+import "@fontsource-variable/host-grotesk";
+
 import "../globals.css";
 
-// Geist for headings and body, from Vercel's geist package: the variable
-// font files ship with the app and are served from this site.
 // The wordmark's typeface. One weight only (400).
 const instrumentSerif = Instrument_Serif({
   weight: "400",
@@ -50,7 +52,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   }
 
   return (
-    <html lang={locale} className={`${GeistSans.variable} ${instrumentSerif.variable}`}>
+    <html lang={locale} className={instrumentSerif.variable}>
       <body className="min-h-dvh font-sans antialiased">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
