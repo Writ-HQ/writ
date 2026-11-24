@@ -16,6 +16,7 @@
     "generate:api": "openapi-typescript ../openapi/openapi.yaml -o src/lib/api/schema.gen.ts"
   },
   "dependencies": {
+    "geist": "1.9.2",
     "next": "16.4.6",
     "next-intl": "4.15.3",
     "openapi-fetch": "0.17.0",

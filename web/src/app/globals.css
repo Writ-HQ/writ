@@ -10,7 +10,7 @@
  * before launch (docs/before-launch.md).
  */
 @theme {
-  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --color-ink: #000000;
   --color-ink-soft: #0d0d0d;
