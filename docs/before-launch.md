@@ -66,3 +66,10 @@ and verified, with the date.
       apps with Google and Meta, and naming both in the privacy policy as
       recipients of sign-in data. Meta then also leaves the "not a
       subprocessor" note in web/src/lib/subprocessors.ts in doubt.
+
+- **Logos in the landing page band.** The Facebook, Instagram,
+  PostgreSQL and Next.js logos (web/src/components/landing/brand-logos.tsx,
+  shapes from Simple Icons, CC0) must be checked against each owner's
+  current brand guidelines: Meta's for Facebook and Instagram, the
+  PostgreSQL trademark policy, and Vercel's for Next.js. AWS may appear
+  only as the official "Powered by AWS" badge, under AWS's trademark terms.
