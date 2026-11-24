@@ -10,6 +10,7 @@ import {
   ContactBook,
   Info,
   Layers,
+  Ledger,
   Lifebuoy,
   ListIcon,
   Lock,
@@ -134,6 +135,7 @@ function useMenus() {
   ];
   const company: MenuItem[] = [
     { label: t("nav.about"), icon: Info },
+    { label: t("nav.manifesto"), href: "/manifesto", icon: Ledger },
     { label: t("nav.blog"), icon: Newspaper },
     { label: t("nav.careers"), icon: Briefcase },
     { label: t("nav.help"), icon: Lifebuoy },

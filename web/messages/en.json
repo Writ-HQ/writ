@@ -29,7 +29,8 @@
       "help": "Help centre",
       "privacy": "Privacy",
       "security": "Security",
-      "featureCard": "Read about the pilot"
+      "featureCard": "Read about the pilot",
+      "manifesto": "Manifesto"
     },
     "hero": {
       "title": "Contacts, supporters, newsletters and your social inbox in one CRM built for advocacy campaigns.",
@@ -289,7 +290,8 @@
       "copyright": "© {year} Writ",
       "closingLine": "Built in Canada, for the people who show up.",
       "cookies": "Cookie policy",
-      "subprocessors": "Subprocessors"
+      "subprocessors": "Subprocessors",
+      "manifesto": "Manifesto"
     },
     "mock": {
       "campaign": "Example Riding Association",
@@ -634,6 +636,78 @@
       "province": "province",
       "siteHost": "website host and location",
       "waitlistHost": "waitlist database host and location"
+    }
+  },
+  "Manifesto": {
+    "metaTitle": "Our manifesto",
+    "metaDescription": "Why we are building Writ: reaching people around a cause, without the extra work.",
+    "eyebrow": "Our manifesto",
+    "entry": {
+      "word": "writ",
+      "sound": "/rɪt/",
+      "kind": "noun.",
+      "meaning": "The order that starts an election.",
+      "reveal": "And the place to run what comes next."
+    },
+    "parts": {
+      "p1": {
+        "title": "It is time to rethink how campaigns reach people.",
+        "s1": "Newsletters and door knocks. Phone calls and town halls. Facebook messages, emails to the office, a note on the back of a petition.",
+        "s2": "People reach out in more ways than ever, and every message deserves an answer. The work behind each one never stops.",
+        "s3": "For years, campaigns and offices have faced the same choice: stay small, or drown in software built for someone else.",
+        "s4": "Every new channel meant another login, another spreadsheet and another tool only one volunteer understood.",
+        "s5": "We were told that is just how organizing works."
+      },
+      "p2": {
+        "title": "Times have changed.",
+        "s1": "The tools campaigns were given were built for marketers and sales teams, full of funnels, pipelines and settings nobody asked for.",
+        "s2": "The people doing this work deserve tools that are clear the first time they open them, whatever their age or experience.",
+        "s3": "They deserve software that does the busywork, so they can spend their time with people."
+      },
+      "p3": {
+        "title": "What does organizing without the extra work mean?",
+        "s1": "It means every supporter, conversation and case in one place, kept in Canada.",
+        "s2": "It means mailings, messages and follow-ups that send themselves, and results you can read at a glance.",
+        "s3": "It means rejecting the idea that reaching more people must mean more work.",
+        "s4": "It means:"
+      }
+    },
+    "beliefs": {
+      "b1": {
+        "before": "Software should feel ",
+        "em": "simple",
+        "after": ".",
+        "because": "Because the people doing this work have better things to learn than menus."
+      },
+      "b2": {
+        "before": "Every voice should be ",
+        "em": "heard",
+        "after": ".",
+        "because": "Because no message, call or case should be left waiting."
+      },
+      "b3": {
+        "before": "Your data should stay ",
+        "em": "yours",
+        "after": ".",
+        "because": "Because supporter lists are never sold, shared or mixed with anyone else’s."
+      },
+      "b4": {
+        "before": "Results should be ",
+        "em": "clear",
+        "after": ".",
+        "because": "Because you should see that it is working, not how the machinery works."
+      }
+    },
+    "close": {
+      "title": "This is organizing without the extra work.",
+      "s1": "That is why we are here. That is what we are building:",
+      "s2": "One simple place to stay in touch with the people you serve, built in Canada.",
+      "sign": "The Writ team"
+    },
+    "finale": {
+      "first": "Reach more people,",
+      "second": "do less busywork.",
+      "action": "Join the waitlist"
     }
   }
 }

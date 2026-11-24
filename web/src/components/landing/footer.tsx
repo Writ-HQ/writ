@@ -90,7 +90,13 @@ export function Footer() {
               />
               <LinkColumn
                 title={f("company")}
-                links={[{ label: f("about") }, { label: f("contact") }, { label: f("privacy"), href: "/privacy" }, { label: f("terms"), href: "/terms" }]}
+                links={[
+                  { label: f("about") },
+                  { label: f("manifesto"), href: "/manifesto" },
+                  { label: f("contact") },
+                  { label: f("privacy"), href: "/privacy" },
+                  { label: f("terms"), href: "/terms" },
+                ]}
               />
               <LinkColumn
                 title={f("resources")}

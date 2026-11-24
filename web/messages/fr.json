@@ -29,7 +29,8 @@
       "help": "Centre d'aide",
       "privacy": "Confidentialité",
       "security": "Sécurité",
-      "featureCard": "En savoir plus sur le projet pilote"
+      "featureCard": "En savoir plus sur le projet pilote",
+      "manifesto": "Manifeste"
     },
     "hero": {
       "title": "Vos contacts, vos sympathisants, vos infolettres et votre messagerie sociale dans un seul CRM conçu pour les campagnes de défense des intérêts.",
@@ -289,7 +290,8 @@
       "copyright": "© {year} Writ",
       "closingLine": "Conçu au Canada, pour celles et ceux qui s'engagent.",
       "cookies": "Politique relative aux témoins",
-      "subprocessors": "Sous-traitants"
+      "subprocessors": "Sous-traitants",
+      "manifesto": "Manifeste"
     },
     "mock": {
       "campaign": "Association de circonscription exemple",
@@ -634,6 +636,78 @@
       "province": "province",
       "siteHost": "hébergeur du site et emplacement",
       "waitlistHost": "hébergeur de la liste d’attente et emplacement"
+    }
+  },
+  "Manifesto": {
+    "metaTitle": "Notre manifeste",
+    "metaDescription": "Pourquoi nous créons Writ : rejoindre les gens autour d’une cause, sans le travail en trop.",
+    "eyebrow": "Notre manifeste",
+    "entry": {
+      "word": "writ",
+      "sound": "/rɪt/",
+      "kind": "nom.",
+      "meaning": "Le bref qui déclenche une élection.",
+      "reveal": "Et l’outil pour mener la suite."
+    },
+    "parts": {
+      "p1": {
+        "title": "Il est temps de repenser la façon dont les campagnes rejoignent les gens.",
+        "s1": "Les infolettres et le porte-à-porte. Les appels et les assemblées publiques. Les messages Facebook, les courriels au bureau, un mot au dos d’une pétition.",
+        "s2": "Les gens se manifestent de plus de façons que jamais, et chaque message mérite une réponse. Le travail derrière chacun ne s’arrête jamais.",
+        "s3": "Depuis des années, les campagnes et les bureaux font face au même choix : rester petits, ou se noyer dans des logiciels conçus pour quelqu’un d’autre.",
+        "s4": "Chaque nouveau canal voulait dire un autre identifiant, un autre tableur et un autre outil qu’un seul bénévole comprenait.",
+        "s5": "On nous a dit que c’est simplement comme ça que l’organisation fonctionne."
+      },
+      "p2": {
+        "title": "Les temps ont changé.",
+        "s1": "Les outils offerts aux campagnes ont été conçus pour les spécialistes du marketing et les équipes de vente, remplis d’entonnoirs, de pipelines et de réglages que personne n’a demandés.",
+        "s2": "Les personnes qui font ce travail méritent des outils clairs dès la première utilisation, quel que soit leur âge ou leur expérience.",
+        "s3": "Elles méritent un logiciel qui s’occupe des tâches répétitives, pour passer leur temps avec les gens."
+      },
+      "p3": {
+        "title": "Que veut dire s’organiser sans le travail en trop?",
+        "s1": "Cela veut dire chaque sympathisant, chaque conversation et chaque dossier au même endroit, conservés au Canada.",
+        "s2": "Cela veut dire des envois, des messages et des suivis qui partent tout seuls, et des résultats qui se lisent d’un coup d’œil.",
+        "s3": "Cela veut dire refuser l’idée que rejoindre plus de gens doit vouloir dire plus de travail.",
+        "s4": "Cela veut dire :"
+      }
+    },
+    "beliefs": {
+      "b1": {
+        "before": "Un logiciel devrait être ",
+        "em": "simple",
+        "after": ".",
+        "because": "Parce que les personnes qui font ce travail ont mieux à apprendre que des menus."
+      },
+      "b2": {
+        "before": "Chaque voix devrait être ",
+        "em": "entendue",
+        "after": ".",
+        "because": "Parce qu’aucun message, appel ou dossier ne devrait rester en attente."
+      },
+      "b3": {
+        "before": "Vos données devraient rester ",
+        "em": "les vôtres",
+        "after": ".",
+        "because": "Parce que les listes de sympathisants ne sont jamais vendues, partagées ni mélangées à celles des autres."
+      },
+      "b4": {
+        "before": "Les résultats devraient être ",
+        "em": "clairs",
+        "after": ".",
+        "because": "Parce que vous devriez voir que ça fonctionne, pas comment la machine fonctionne."
+      }
+    },
+    "close": {
+      "title": "C’est ça, s’organiser sans le travail en trop.",
+      "s1": "Voilà pourquoi nous sommes ici. Voilà ce que nous construisons :",
+      "s2": "Un seul endroit, simple, pour rester en contact avec les gens que vous servez, conçu au Canada.",
+      "sign": "L’équipe Writ"
+    },
+    "finale": {
+      "first": "Rejoignez plus de gens,",
+      "second": "faites moins de paperasse.",
+      "action": "Rejoindre la liste"
     }
   }
 }

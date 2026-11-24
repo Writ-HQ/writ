@@ -124,6 +124,16 @@
   }
 }
 
+/* The manifesto's colour field (components/manifesto/field.tsx): four
+   blues from the landing page's sky, and the glow along the horizon. */
+:root {
+  --field-1: #6fa8d6;
+  --field-2: #4f8fc4;
+  --field-3: #8cc2e6;
+  --field-4: #3d79ad;
+  --field-rim: hsl(205, 80%, 90%);
+}
+
 html {
   scroll-behavior: smooth;
   /* Section anchors land below the sticky navbar. */
