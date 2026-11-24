@@ -29,6 +29,7 @@ import {
 import { Pill } from "@/components/ui/pill";
 
 import { Container, SectionTitle } from "./container";
+import { CountUp } from "./count-up";
 import { ConsentMock, ContactMock, EmailMock, InboxMock, TeamMock } from "./mocks";
 
 type IconType = ComponentType<SVGProps<SVGSVGElement>>;
@@ -49,7 +50,9 @@ export function Stats() {
             <Icon className="h-6 w-6 text-ink" />
             <dt className="sr-only">{t(`${key}.unit`)}</dt>
             <dd className="mt-6">
-              <span className="text-[52px] leading-none tracking-[-0.04em] lg:text-[60px]">{t(`${key}.value`)}</span>{" "}
+              <span className="text-[52px] leading-none tracking-[-0.04em] lg:text-[60px]">
+                <CountUp value={t(`${key}.value`)} />
+              </span>{" "}
               <span className="text-xl tracking-[-0.02em]">{t(`${key}.unit`)}</span>
             </dd>
             <dd className="mt-4 max-w-[280px] text-[13px] leading-snug text-ink/80">{t(`${key}.note`)}</dd>
