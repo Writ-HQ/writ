@@ -27,7 +27,7 @@ export const facts: Record<FactKey, Fact> = {
   /** The company that hosts this website, and where. */
   siteHost: null,
   /** The company that hosts the waitlist database, and where. */
-  waitlistHost: null,
+  waitlistHost: { en: "Neon, in the United States (AWS US East, Virginia)", fr: "Neon, aux États-Unis (AWS US East, Virginie)" },
 };
 
 /** The date the legal pages last changed, as YYYY-MM-DD. */
