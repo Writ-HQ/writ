@@ -138,7 +138,7 @@ export function Footer() {
 
       {/* A closing line, large, across the foot of the page. */}
       <Container>
-        <p className="border-t border-white/15 pt-10 pb-14 text-[44px] leading-[0.95] font-medium tracking-[-0.045em] text-balance text-white sm:text-[64px] lg:pt-14 lg:pb-20 lg:text-[96px]">
+        <p className="pt-10 pb-14 text-[44px] leading-[0.95] font-medium tracking-[-0.045em] text-balance text-white sm:text-[64px] lg:pt-14 lg:pb-20 lg:text-[96px]">
           {f("closingLine")}
         </p>
       </Container>
