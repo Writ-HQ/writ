@@ -84,3 +84,10 @@ and verified, with the date.
   limiting to the form beyond its hidden bot field, and name the
   database host in the privacy policy. Move the waitlist into the API
   when it is deployed.
+
+- **Features named in the landing page band.** The band
+  (web/src/lib/built-with.ts) lists SMS, surveys, websites, appointments,
+  call tracking, reputation management and document signing, none of
+  which are built, and most are not on the roadmap. Before promoting the
+  site beyond the waitlist, build them, mark them as coming, or take them
+  out, so the page does not promise what Writ cannot do.

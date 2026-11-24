@@ -214,6 +214,57 @@ export const ContactBook = (p: IconProps) => (
   </Icon>
 );
 
+export const MessageDots = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M4.5 4.5h15a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4.5 3.5v-3.5h0a1 1 0 0 1-1-1v-10a1 1 0 0 1 1-1z" />
+    <path d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01" strokeWidth={2.4} />
+  </Icon>
+);
+
+export const ClipboardCheck = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M9 4.5H6.5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-14a1 1 0 0 0-1-1H15" />
+    <rect x="9" y="3" width="6" height="3" rx="1" />
+    <path d="M9 13.5l2 2 4-4.5" />
+  </Icon>
+);
+
+export const Browser = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="3" y="4.5" width="18" height="15" rx="2" />
+    <path d="M3 9h18M6.5 6.75h.01M9 6.75h.01" />
+  </Icon>
+);
+
+export const Calendar = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
+    <path d="M3.5 10h17M8 3v4M16 3v4M8 14h2M14 14h2M8 17h2" />
+  </Icon>
+);
+
+export const PhoneCall = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M5 4h3.5l1.5 4-2 1.5a10 10 0 0 0 6.5 6.5l1.5-2 4 1.5V19a1.5 1.5 0 0 1-1.5 1.5C10.5 20.5 3.5 13.5 3.5 5.5A1.5 1.5 0 0 1 5 4z" />
+    <path d="M14.5 3.5a6 6 0 0 1 6 6M14.5 7a2.5 2.5 0 0 1 2.5 2.5" />
+  </Icon>
+);
+
+export const Star = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M12 3.5l2.6 5.3 5.9.9-4.25 4.1 1 5.8L12 16.8l-5.25 2.8 1-5.8L3.5 9.7l5.9-.9z" />
+  </Icon>
+);
+
+/** A page with a signature line and a pen. */
+export const Signature = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M13.5 20.5h-7a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1h8l4 4v4" />
+    <path d="M8.5 15.5c1-1.5 2-1.5 2.5 0s1.5 1.5 2.5 0" />
+    <path d="M20.5 13.5l-5 5-2 .5.5-2 5-5a1 1 0 0 1 1.5 1.5z" />
+  </Icon>
+);
+
 export const Layers = (p: IconProps) => (
   <Icon {...p}>
     <path d="m12 3 9 5-9 5-9-5 9-5Z" />

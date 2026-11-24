@@ -1,25 +1,45 @@
 import type { LogoKey } from "@/components/landing/brand-logos";
 
-// The names in the landing page's moving band: the platforms campaigns connect.
-// Every entry must be true of Writ today or of a feature the page
-// describes; add or remove names here, not in the component. A logo is
-// shown only where brand-logos.tsx has one (see subprocessors.ts).
-// AWS and Zitadel are left out of the band by choice; they are still in
-// subprocessors.ts. X (Twitter) is listed ahead of its integration, which
-// is not built yet (docs/before-launch.md).
+// What the landing page's moving band shows: what Writ does, then the
+// social platforms campaigns connect. Features have an outline icon and a
+// translated name (Landing.band.features); platforms have their logo and
+// their own name. Add or remove entries here, not in the component.
+//
+// Several features are planned rather than built (docs/before-launch.md).
+// X (Twitter) is listed ahead of its integration. AWS and Zitadel are
+// left out by choice; they are still in subprocessors.ts.
 
-export type BandItem = {
-  /** The name as its owner writes it. Not translated. */
-  name: string;
-  /** Key under Landing.band.purposes: what it does for Writ. Not shown in
-   *  the band, kept for a fuller list such as a privacy page. */
-  purpose: "hosting" | "signIn" | "social";
-  /** Shown before the name, where the owner's guidelines allow a logo. */
-  logo?: LogoKey;
-};
+export type FeatureKey =
+  | "newsletters"
+  | "sms"
+  | "surveys"
+  | "websites"
+  | "appointments"
+  | "calls"
+  | "reputation"
+  | "signing"
+  | "casework";
 
-export const builtWith: BandItem[] = [
-  { name: "Facebook", purpose: "social", logo: "facebook" },
-  { name: "Instagram", purpose: "social", logo: "instagram" },
-  { name: "X (Twitter)", purpose: "social", logo: "x" },
+export type BandItem =
+  | { kind: "feature"; key: FeatureKey }
+  | {
+      kind: "platform";
+      /** The name as its owner writes it. Not translated. */
+      name: string;
+      logo: LogoKey;
+    };
+
+export const bandItems: BandItem[] = [
+  { kind: "feature", key: "newsletters" },
+  { kind: "feature", key: "sms" },
+  { kind: "feature", key: "surveys" },
+  { kind: "feature", key: "websites" },
+  { kind: "feature", key: "appointments" },
+  { kind: "feature", key: "calls" },
+  { kind: "feature", key: "reputation" },
+  { kind: "feature", key: "signing" },
+  { kind: "feature", key: "casework" },
+  { kind: "platform", name: "Facebook", logo: "facebook" },
+  { kind: "platform", name: "Instagram", logo: "instagram" },
+  { kind: "platform", name: "X (Twitter)", logo: "x" },
 ];

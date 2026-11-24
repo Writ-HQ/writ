@@ -32,26 +32,36 @@
       "featureCard": "En savoir plus sur le projet pilote"
     },
     "hero": {
-      "title": "Gérez le porte-à-porte, vos courriels, vos bénévoles et vos messages depuis un seul espace de campagne bilingue.",
-      "lead": "Gérez",
+      "title": "Vos contacts, vos sympathisants, vos infolettres et votre messagerie sociale dans un seul CRM conçu pour les campagnes de défense des intérêts.",
       "words": {
-        "w1": "le porte-à-porte",
-        "w2": "vos courriels",
-        "w3": "vos bénévoles",
-        "w4": "vos messages"
+        "w1": "Vos contacts",
+        "w2": "Vos sympathisants",
+        "w3": "Vos infolettres",
+        "w4": "Vos messages sociaux"
       },
-      "line2": "depuis un seul espace",
-      "line3": "de campagne bilingue.",
-      "subtitle": "Contacts, sympathisants, infolettres et messagerie sociale dans un seul CRM conçu pour les campagnes de défense des intérêts.",
+      "line2": "dans un seul CRM conçu pour",
+      "line3": "les campagnes de défense des intérêts.",
+      "subtitle": "Conçu pour les groupes de défense des intérêts et les campagnes canadiennes, avec vos données conservées au Canada.",
       "cta": "Rejoindre la liste",
       "visualLabel": "Un aperçu du tableau de bord de Writ, avec des données fictives"
     },
     "band": {
-      "label": "Fonctionne avec",
+      "label": "Ce que fait Writ",
       "purposes": {
         "hosting": "Hébergement et courriels, au Canada",
         "signIn": "Connexion de l'équipe",
         "social": "Messages et publications planifiées"
+      },
+      "features": {
+        "newsletters": "Infolettres",
+        "sms": "Textos",
+        "surveys": "Sondages",
+        "websites": "Sites Web",
+        "appointments": "Rendez-vous",
+        "calls": "Suivi des appels",
+        "reputation": "Gestion de la réputation",
+        "signing": "Signature de documents",
+        "casework": "Gestion des dossiers"
       }
     },
     "stats": {

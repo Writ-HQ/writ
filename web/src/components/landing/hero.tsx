@@ -1,8 +1,9 @@
 import { useTranslations } from "next-intl";
-import type React from "react";
+import type { ComponentType, ReactNode, SVGProps } from "react";
 
+import { Briefcase, Browser, Calendar, ClipboardCheck, Mail, MessageDots, PhoneCall, Signature, Star } from "@/components/ui/icons";
 import { Pill } from "@/components/ui/pill";
-import { builtWith } from "@/lib/built-with";
+import { bandItems, type FeatureKey } from "@/lib/built-with";
 
 import { BrandLogo } from "./brand-logos";
 import { Container } from "./container";
@@ -48,17 +49,18 @@ export function Hero() {
   );
 }
 
-// Three fixed lines, the first with a small picture and a word that
+// Three lines: the first is a small picture and a word that
 // change together every three seconds, as in the reference. Screen
 // readers get the whole sentence once, instead of the moving parts.
 function HeroTitle() {
   const t = useTranslations("Landing.hero");
   const words = (["w1", "w2", "w3", "w4"] as const).map((k) => t(`words.${k}`));
-  const pictures = [ClipboardPicture, EnvelopePicture, BadgePicture, PhonePicture];
+  // Contacts, supporters, newsletters, social inbox.
+  const pictures = [BadgePicture, ClipboardPicture, EnvelopePicture, PhonePicture];
 
   // All items share one grid cell, so the cell is as wide as the widest
   // and nothing shifts as they change.
-  const cycling = (items: React.ReactNode[]) =>
+  const cycling = (items: ReactNode[]) =>
     items.map((item, i) => (
       <span key={i} className="cycle-item [grid-area:1/1]" style={{ animationDelay: `${i * 3}s` }}>
         {item}
@@ -70,11 +72,10 @@ function HeroTitle() {
       <span className="sr-only">{t("title")}</span>
       <span aria-hidden="true" className="block">
         <span className="block whitespace-nowrap">
-          {t("lead")}
           {/* Sized in em so it scales with the text, and set from just
               below the baseline to the top of the capitals: the pictures
               centre on the letters and never reach the next line. */}
-          <span className="mx-[0.28em] inline-grid h-[0.95em] w-[1.3em] align-[-0.08em] [&>span]:flex [&>span]:items-center [&>span]:justify-center">
+          <span className="mr-[0.28em] inline-grid h-[0.95em] w-[1.3em] align-[-0.08em] [&>span]:flex [&>span]:items-center [&>span]:justify-center">
             {cycling(pictures.map((P, i) => <P key={i} />))}
           </span>
           <span className="inline-grid align-baseline">{cycling(words)}</span>
@@ -203,28 +204,41 @@ function PhonePicture() {
 // drawn twice and slid by half its width, so the loop has no seam; the
 // copy is hidden from screen readers. It stops on hover, and stands still
 // for people who ask for less motion. 64px below the hairline, 50px tall.
-/** Times the list repeats in each half of the loop. */
-const REPEAT = 4;
+const FEATURE_ICONS: Record<FeatureKey, ComponentType<SVGProps<SVGSVGElement>>> = {
+  newsletters: Mail,
+  sms: MessageDots,
+  surveys: ClipboardCheck,
+  websites: Browser,
+  appointments: Calendar,
+  calls: PhoneCall,
+  reputation: Star,
+  signing: Signature,
+  casework: Briefcase,
+};
+
+/** Times the list repeats in each half of the loop: enough to be wider than the widest screen. */
+const REPEAT = Math.max(1, Math.ceil(10 / bandItems.length));
 
 function Band() {
   const t = useTranslations("Landing.band");
-  // Each half of the loop repeats the list until it is wider than the
-  // widest screen, so the band never shows a gap.
-  const half = Array.from({ length: REPEAT }, () => builtWith).flat();
+  const half = Array.from({ length: REPEAT }, () => bandItems).flat();
   const items = (copy: number) =>
-    half.map(({ name, logo }, i) => (
-      <li
-        key={`${copy}-${i}`}
-        aria-hidden={copy > 0 || i >= builtWith.length || undefined}
-        className="flex shrink-0 items-center gap-2 pr-[100px] whitespace-nowrap text-ink"
-      >
-        {logo && <BrandLogo name={logo} className="size-5 shrink-0" />}
-        <span className="text-[17px] font-semibold tracking-[-0.02em]">{name}</span>
-      </li>
-    ));
+    half.map((item, i) => {
+      const Icon = item.kind === "feature" ? FEATURE_ICONS[item.key] : null;
+      return (
+        <li
+          key={`${copy}-${i}`}
+          aria-hidden={copy > 0 || i >= bandItems.length || undefined}
+          className="flex shrink-0 items-center gap-2 pr-[88px] whitespace-nowrap text-ink"
+        >
+          {Icon ? <Icon strokeWidth={1.8} className="size-5 shrink-0" /> : item.kind === "platform" && <BrandLogo name={item.logo} className="size-5 shrink-0" />}
+          <span className="text-[17px] font-semibold tracking-[-0.02em]">{item.kind === "feature" ? t(`features.${item.key}`) : item.name}</span>
+        </li>
+      );
+    });
   return (
     <div className="group mt-16 flex min-h-[50px] items-center overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
-      <ul aria-label={t("label")} className="animate-marquee flex w-max [animation-duration:40s] group-hover:[animation-play-state:paused]">
+      <ul aria-label={t("label")} className="animate-marquee flex w-max [animation-duration:70s] group-hover:[animation-play-state:paused]">
         {items(0)}
         {items(1)}
       </ul>

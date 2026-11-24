@@ -32,26 +32,36 @@
       "featureCard": "Read about the pilot"
     },
     "hero": {
-      "title": "Run canvassing, email, volunteers and outreach from one bilingual campaign workspace.",
-      "lead": "Run",
+      "title": "Contacts, supporters, newsletters and your social inbox in one CRM built for advocacy campaigns.",
       "words": {
-        "w1": "canvassing",
-        "w2": "email",
-        "w3": "volunteers",
-        "w4": "outreach"
+        "w1": "Contacts",
+        "w2": "Supporters",
+        "w3": "Newsletters",
+        "w4": "Your social inbox"
       },
-      "line2": "from one bilingual",
-      "line3": "campaign workspace.",
-      "subtitle": "Contacts, supporters, newsletters and your social inbox in one CRM built for advocacy campaigns.",
+      "line2": "in one CRM built for",
+      "line3": "advocacy campaigns.",
+      "subtitle": "Built for advocacy groups and Canadian campaigns, with your data kept in Canada.",
       "cta": "Join the waitlist",
       "visualLabel": "A preview of the Writ dashboard, with fictional data"
     },
     "band": {
-      "label": "Works with",
+      "label": "What Writ does",
       "purposes": {
         "hosting": "Hosting and email, in Canada",
         "signIn": "Team sign-in",
         "social": "Messages and scheduled posts"
+      },
+      "features": {
+        "newsletters": "Newsletters",
+        "sms": "SMS",
+        "surveys": "Surveys",
+        "websites": "Websites",
+        "appointments": "Appointments",
+        "calls": "Call tracking",
+        "reputation": "Reputation management",
+        "signing": "Document signing",
+        "casework": "Casework"
       }
     },
     "stats": {
