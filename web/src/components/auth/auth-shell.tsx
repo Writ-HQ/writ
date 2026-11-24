@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { Home } from "@/components/ui/icons";
 import { Logo, WritMark } from "@/components/ui/logo";
 import { Link } from "@/i18n/navigation";
 
@@ -28,11 +29,21 @@ export function AuthShell({ path, title, subtitle, children, footer }: Props) {
 
       <main className="flex min-h-dvh flex-1 flex-col px-6 py-6 sm:px-10">
         <div className="flex items-center justify-between">
-          {/* The logo is in the sky on large screens. */}
+          {/* The logo is in the panel on large screens. */}
           <Link href="/" aria-label={t("home")} className="lg:invisible">
             <Logo />
           </Link>
-          <LocaleSwitcher compact href={path} />
+          <div className="flex items-center gap-2">
+            {/* A small way back to the home page, beside the language switch. */}
+            <Link
+              href="/"
+              className="inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium text-ink/70 ring-1 ring-line transition-colors hover:bg-panel hover:text-ink"
+            >
+              <Home className="size-3.5" strokeWidth={1.8} />
+              {t("backHome")}
+            </Link>
+            <LocaleSwitcher compact href={path} />
+          </div>
         </div>
 
         <div className="mx-auto flex w-full max-w-[400px] flex-1 flex-col justify-center py-12">

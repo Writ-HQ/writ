@@ -407,7 +407,8 @@
       "google": "Continuer avec Google",
       "facebook": "Continuer avec Facebook",
       "or": "ou"
-    }
+    },
+    "backHome": "Accueil"
   },
   "Dashboard": {
     "nav": {
