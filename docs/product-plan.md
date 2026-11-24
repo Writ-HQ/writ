@@ -1,7 +1,8 @@
 # Product plan: GoHighLevel's features, made simple
 
 Status: proposal, 2026-11-24. Not approved; nothing here is built yet
-unless it says so.
+unless it says so. One decision is made: constituency offices are the
+first customer (docs/decisions/0007).
 
 ## The idea
 
@@ -52,8 +53,8 @@ Phases are explained below. "Skip" means not planned.
 
 | GoHighLevel | In Writ | Phase | Notes |
 |---|---|---|---|
-| CRM, pipelines, smart lists, lead scoring | **People** (with households) and **Cases** (casework instead of sales pipelines) | 1 | Already on the roadmap (weeks 4–7). No lead scoring. |
-| Unified conversations: SMS, Messenger, Instagram, WhatsApp, live chat | **Messages**: one inbox | 1 (Facebook, Instagram), 2 (SMS, website chat), 3 (WhatsApp) | Facebook and Instagram are already roadmapped (weeks 11–15). Meta allows replies only within 24 hours of the person's last message. |
+| CRM, pipelines, smart lists, lead scoring | **People** (with households) and **Cases** (casework instead of sales pipelines) | 1 | People are on the roadmap (weeks 4–7); Cases are not yet, and with offices first they must be (docs/decisions/0007). No lead scoring. |
+| Unified conversations: SMS, Messenger, Instagram, WhatsApp, live chat | **Messages**: one inbox | 1 (Facebook, Instagram), 2 (SMS, website chat) | Facebook and Instagram are already roadmapped (weeks 11–15). Meta allows replies only within 24 hours of the person's last message. No WhatsApp: see Guardrails. |
 | Email broadcasts, newsletter automation | **Mailings** | 1 | Weeks 8–10, through Amazon SES. Consent and unsubscribe under CASL. |
 | SMS broadcasts, 2-way SMS | **Texts** | 2 | Needs a provider with Canadian numbers, and data kept in Canada must be checked. Consent under CASL. |
 | Calendars, booking, reminders | **Appointments**: office hours and meetings | 2 | Reminders by email and text. |
@@ -87,6 +88,58 @@ Phases are explained below. "Skip" means not planned.
    - "Are people finding you?", donations
 4. **Understanding people:** sentiment and trends, and suggested replies.
 
+## Guardrails
+
+These hold for every phase. Several are also selling points: offices and
+campaigns need to be able to say their tools keep them within the rules.
+The legal points come from research on 2026-11-24 and must be confirmed
+(with an election lawyer where marked) before Writ relies on them.
+
+1. **Office data and campaign data never mix.** The House of Commons
+   rules let Members use House resources for partisan work only as part
+   of their parliamentary functions, and provincial legislatures have
+   similar rules. So a constituency office is its own kind of tenant,
+   with no way to export, sync or copy its people or cases into a
+   campaign tenant, even when the same person belongs to both. Tenants
+   are already isolated (docs/decisions/0005); this adds a tenant kind
+   and blocks moves between kinds. *(Confirm the House and provincial
+   rules.)*
+2. **No WhatsApp.** WhatsApp's Business Messaging Policy (updated
+   2026-09-23) prohibits political parties, politicians, candidates and
+   campaigns, and companies offering political campaigning services,
+   from the WhatsApp Business Platform. That rules out Writ connecting
+   to it, for any customer. Revisit only if Meta changes the policy. The
+   landing page still names WhatsApp (docs/before-launch.md).
+3. **Calls and texts follow CRTC rules and CASL.** Calls to voters by or
+   for parties, candidates and nomination contestants need registration
+   with the CRTC's Voter Contact Registry (within 48 hours of the first
+   call), and automatic dialing-announcing devices can't be used for
+   their solicitation calls. Texts follow Canada's Anti-Spam Legislation.
+   Writ builds these in: registration reminders, no robocalls, and
+   consent checked before sending. *(Confirm current CRTC rules.)*
+4. **AI suggests; a person sends.** Nothing AI-written goes out without a
+   person approving it. Every AI action is recorded in the audit log.
+   Content drafted by AI is labelled as such. No guessing ethnicity,
+   religion or political views about individual people (from names or
+   anything else), and no cloned voices of candidates or anyone else.
+   Any AI voice line is for incoming calls only and says it is AI.
+5. **AI runs in Canada and keeps nothing.** The landing page promises
+   data is not processed outside Canada and not used to train AI. So any
+   AI model runs in Canada, under a zero-retention contract with its
+   provider. Check providers before choosing.
+6. **Pilots are paid, at a published rate.** Under the Canada Elections
+   Act, a service given free or below its commercial value can count as
+   a contribution, and corporations can't contribute federally or to
+   Ontario municipal candidates. Campaign pilots pay a rate open to
+   everyone. Constituency offices are paid from public budgets, which
+   has its own rules. *(Election lawyer to confirm before any pilot is
+   offered.)*
+7. **Every vendor is checked against "data stays in Canada".** Texts,
+   calls, signing and AI are where that promise can break (for example,
+   Twilio offers no Canadian processing region). Services that live
+   outside Writ by nature, such as Google reviews and listings, are named
+   in the footnotes like Meta's platforms, not promised.
+
 ## Sentiment and trend tracking (phase 4)
 
 - **What it does:** sorts incoming messages, comments and case notes by
@@ -115,11 +168,12 @@ Nothing yet. If approved:
 
 ## Decisions needed
 
-1. **Who exactly:** advocacy groups, election campaigns, constituency
-   offices, or all three? The data rules differ: a campaign's supporter
-   lists and an MP's constituent casework must be kept apart.
-2. **What goes into the pilot:** is phase 1 right, or do appointments or
-   texts need to come sooner?
+1. ~~**Who exactly.**~~ Decided 2026-11-24: constituency offices first,
+   then campaigns and advocacy groups (docs/decisions/0007). Office and
+   campaign data are kept apart (Guardrails, 1).
+2. **What goes into the pilot:** with offices first, Cases become the
+   centre of phase 1. Do appointments, consent forms to sign, or an
+   office phone line need to come sooner?
 3. **Providers for texts and calls,** given the rule that data stays in
    Canada.
 4. **Pricing model:** flat monthly like GoHighLevel, with texts and calls
