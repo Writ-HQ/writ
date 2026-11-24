@@ -7,11 +7,11 @@ import {
   Chat,
   Check,
   Globe,
-  KeyRound,
+  KeySolid,
   Layers,
-  Ledger,
+  LedgerSolid,
   ListIcon,
-  Lock,
+  LockSolid,
   Mail,
   MapleLeaf,
   MapleLeafRed,
@@ -229,10 +229,10 @@ export function BuiltFor() {
 export function Security() {
   const t = useTranslations("Landing.security");
   const items: { key: "isolated" | "canada" | "mfa" | "audit"; icon: IconType }[] = [
-    { key: "isolated", icon: Lock },
+    { key: "isolated", icon: LockSolid },
     { key: "canada", icon: MapleLeafRed },
-    { key: "mfa", icon: KeyRound },
-    { key: "audit", icon: Ledger },
+    { key: "mfa", icon: KeySolid },
+    { key: "audit", icon: LedgerSolid },
   ];
   const row = "border-t border-ink lg:h-[164px]";
   return (
