@@ -29,21 +29,19 @@ export function AuthShell({ path, title, subtitle, children, footer }: Props) {
 
       <main className="flex min-h-dvh flex-1 flex-col px-6 py-6 sm:px-10">
         <div className="flex items-center justify-between">
-          {/* The logo is in the panel on large screens. */}
-          <Link href="/" aria-label={t("home")} className="lg:invisible">
+          {/* Large screens: a small Home button (the logo is in the panel).
+              Small screens: the logo, which also leads home. */}
+          <Link href="/" aria-label={t("home")} className="lg:hidden">
             <Logo />
           </Link>
-          <div className="flex items-center gap-2">
-            {/* A small way back to the home page, beside the language switch. */}
-            <Link
-              href="/"
-              className="inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium text-ink/70 ring-1 ring-line transition-colors hover:bg-panel hover:text-ink"
-            >
-              <Home className="size-3.5" strokeWidth={1.8} />
-              {t("backHome")}
-            </Link>
-            <LocaleSwitcher compact href={path} />
-          </div>
+          <Link
+            href="/"
+            className="hidden h-8 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium text-ink/70 ring-1 ring-line transition-colors hover:bg-panel hover:text-ink lg:inline-flex"
+          >
+            <Home className="size-3.5" strokeWidth={1.8} />
+            {t("backHome")}
+          </Link>
+          <LocaleSwitcher compact href={path} />
         </div>
 
         <div className="mx-auto flex w-full max-w-[400px] flex-1 flex-col justify-center py-12">
