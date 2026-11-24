@@ -23,8 +23,12 @@
       "start": "Commencer",
       "menu": "Menu",
       "about": "À propos",
+      "blog": "Blogue",
+      "careers": "Carrières",
       "contact": "Nous joindre",
+      "help": "Centre d'aide",
       "privacy": "Confidentialité",
+      "security": "Sécurité",
       "featureCard": "En savoir plus sur le projet pilote"
     },
     "hero": {
@@ -43,13 +47,11 @@
       "visualLabel": "Un aperçu du tableau de bord de Writ, avec des données fictives"
     },
     "band": {
-      "label": "Conçu avec",
+      "label": "Fonctionne avec",
       "purposes": {
         "hosting": "Hébergement et courriels, au Canada",
         "signIn": "Connexion de l'équipe",
-        "social": "Messages et publications planifiées",
-        "database": "Base de données",
-        "web": "Application Web"
+        "social": "Messages et publications planifiées"
       }
     },
     "stats": {

@@ -67,14 +67,12 @@ and verified, with the date.
       recipients of sign-in data. Meta then also leaves the "not a
       subprocessor" note in web/src/lib/subprocessors.ts in doubt.
 
-- **Logos in the landing page band.** The Facebook, Instagram,
-  PostgreSQL and Next.js logos (web/src/components/landing/brand-logos.tsx,
-  shapes from Simple Icons, CC0) must be checked against each owner's
-  current brand guidelines: Meta's for Facebook and Instagram, the
-  PostgreSQL trademark policy, and Vercel's for Next.js. AWS may appear
+- **Logos in the landing page band.** The Facebook, Instagram and X
+  logos (web/src/components/landing/brand-logos.tsx, shapes from Simple
+  Icons, CC0) must be checked against each owner's current brand
+  guidelines: Meta's for Facebook and Instagram, X's for X. AWS may appear
   only as the official "Powered by AWS" badge, under AWS's trademark terms.
 
-- **X (Twitter) in the landing page band.** X is named in the "Built
-  with" band (web/src/lib/built-with.ts) before Writ connects to it. By
+- **X (Twitter) in the landing page band.** X is named in the band (web/src/lib/built-with.ts) before Writ connects to it. By
   launch, either build the X integration (API access and its cost, terms,
   and naming X in the privacy policy) or take X out of the band.

@@ -13,9 +13,10 @@ const variants = {
 
 // From the reference: navbar buttons are 32px tall with 4px/16px padding
 // and 14px text; the hero button is 48px tall with 12px/20px padding and
-// 16px text.
+// 16px text. Feature sections use a 42px button with 17px text.
 const sizes = {
   sm: "h-8 px-4 text-sm leading-[18px]",
+  feature: "h-[42px] px-[19px] text-[17px] leading-5",
   md: "h-10 px-5 text-sm",
   lg: "h-12 px-5 text-base leading-[18px]",
 } as const;

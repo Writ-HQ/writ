@@ -176,18 +176,42 @@ export const ShieldSolid = (p: IconProps) => (
   </Solid>
 );
 
-/** A solid building with white windows and door. */
-export const BuildingSolid = (p: IconProps) => (
-  <Solid {...p}>
-    <path d="M5.5 2.5h8a1.5 1.5 0 0 1 1.5 1.5v4.5h3.5A1.5 1.5 0 0 1 20 10v11.5H4V4a1.5 1.5 0 0 1 1.5-1.5zM7.3 6h1.8v1.8H7.3zM10.4 6h1.8v1.8h-1.8zM7.3 9.6h1.8v1.8H7.3zM10.4 9.6h1.8v1.8h-1.8zM7.3 13.2h1.8V15H7.3zM10.4 13.2h1.8V15h-1.8zM16.2 11.6H18v1.8h-1.8zM16.2 15.2H18V17h-1.8zM8.6 21.5v-3.3h3.2v3.3z" />
-  </Solid>
+export const Info = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 11v5.5M12 7.75v.01" />
+  </Icon>
 );
 
-/** A solid circle with a white "i". */
-export const InfoSolid = (p: IconProps) => (
-  <Solid {...p}>
-    <path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zM10.9 10.4h2.2v7.1h-2.2zM12 6.3a1.35 1.35 0 1 0 0 2.7 1.35 1.35 0 0 0 0-2.7z" />
-  </Solid>
+export const Newspaper = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M3.5 4.5h12v13a2 2 0 0 0 2 2h-12a2 2 0 0 1-2-2z" />
+    <path d="M15.5 9h4v8.5a2 2 0 0 1-2 2" />
+    <path d="M6.5 8h6v3.5h-6zM6.5 14.5h6M6.5 17h4" />
+  </Icon>
+);
+
+export const Briefcase = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="3.5" y="7.5" width="17" height="12" rx="1.5" />
+    <path d="M9 7.5V5.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M3.5 12.5h17" />
+  </Icon>
+);
+
+export const Lifebuoy = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <circle cx="12" cy="12" r="3.5" />
+    <path d="M5.6 5.6l3.9 3.9M14.5 14.5l3.9 3.9M18.4 5.6l-3.9 3.9M9.5 14.5l-3.9 3.9" />
+  </Icon>
+);
+
+/** A contact book: a bound cover with tabs and a name card. */
+export const ContactBook = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M6.5 3.5h12v17h-12z" />
+    <path d="M4 7.5h3.5M4 12h3.5M4 16.5h3.5M10.5 7h4.5v4h-4.5z" />
+  </Icon>
 );
 
 export const Layers = (p: IconProps) => (

@@ -17,12 +17,25 @@ export const markPaths = [
   "M16 20h2L22.6 4h-2z",
 ];
 
-export function WritMark(props: SVGProps<SVGSVGElement>) {
+type WritMarkProps = SVGProps<SVGSVGElement> & {
+  // A full stop after the W, sitting on its baseline. Used in the logo;
+  // the footer tile and the browser-tab icon show the W alone.
+  withDot?: boolean;
+};
+
+export function WritMark({ withDot = false, ...props }: WritMarkProps) {
   return (
-    <svg viewBox="1 3 22 18" fill="currentColor" aria-hidden="true" focusable="false" {...props}>
+    <svg
+      viewBox={withDot ? "1 3 26.6 18" : "1 3 22 18"}
+      fill="currentColor"
+      aria-hidden="true"
+      focusable="false"
+      {...props}
+    >
       {markPaths.map((d) => (
         <path key={d} d={d} />
       ))}
+      {withDot && <circle cx="25" cy="18.4" r="1.6" />}
     </svg>
   );
 }
@@ -37,8 +50,8 @@ type LogoProps = {
 export function Logo({ className = "" }: LogoProps) {
   return (
     <span className={`inline-flex items-center gap-2.5 ${className}`}>
-      <WritMark className="h-[20px] w-auto shrink-0" />
-      <span className="text-[24px] leading-6 font-medium tracking-[-0.03em]">Writ</span>
+      <WritMark withDot className="h-[20px] w-auto shrink-0" />
+      <span className="font-serif text-[30px] leading-6 font-normal tracking-[-0.01em]">Writ</span>
     </span>
   );
 }
