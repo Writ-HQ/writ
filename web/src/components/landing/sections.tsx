@@ -313,7 +313,7 @@ export function Faq() {
           </div>
           <div>
             {questions.map((q) => (
-              <details key={q} className="group border-b border-ink last:border-0">
+              <details key={q} className="faq-item group border-b border-ink last:border-0">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-6 text-xl leading-[23px] font-medium [&::-webkit-details-marker]:hidden">
                   {t(`${q}.q`)}
                   <Plus className="h-3 w-3 shrink-0 transition-transform group-open:rotate-45" strokeWidth={2.5} />

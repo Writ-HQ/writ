@@ -88,6 +88,42 @@
   }
 }
 
+/*
+ * FAQ answers ease open and shut: the details element's content animates
+ * between no height and its own height, and the answer fades in. Where a
+ * browser cannot animate to an automatic height, answers open at once.
+ */
+.faq-item {
+  interpolate-size: allow-keywords;
+}
+.faq-item::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size 320ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    content-visibility 320ms allow-discrete;
+}
+.faq-item[open]::details-content {
+  block-size: auto;
+}
+.faq-item > p {
+  transition: opacity 320ms ease;
+}
+.faq-item:not([open]) > p {
+  opacity: 0;
+}
+@starting-style {
+  .faq-item[open] > p {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .faq-item::details-content,
+  .faq-item > p {
+    transition: none;
+  }
+}
+
 html {
   scroll-behavior: smooth;
   /* Section anchors land below the sticky navbar. */
