@@ -2,11 +2,13 @@ import "server-only";
 
 import postgres from "postgres";
 
+import type { ContactMessage } from "./contact";
 import type { Signup } from "./waitlist";
 
-// Saves waitlist signups to the database named by WAITLIST_DATABASE_URL.
-// The table is created by web/db/waitlist.sql. This is the one place the
-// web app writes to a database itself; see docs/decisions/0006.
+// Saves waitlist signups and contact form messages to the database named
+// by WAITLIST_DATABASE_URL. The tables are created by web/db/waitlist.sql
+// and web/db/contact.sql. This is the one place the web app writes to a
+// database itself; see docs/decisions/0006.
 
 let sql: postgres.Sql | null = null;
 
@@ -36,5 +38,15 @@ export async function saveSignup(signup: Signup, consentText: string) {
     values (${signup.name}, ${signup.email}, ${signup.organisation || null}, ${signup.orgType}, ${signup.province},
             ${signup.locale}, ${consentText}, now())
     on conflict ((lower(email))) where deleted_at is null do nothing
+  `;
+}
+
+/** Records a message from the contact form, to be answered by email. */
+export async function saveContactMessage(m: ContactMessage) {
+  const db = client();
+  if (!db) throw new Error("WAITLIST_DATABASE_URL is not set");
+  await db`
+    insert into contact_messages (name, email, organisation, topic, message, locale)
+    values (${m.name}, ${m.email}, ${m.organisation || null}, ${m.topic}, ${m.message}, ${m.locale})
   `;
 }

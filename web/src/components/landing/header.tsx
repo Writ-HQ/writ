@@ -161,7 +161,7 @@ function useMenus() {
     { label: t("nav.manifesto"), href: "/manifesto", icon: LedgerSolid },
     { label: t("nav.blog"), icon: NewspaperSolid },
     { label: t("nav.help"), icon: LifebuoySolid },
-    { label: t("nav.contact"), icon: MailSolid },
+    { label: t("nav.contact"), href: "/contact", icon: MailSolid },
     { label: t("nav.security"), icon: ShieldSolid },
     { label: t("nav.privacy"), href: "/privacy", icon: LockSolid },
   ];
@@ -241,7 +241,7 @@ export function Navbar() {
               {t("login")}
             </Link>
           )}
-          <Pill variant="outline" size="sm" className="hidden md:inline-flex">
+          <Pill variant="outline" size="sm" href="/contact?topic=demo" className="hidden md:inline-flex">
             {t("demo")}
           </Pill>
           <Pill size="sm" href="/waitlist">
@@ -277,7 +277,7 @@ export function Navbar() {
                       {t("login")}
                     </Link>
                   )}
-                  <Pill variant="outline" size="sm">
+                  <Pill variant="outline" size="sm" href="/contact?topic=demo">
                     {t("demo")}
                   </Pill>
                 </div>

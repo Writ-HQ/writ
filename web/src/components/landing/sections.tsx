@@ -408,7 +408,7 @@ export function Closing() {
           <Pill variant="slate" size="lg" href="/waitlist">
             {t("start")}
           </Pill>
-          <Pill variant="outline-light" size="lg" className="bg-white/30">
+          <Pill variant="outline-light" size="lg" href="/contact?topic=demo" className="bg-white/30">
             {t("demo")}
           </Pill>
         </div>

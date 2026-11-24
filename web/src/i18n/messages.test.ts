@@ -58,6 +58,8 @@ describe("messages", () => {
     "Landing.mock.social.conversation",
     "Landing.mock.access.contacts",
     "Landing.mock.consentPanel.source",
+    "Contact.organisation",
+    "Contact.message",
     "Dashboard.nav.contacts",
     "Dashboard.shell.sections",
     "Dashboard.issues.immigration",

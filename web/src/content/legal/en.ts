@@ -65,7 +65,7 @@ export const en: Record<LegalSlug, LegalDoc> = {
       {
         title: "Where it is stored",
         body: [
-          "The waitlist is stored with {waitlistHost}. This website is hosted by {siteHost}. If a service provider stores or handles information outside Canada, it is subject to the laws of that country, and authorities there may be able to access it.",
+          "The waitlist, and messages sent through the contact form, are stored with {waitlistHost}. This website is hosted by {siteHost}. If a service provider stores or handles information outside Canada, it is subject to the laws of that country, and authorities there may be able to access it.",
           "The Writ product is built to keep campaign data in Canada, in Amazon Web Services’ Canada (Central) region.",
         ],
       },

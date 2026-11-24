@@ -10,9 +10,10 @@ import { ORG_TYPES, PROVINCES, type Field } from "@/lib/waitlist";
 
 // The waitlist form. The browser checks required fields first; the server
 // checks everything again and its problems show under each field. Once
-// saved, the form gives way to a thank-you.
+// saved, the form gives way to a thank-you. Row and selectStyle are shared
+// with the contact form.
 
-function Row({
+export function Row({
   label,
   optional,
   error,
@@ -41,7 +42,7 @@ function Row({
   );
 }
 
-const selectStyle = `${inputStyle} appearance-none bg-[url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='%23737373'%20stroke-width='1.5'%3E%3Cpath%20d='M4%206l4%204%204-4'/%3E%3C/svg%3E")] bg-[length:16px] bg-[right_12px_center] bg-no-repeat pr-10`;
+export const selectStyle = `${inputStyle} appearance-none bg-[url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='%23737373'%20stroke-width='1.5'%3E%3Cpath%20d='M4%206l4%204%204-4'/%3E%3C/svg%3E")] bg-[length:16px] bg-[right_12px_center] bg-no-repeat pr-10`;
 
 export function WaitlistForm() {
   const t = useTranslations("Waitlist");

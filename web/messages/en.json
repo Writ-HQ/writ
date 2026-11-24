@@ -784,5 +784,57 @@
       "second": "do less busywork.",
       "action": "Join the waitlist"
     }
+  },
+  "Contact": {
+    "metaTitle": "Contact",
+    "metaDescription": "Write to the Writ team about a demo, pricing, privacy or the press.",
+    "eyebrow": "Contact",
+    "title": "Talk to the people building Writ.",
+    "subtitle": "Questions about Writ, a demo for your campaign or office, or a privacy request: write to us and we'll answer by email, in English or French.",
+    "reasons": {
+      "demo": {
+        "title": "See Writ in action",
+        "body": "A walkthrough with our team, using fictional data."
+      },
+      "privacy": {
+        "title": "Privacy and data requests",
+        "body": "Ask what we hold about you, or have it corrected or deleted."
+      },
+      "press": {
+        "title": "Press",
+        "body": "Interviews, background and facts about Writ."
+      }
+    },
+    "name": "Full name",
+    "email": "Email",
+    "emailPlaceholder": "name@example.ca",
+    "organisation": "Organisation",
+    "optional": "Optional",
+    "topic": "Topic",
+    "choose": "Choose…",
+    "topics": {
+      "demo": "A demo",
+      "sales": "Pricing and plans",
+      "support": "Help with Writ",
+      "privacy": "Privacy or data request",
+      "press": "Press",
+      "other": "Something else"
+    },
+    "message": "Message",
+    "messagePlaceholder": "How can we help?",
+    "submit": "Send message",
+    "sending": "Sending…",
+    "privacy": "We use your details only to reply to you. We never share or sell them. See our <link>privacy policy</link>.",
+    "done": {
+      "title": "Message sent",
+      "body": "Thank you. We'll reply by email."
+    },
+    "errors": {
+      "required": "Please fill this in.",
+      "tooLong": "This is too long.",
+      "invalidEmail": "Enter an email address like name@example.ca.",
+      "invalidChoice": "Choose one of the options.",
+      "server": "Something went wrong and your message wasn't sent. Please try again in a moment."
+    }
   }
 }

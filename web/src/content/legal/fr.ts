@@ -63,7 +63,7 @@ export const fr: Record<LegalSlug, LegalDoc> = {
       {
         title: "Où ils sont conservés",
         body: [
-          "La liste d’attente est conservée chez {waitlistHost}. Ce site Web est hébergé par {siteHost}. Si un fournisseur de services conserve ou traite des renseignements à l’extérieur du Canada, ceux-ci sont assujettis aux lois de ce pays, et les autorités de ce pays pourraient y avoir accès.",
+          "La liste d’attente et les messages envoyés au moyen du formulaire de contact sont conservés chez {waitlistHost}. Ce site Web est hébergé par {siteHost}. Si un fournisseur de services conserve ou traite des renseignements à l’extérieur du Canada, ceux-ci sont assujettis aux lois de ce pays, et les autorités de ce pays pourraient y avoir accès.",
           "Le produit Writ est conçu pour conserver les données des campagnes au Canada, dans la région Canada (Centre) d’Amazon Web Services.",
         ],
       },
