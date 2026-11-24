@@ -335,7 +335,8 @@ export function Security() {
 
 // Questions and answers, sized from the reference: a 416px column, 64px
 // gap; a 32px medium heading; 20px medium questions with 24px above and
-// below, between solid black lines. Native disclosure elements: they open
+// below, between solid black lines. Native disclosure elements sharing one
+// name, so opening an answer closes the one that was open; they open
 // and close without JavaScript and are announced correctly by screen
 // readers.
 export function Faq() {
@@ -358,7 +359,7 @@ export function Faq() {
           </div>
           <div>
             {questions.map((q) => (
-              <details key={q} className="faq-item group border-b border-ink last:border-0">
+              <details key={q} name="faq" className="faq-item group border-b border-ink last:border-0">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-6 text-xl leading-[23px] font-medium [&::-webkit-details-marker]:hidden">
                   {t(`${q}.q`)}
                   <Plus className="h-3 w-3 shrink-0 transition-transform group-open:rotate-45" strokeWidth={2.5} />
