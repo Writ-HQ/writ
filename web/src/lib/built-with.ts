@@ -1,12 +1,13 @@
 import type { LogoKey } from "@/components/landing/brand-logos";
 
-import { subprocessors } from "./subprocessors";
-
-// The names in the landing page's moving band: the subprocessors, the
+// The names in the landing page's moving band: Zitadel, the
 // platforms campaigns connect, and the open-source projects Writ runs on.
 // Every entry must be true of Writ today or of a feature the page
-// describes; add or remove names here, not in the component. Names, not
-// logos only where brand-logos.tsx has one (see subprocessors.ts).
+// describes; add or remove names here, not in the component. A logo is
+// shown only where brand-logos.tsx has one (see subprocessors.ts).
+// AWS, Writ's host, is left out of the band by choice; it is still in
+// subprocessors.ts. X (Twitter) is listed ahead of its integration, which
+// is not built yet (docs/before-launch.md).
 
 export type BandItem = {
   /** The name as its owner writes it. Not translated. */
@@ -19,9 +20,10 @@ export type BandItem = {
 };
 
 export const builtWith: BandItem[] = [
-  ...subprocessors,
+  { name: "Zitadel", purpose: "signIn" },
   { name: "Facebook", purpose: "social", logo: "facebook" },
   { name: "Instagram", purpose: "social", logo: "instagram" },
+  { name: "X", purpose: "social" },
   { name: "PostgreSQL", purpose: "database", logo: "postgresql" },
   { name: "Next.js", purpose: "web", logo: "nextjs" },
 ];

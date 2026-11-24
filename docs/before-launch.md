@@ -73,3 +73,8 @@ and verified, with the date.
   current brand guidelines: Meta's for Facebook and Instagram, the
   PostgreSQL trademark policy, and Vercel's for Next.js. AWS may appear
   only as the official "Powered by AWS" badge, under AWS's trademark terms.
+
+- **X (Twitter) in the landing page band.** X is named in the "Built
+  with" band (web/src/lib/built-with.ts) before Writ connects to it. By
+  launch, either build the X integration (API access and its cost, terms,
+  and naming X in the privacy policy) or take X out of the band.
