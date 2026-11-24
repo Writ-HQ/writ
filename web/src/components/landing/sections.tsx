@@ -28,6 +28,7 @@ import { Pill } from "@/components/ui/pill";
 import { CampaignBox } from "./campaign-box";
 import { Container, SectionTitle } from "./container";
 import { CountUp } from "./count-up";
+import { MockReveal } from "./mock-reveal";
 import { ConsentMock, ContactMock, EmailMock, InboxMock, TeamMock } from "./mocks";
 
 type IconType = ComponentType<SVGProps<SVGSVGElement>>;
@@ -210,7 +211,9 @@ function Feature({ featureKey, icon: Icon, bullets, Mock, flip }: { featureKey: 
           </div>
           <div aria-hidden="true" className="bg-sky relative flex h-[340px] items-center justify-center overflow-hidden rounded-[6px] sm:h-[440px] lg:h-[544px]">
             <div className="scale-[0.8] sm:scale-100 lg:scale-110">
-              <Mock />
+              <MockReveal>
+                <Mock />
+              </MockReveal>
             </div>
           </div>
         </div>

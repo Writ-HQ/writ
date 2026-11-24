@@ -134,6 +134,67 @@
   --field-rim: hsl(205, 80%, 90%);
 }
 
+/*
+ * Product mock-ups beside each feature (components/landing/mock-reveal.tsx):
+ * once armed by the script, the card waits below and faded; when it scrolls
+ * into view it rises in, its rows follow one by one, then it floats gently.
+ */
+.mock-reveal[data-armed] > * {
+  opacity: 0;
+  transform: translateY(28px) scale(0.97);
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mock-reveal[data-armed] > * > *,
+.mock-reveal[data-armed] li {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 600ms ease,
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mock-reveal[data-shown] > *,
+.mock-reveal[data-shown] > * > *,
+.mock-reveal[data-shown] li {
+  opacity: 1;
+  transform: none;
+}
+.mock-reveal[data-shown] > * > *:nth-child(1) { transition-delay: 250ms; }
+.mock-reveal[data-shown] > * > *:nth-child(2) { transition-delay: 350ms; }
+.mock-reveal[data-shown] > * > *:nth-child(3) { transition-delay: 450ms; }
+.mock-reveal[data-shown] > * > *:nth-child(4) { transition-delay: 550ms; }
+.mock-reveal[data-shown] > * > *:nth-child(n + 5) { transition-delay: 650ms; }
+.mock-reveal[data-shown] li:nth-child(1) { transition-delay: 450ms; }
+.mock-reveal[data-shown] li:nth-child(2) { transition-delay: 580ms; }
+.mock-reveal[data-shown] li:nth-child(3) { transition-delay: 710ms; }
+.mock-reveal[data-shown] li:nth-child(4) { transition-delay: 840ms; }
+.mock-reveal[data-shown] li:nth-child(n + 5) { transition-delay: 970ms; }
+.mock-reveal[data-shown] {
+  animation: mock-float 7s ease-in-out 1.6s infinite;
+}
+@keyframes mock-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mock-reveal[data-armed] > *,
+  .mock-reveal[data-armed] > * > *,
+  .mock-reveal[data-armed] li {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .mock-reveal[data-shown] {
+    animation: none;
+  }
+}
+
 html {
   scroll-behavior: smooth;
   /* Section anchors land below the sticky navbar. */
