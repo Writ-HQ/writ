@@ -55,6 +55,14 @@ describe("messages", () => {
     "Landing.footer.copyright",
     "Landing.mock.nav.contacts",
     "Landing.mock.volunteersValue",
+    "Dashboard.nav.contacts",
+    "Dashboard.shell.sections",
+    "Dashboard.issues.immigration",
+    "Dashboard.issues.pensions",
+    "Dashboard.overview.eyebrow",
+    "Dashboard.queue.tabs.messages",
+    "Dashboard.platforms.facebook",
+    "Dashboard.platforms.instagram",
   ]);
 
   it("fr is translated: no value is identical to en unless listed", () => {

@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { Link } from "@/i18n/navigation";
+
 const variants = {
   solid: "bg-ink text-white hover:bg-ink-soft/85",
   outline: "border border-ink text-ink hover:bg-ink hover:text-white",
@@ -23,8 +25,9 @@ type Props = {
   variant?: keyof typeof variants;
   size?: keyof typeof sizes;
   /**
-   * Where the button goes. Left out for now: the calls to action are not
-   * wired to anything yet, so they render as buttons that do nothing.
+   * Where the button goes, as a path without the locale ("/signup"); the
+   * link keeps the visitor's language. Left out, it renders as a button
+   * that does nothing yet.
    */
   href?: string;
   className?: string;
@@ -35,9 +38,9 @@ export function Pill({ children, variant = "solid", size = "md", href, className
   const classes = `inline-flex shrink-0 items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${variants[variant]} ${sizes[size]} ${className}`;
   if (href) {
     return (
-      <a href={href} className={classes}>
+      <Link href={href} className={classes}>
         {children}
-      </a>
+      </Link>
     );
   }
   return (

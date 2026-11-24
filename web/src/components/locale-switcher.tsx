@@ -8,12 +8,14 @@ type Props = {
   compact?: boolean;
   /** For dark backgrounds. */
   inverse?: boolean;
+  /** The page to link to in each language, without the locale. */
+  href?: string;
   className?: string;
 };
 
 // Links to the same page in each language. Plain links, so they work
 // without JavaScript.
-export function LocaleSwitcher({ compact = false, inverse = false, className = "" }: Props) {
+export function LocaleSwitcher({ compact = false, inverse = false, href = "/", className = "" }: Props) {
   const t = useTranslations("LocaleSwitcher");
   const current = useLocale();
   const idle = inverse ? "text-white/55 hover:text-white" : "text-muted hover:text-ink";
@@ -25,7 +27,7 @@ export function LocaleSwitcher({ compact = false, inverse = false, className = "
         <span key={locale} className="flex items-center gap-1.5">
           {i > 0 && <span aria-hidden="true" className={inverse ? "text-white/30" : "text-faint"}>·</span>}
           <Link
-            href="/"
+            href={href}
             locale={locale}
             hrefLang={locale}
             lang={locale}

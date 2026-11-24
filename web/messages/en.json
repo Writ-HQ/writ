@@ -11,7 +11,7 @@
   "Landing": {
     "announcement": {
       "text": "Writ is opening a pilot for Canadian campaigns.",
-      "cta": "Join the waitlist"
+      "cta": "See a demo"
     },
     "nav": {
       "home": "Writ home",
@@ -20,7 +20,7 @@
       "company": "Company",
       "login": "Log in",
       "demo": "See a demo",
-      "waitlist": "Join the waitlist",
+      "start": "Get started",
       "menu": "Menu",
       "about": "About",
       "contact": "Contact",
@@ -39,19 +39,18 @@
       "line2": "from one bilingual",
       "line3": "campaign workspace.",
       "subtitle": "Contacts, lists, bilingual email and your social inbox in one CRM built for Canadian campaigns. In English and French, with your data kept in Canada.",
-      "cta": "Join the waitlist",
+      "cta": "Get started",
       "visualLabel": "A preview of the Writ dashboard, with fictional data"
     },
     "band": {
-      "label": "Built for campaigns of every kind",
-      "i1": "Municipal campaigns",
-      "i2": "Provincial campaigns",
-      "i3": "Federal campaigns",
-      "i4": "Nomination races",
-      "i5": "Leadership races",
-      "i6": "Riding associations",
-      "i7": "Advocacy groups",
-      "i8": "Non-profits"
+      "label": "Built with",
+      "purposes": {
+        "hosting": "Hosting and email, in Canada",
+        "signIn": "Team sign-in",
+        "social": "Messages and scheduled posts",
+        "database": "Database",
+        "web": "Web app"
+      }
     },
     "stats": {
       "languages": {
@@ -217,14 +216,14 @@
       },
       "q7": {
         "q": "When can we start?",
-        "a": "We are opening a pilot for a small number of campaigns. Join the waitlist and we will be in touch."
+        "a": "We are opening a pilot for a small number of campaigns. Book a demo and we will be in touch."
       }
     },
     "closing": {
       "title1": "Your whole campaign.",
       "title2": "One place.",
-      "waitlist": "Join the waitlist",
-      "demo": "See a demo"
+      "demo": "See a demo",
+      "start": "Get started"
     },
     "footer": {
       "product": "Product",
@@ -325,6 +324,213 @@
       "optedOut": "Opted out",
       "noAnswer": "Not asked",
       "consentNote": "Recorded with source and date for every change."
+    }
+  },
+  "Auth": {
+    "home": "Writ home",
+    "email": "Email",
+    "emailPlaceholder": "name@example.ca",
+    "password": "Password",
+    "showPassword": "Show",
+    "hidePassword": "Hide",
+    "notConnected": "Not connected yet: nothing was sent.",
+    "panel": {
+      "title": "Your team, your contacts and your messages, in one place.",
+      "points": {
+        "canada": "Hosted in Canada",
+        "languages": "English and French throughout",
+        "mfa": "Two-step verification on every account"
+      }
+    },
+    "login": {
+      "metaTitle": "Log in",
+      "title": "Welcome back",
+      "subtitle": "Log in to your Writ account.",
+      "forgot": "Forgot password?",
+      "submit": "Log in",
+      "mfaNote": "You will confirm with your second step next.",
+      "noAccount": "New to Writ?",
+      "signup": "Create an account"
+    },
+    "signup": {
+      "metaTitle": "Create an account",
+      "title": "Create your account",
+      "subtitle": "Set up Writ for your campaign or office.",
+      "name": "Full name",
+      "email": "Work email",
+      "organisation": "Campaign or office",
+      "organisationHint": "You can invite your team once it is set up.",
+      "passwordHint": "At least 12 characters.",
+      "terms": "I agree to the Terms of Service and the Privacy Policy.",
+      "submit": "Create account",
+      "hasAccount": "Already have an account?",
+      "login": "Log in"
+    },
+    "social": {
+      "google": "Continue with Google",
+      "facebook": "Continue with Facebook",
+      "or": "or"
+    }
+  },
+  "Dashboard": {
+    "nav": {
+      "overview": "Overview",
+      "casework": "Casework",
+      "contacts": "Contacts",
+      "inbox": "Inbox",
+      "posts": "Scheduled posts",
+      "replies": "Auto-replies",
+      "email": "Email",
+      "volunteers": "Volunteers",
+      "settings": "Settings"
+    },
+    "shell": {
+      "home": "Writ home",
+      "sections": "Sections",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "collapse": "Collapse sidebar",
+      "expand": "Expand sidebar",
+      "office": "Office",
+      "profile": "Profile and account",
+      "signOut": "Sign out",
+      "groups": {
+        "social": "Social",
+        "outreach": "Outreach"
+      }
+    },
+    "soon": "This part of Writ is not built yet.",
+    "about": {
+      "casework": "Track every request from constituents, from first contact to resolution.",
+      "contacts": "Everyone the office has heard from, with their lists, consent and history.",
+      "inbox": "Every direct message and comment from your social accounts, kept on record and matched to contacts.",
+      "posts": "Plan posts for Facebook and Instagram, send them for approval and publish on schedule.",
+      "replies": "Answer common messages automatically, in English and French, and hand the rest to staff.",
+      "email": "Newsletters and updates, with unsubscribe and consent handled for you.",
+      "volunteers": "The people who help out, and what they are signed up for.",
+      "settings": "The office, your team, connected social accounts and your profile."
+    },
+    "overview": {
+      "eyebrow": "{date} · {office}",
+      "title": "Good to see you, {name}",
+      "summary": "{cases, plural, one {# case has} other {# cases have}} waited over two months, {messages, plural, one {# message needs} other {# messages need}} a reply, and {posts, plural, =0 {no posts go} one {# post goes} other {# posts go}} out today.",
+      "showing": "Last {range}, compared with the period before",
+      "range": "Range",
+      "actions": {
+        "newCase": "New case",
+        "schedulePost": "Schedule a post"
+      }
+    },
+    "queue": {
+      "title": "Your queue",
+      "tabs": {
+        "messages": "Messages",
+        "cases": "Oldest cases"
+      },
+      "states": {
+        "new": "Needs a reply",
+        "auto": "Auto-replied",
+        "replied": "Replied"
+      },
+      "openInbox": "Open inbox",
+      "allCases": "All cases",
+      "dayUnit": "days",
+      "daysOpen": "Open for {days} days"
+    },
+    "upNext": {
+      "title": "Up next",
+      "hint": "Scheduled posts",
+      "all": "Calendar",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "status": {
+        "approved": "Approved",
+        "approval": "Awaiting approval",
+        "draft": "Draft"
+      }
+    },
+    "channels": {
+      "title": "Social channels",
+      "manage": "Manage",
+      "followers": "{count, plural, one {# follower} other {# followers}}",
+      "unread": "{count} unread",
+      "autoReplies": "auto-replies sent this week"
+    },
+    "status": {
+      "title": "Open cases",
+      "all": "Casework",
+      "total": "open",
+      "new": "New",
+      "progress": "In progress",
+      "agency": "Waiting on an agency",
+      "constituent": "Waiting on the constituent"
+    },
+    "topIssues": {
+      "title": "Top issues",
+      "hint": "Cases opened in this range"
+    },
+    "platforms": {
+      "facebook": "Facebook",
+      "instagram": "Instagram"
+    },
+    "flow": {
+      "title": "Casework flow",
+      "hint": {
+        "day": "Cases opened and resolved, by day.",
+        "week": "Cases opened and resolved, by week.",
+        "month": "Cases opened and resolved, by month."
+      },
+      "opened": "Opened",
+      "resolved": "Resolved",
+      "net": "Net change",
+      "label": "Cases opened and resolved, last {period}"
+    },
+    "metrics": {
+      "opened": "Cases opened",
+      "resolved": "Cases resolved",
+      "days": "Days to resolve",
+      "contacts": "New contacts"
+    },
+    "range": {
+      "presets": {
+        "7d": "7 days",
+        "28d": "28 days",
+        "3m": "3 months",
+        "6m": "6 months",
+        "12m": "12 months"
+      }
+    },
+    "issues": {
+      "immigration": "Immigration",
+      "pensions": "Pensions",
+      "taxes": "Taxes",
+      "passports": "Passports",
+      "housing": "Housing",
+      "ei": "Employment insurance",
+      "health": "Health care",
+      "veterans": "Veterans' services"
+    },
+    "mock": {
+      "cases": {
+        "c3": "Passport application lost in the mail",
+        "c5": "Spousal sponsorship file stalled",
+        "c6": "Survivor's pension not started",
+        "c7": "Repairs refused in social housing",
+        "c8": "Tax reassessment letter not explained"
+      },
+      "dms": {
+        "m1": "Hi, my mother's pension stopped after she moved in with us. Who do I call?",
+        "m2": "Is the office open on Saturday? I need a letter for my passport application.",
+        "m3": "Thank you for the town hall last week. Will the slides be posted?",
+        "m4": "My work permit renewal has been stuck for four months. Can you help?",
+        "m5": "Got the call from your caseworker today, thanks so much."
+      },
+      "posts": {
+        "p1": "Office hours over the holidays: we're open Dec. 22 and 23, closed until Jan. 2.",
+        "p2": "Need help with winter heating costs? Here's what's available and how to apply.",
+        "p3": "Thanks to everyone who came out to the community clean-up on Saturday.",
+        "p4": "Town hall on local transit: join us Thursday at the Riverside library."
+      }
     }
   }
 }

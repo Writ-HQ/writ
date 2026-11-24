@@ -1,7 +1,20 @@
 import { useTranslations } from "next-intl";
 import type { ComponentType, SVGProps } from "react";
 
-import { ArrowRight, Building, Chat, ChevronDown, Layers, ListIcon, Mail, Shield, Users, WritMark } from "@/components/ui/icons";
+import {
+  ArrowRight,
+  BuildingSolid,
+  ChatSolid,
+  ChevronDown,
+  InfoSolid,
+  LayersSolid,
+  ListSolid,
+  LockSolid,
+  MailSolid,
+  ShieldSolid,
+  UsersSolid,
+} from "@/components/ui/icons";
+import { Logo } from "@/components/ui/logo";
 import { Pill } from "@/components/ui/pill";
 import { Link } from "@/i18n/navigation";
 
@@ -11,29 +24,25 @@ type MenuItem = {
   /** An anchor on this page. Items without one are not wired up yet. */
   href?: string;
   icon?: ComponentType<SVGProps<SVGSVGElement>>;
-  /** Background of the small icon tile. */
-  tint?: string;
 };
 
-// One entry in a menu: a small tinted icon tile and a 14px medium label,
-// in an 8px-padded row with 12px between them (from the reference).
+// One entry in a menu: a 20px solid icon and a 17px medium label, 14px
+// apart, in a row that turns pale grey on hover.
 // Descriptions show only in the small-screen menu, where there is no card.
 function MenuEntry({ item, compact = true }: { item: MenuItem; compact?: boolean }) {
   const Icon = item.icon;
   const body = (
     <>
       {Icon && (
-        <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] ${item.tint ?? "bg-panel"}`}>
-          <Icon className="h-3 w-3 text-ink/75" />
-        </span>
+        <Icon className="h-5 w-5 shrink-0 text-ink" />
       )}
       <span>
-        <span className="block text-sm leading-[18.2px] font-medium">{item.label}</span>
+        <span className="block text-[17px] leading-[22px] font-medium tracking-[-0.01em]">{item.label}</span>
         {!compact && item.desc && <span className="mt-0.5 block text-[12px] leading-snug text-muted">{item.desc}</span>}
       </span>
     </>
   );
-  const classes = "flex w-full items-center gap-3 rounded-[6px] p-2 text-left transition-colors hover:bg-panel";
+  const classes = "flex w-full items-center gap-3.5 rounded-[10px] px-3 py-2.5 text-left transition-colors hover:bg-[#f3f3f3]";
   return item.href ? (
     <a href={item.href} className={classes}>
       {body}
@@ -75,7 +84,8 @@ function FeatureCard({ caption }: { caption: string }) {
 }
 
 // A menu that opens on hover and on keyboard focus, without JavaScript: a
-// white panel with a 226px column of entries and, for Product, a card.
+// white panel with a 250px column of entries and, for Product, a card.
+// Beside the card the entries spread out to its full height.
 function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; card?: string }) {
   return (
     <div className="group relative">
@@ -88,8 +98,8 @@ function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; ca
         <ChevronDown className="h-3 w-3 transition-transform group-focus-within:rotate-180 group-hover:rotate-180" />
       </button>
       <div className="invisible absolute top-full -left-2.5 -mt-3 translate-y-1 opacity-0 transition-all duration-150 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-        <div className="flex gap-4 rounded-[16px] bg-white p-4 shadow-[0_0_0_1px_rgb(0_0_0/0.04),0_24px_48px_-16px_rgb(0_0_0/0.18),0_8px_16px_-8px_rgb(0_0_0/0.08)]">
-          <div className="flex w-[226px] flex-col gap-0.5 py-0.5">
+        <div className="flex gap-4 rounded-[24px] bg-white p-3.5 shadow-[0_0_0_1px_rgb(0_0_0/0.04),0_24px_48px_-16px_rgb(0_0_0/0.18),0_8px_16px_-8px_rgb(0_0_0/0.08)]">
+          <div className={`flex w-[250px] flex-col gap-0.5 ${card ? "justify-between" : "py-0.5"}`}>
             {items.map((item) => (
               <MenuEntry key={item.label} item={item} />
             ))}
@@ -104,19 +114,23 @@ function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; ca
 function useMenus() {
   const t = useTranslations("Landing");
   const product: MenuItem[] = [
-    { label: t("overview.contacts.title"), desc: t("overview.contacts.desc"), href: "#contacts", icon: Users, tint: "bg-[#cfdcc4]" },
-    { label: t("overview.lists.title"), desc: t("overview.lists.desc"), href: "#overview", icon: ListIcon, tint: "bg-[#e9dcc4]" },
-    { label: t("overview.email.title"), desc: t("overview.email.desc"), href: "#email", icon: Mail, tint: "bg-sky" },
-    { label: t("overview.social.title"), desc: t("overview.social.desc"), href: "#social", icon: Chat, tint: "bg-[#d9d0ea]" },
-    { label: t("overview.volunteers.title"), desc: t("overview.volunteers.desc"), href: "#volunteers", icon: Layers, tint: "bg-[#e7d6d0]" },
-    { label: t("overview.consent.title"), desc: t("overview.consent.desc"), href: "#consent", icon: Shield, tint: "bg-mist" },
+    { label: t("overview.contacts.title"), desc: t("overview.contacts.desc"), href: "#contacts", icon: UsersSolid },
+    { label: t("overview.lists.title"), desc: t("overview.lists.desc"), href: "#overview", icon: ListSolid },
+    { label: t("overview.email.title"), desc: t("overview.email.desc"), href: "#email", icon: MailSolid },
+    { label: t("overview.social.title"), desc: t("overview.social.desc"), href: "#social", icon: ChatSolid },
+    { label: t("overview.volunteers.title"), desc: t("overview.volunteers.desc"), href: "#volunteers", icon: LayersSolid },
+    { label: t("overview.consent.title"), desc: t("overview.consent.desc"), href: "#consent", icon: ShieldSolid },
   ];
   const solutions: MenuItem[] = [
-    { label: t("builtFor.candidates.title"), href: "#built-for", icon: Users, tint: "bg-[#cfdcc4]" },
-    { label: t("builtFor.ridings.title"), href: "#built-for", icon: Building, tint: "bg-[#e9dcc4]" },
-    { label: t("builtFor.advocacy.title"), href: "#built-for", icon: Chat, tint: "bg-sky" },
+    { label: t("builtFor.candidates.title"), href: "#built-for", icon: UsersSolid },
+    { label: t("builtFor.ridings.title"), href: "#built-for", icon: BuildingSolid },
+    { label: t("builtFor.advocacy.title"), href: "#built-for", icon: ChatSolid },
   ];
-  const company: MenuItem[] = [{ label: t("nav.about") }, { label: t("nav.contact") }, { label: t("nav.privacy") }];
+  const company: MenuItem[] = [
+    { label: t("nav.about"), icon: InfoSolid },
+    { label: t("nav.contact"), icon: MailSolid },
+    { label: t("nav.privacy"), icon: LockSolid },
+  ];
   return { product, solutions, company };
 }
 
@@ -177,8 +191,7 @@ export function Navbar() {
       <ProgressiveBlur />
       <div className="relative z-10 mx-auto flex h-16 max-w-[1440px] items-center gap-10 px-5 sm:px-8 lg:px-16">
         <Link href="/" aria-label={t("home")} className="flex items-center gap-2">
-          <WritMark className="h-6 w-6 text-ink" />
-          <span className="text-[24px] leading-6 font-medium tracking-[-0.04em]">Writ</span>
+          <Logo />
         </Link>
 
         <nav aria-label={t("menu")} className="hidden items-center gap-4 lg:flex [&:has(>div:hover)>div:not(:hover)>button]:text-ink/45 [&:has(>div:focus-within)>div:not(:focus-within)>button]:text-ink/45">
@@ -188,13 +201,15 @@ export function Navbar() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <button type="button" className="hidden h-8 rounded-full px-4 text-sm leading-[18px] font-medium hover:bg-ink/5 md:block">
+          <Link href="/login" className="hidden h-8 items-center rounded-full px-4 text-sm leading-[18px] font-medium hover:bg-ink/5 md:inline-flex">
             {t("login")}
-          </button>
+          </Link>
           <Pill variant="outline" size="sm" className="hidden md:inline-flex">
             {t("demo")}
           </Pill>
-          <Pill size="sm">{t("waitlist")}</Pill>
+          <Pill size="sm" href="/signup">
+            {t("start")}
+          </Pill>
 
           {/* Small screens: the same links in a disclosure. */}
           <details className="group relative lg:hidden">
@@ -220,9 +235,9 @@ export function Navbar() {
               ))}
               <div className="flex items-center justify-end gap-3 pt-3">
                 <div className="flex gap-2">
-                  <button type="button" className="text-[13px] font-medium">
+                  <Link href="/login" className="inline-flex items-center text-[13px] font-medium">
                     {t("login")}
-                  </button>
+                  </Link>
                   <Pill variant="outline" size="sm">
                     {t("demo")}
                   </Pill>

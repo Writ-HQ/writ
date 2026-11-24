@@ -5,18 +5,20 @@ import {
   ArrowRight,
   Building,
   Chat,
+  ChatSolid,
   Check,
-  Globe,
-  KeyRound,
-  Layers,
-  Ledger,
-  ListIcon,
-  Lock,
-  Mail,
-  MapleLeaf,
+  GlobeSolid,
+  KeySolid,
+  LayersSolid,
+  LedgerSolid,
+  ListSolid,
+  LockSolid,
+  MailSolid,
+  MapleLeafRed,
   Plus,
-  Shield,
+  ShieldSolid,
   Users,
+  UsersSolid,
 } from "@/components/ui/icons";
 import { Pill } from "@/components/ui/pill";
 
@@ -29,16 +31,16 @@ type IconType = ComponentType<SVGProps<SVGSVGElement>>;
 export function Stats() {
   const t = useTranslations("Landing.stats");
   const stats: { key: "languages" | "canada" | "place"; icon: IconType }[] = [
-    { key: "languages", icon: Globe },
-    { key: "canada", icon: MapleLeaf },
-    { key: "place", icon: Layers },
+    { key: "languages", icon: GlobeSolid },
+    { key: "canada", icon: MapleLeafRed },
+    { key: "place", icon: LayersSolid },
   ];
   return (
     <Container>
       <dl className="grid border-y border-line sm:grid-cols-3">
         {stats.map(({ key, icon: Icon }) => (
           <div key={key} className="border-line py-10 not-first:border-t sm:px-8 sm:not-first:border-t-0 sm:not-first:border-l sm:first:pl-0">
-            <Icon className="h-5 w-5 text-ink/70" />
+            <Icon className="h-6 w-6 text-ink" />
             <dt className="sr-only">{t(`${key}.unit`)}</dt>
             <dd className="mt-6">
               <span className="text-[52px] leading-none tracking-[-0.04em] lg:text-[60px]">{t(`${key}.value`)}</span>{" "}
@@ -63,14 +65,14 @@ export function Overview() {
   type Key = "contacts" | "lists" | "email" | "social" | "volunteers" | "consent";
   const rows: { key: Key; icon: IconType; href: string }[][] = [
     [
-      { key: "contacts", icon: Users, href: "#contacts" },
-      { key: "lists", icon: ListIcon, href: "#contacts" },
-      { key: "email", icon: Mail, href: "#email" },
+      { key: "contacts", icon: UsersSolid, href: "#contacts" },
+      { key: "lists", icon: ListSolid, href: "#contacts" },
+      { key: "email", icon: MailSolid, href: "#email" },
     ],
     [
-      { key: "social", icon: Chat, href: "#social" },
-      { key: "volunteers", icon: Layers, href: "#volunteers" },
-      { key: "consent", icon: Shield, href: "#consent" },
+      { key: "social", icon: ChatSolid, href: "#social" },
+      { key: "volunteers", icon: LayersSolid, href: "#volunteers" },
+      { key: "consent", icon: ShieldSolid, href: "#consent" },
     ],
   ];
   return (
@@ -98,7 +100,7 @@ export function Overview() {
                   <li key={key} className={`border-black/[0.06] max-lg:not-first:border-t lg:px-[15.5px] lg:first:pl-0 lg:last:pr-0 ${c > 0 ? "lg:border-l" : ""}`}>
                     <a href={href} className="group flex flex-col gap-2 p-4">
                       <span className="flex items-center gap-2 text-xl leading-[23px]">
-                        <Icon className="h-[18px] w-[18px] shrink-0 text-ink/70" />
+                        <Icon className="h-5 w-5 shrink-0 text-ink" />
                         {t(`${key}.title`)}
                         <ArrowRight className="h-4 w-4 text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-ink" />
                       </span>
@@ -119,11 +121,11 @@ export function Overview() {
 type FeatureKey = "contacts" | "email" | "social" | "volunteers" | "consent";
 
 const features: { key: FeatureKey; icon: IconType; bullets: string[]; Mock: ComponentType }[] = [
-  { key: "contacts", icon: Users, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: ContactMock },
-  { key: "email", icon: Mail, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: EmailMock },
-  { key: "social", icon: Chat, bullets: ["b1", "b2", "b3", "b4"], Mock: InboxMock },
-  { key: "volunteers", icon: Layers, bullets: ["b1", "b2", "b3", "b4"], Mock: TeamMock },
-  { key: "consent", icon: Shield, bullets: ["b1", "b2", "b3", "b4"], Mock: ConsentMock },
+  { key: "contacts", icon: UsersSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: ContactMock },
+  { key: "email", icon: MailSolid, bullets: ["b1", "b2", "b3", "b4", "b5"], Mock: EmailMock },
+  { key: "social", icon: ChatSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: InboxMock },
+  { key: "volunteers", icon: LayersSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: TeamMock },
+  { key: "consent", icon: ShieldSolid, bullets: ["b1", "b2", "b3", "b4"], Mock: ConsentMock },
 ];
 
 // One product area: text on one side, a mock-up on sky on the other,
@@ -228,10 +230,10 @@ export function BuiltFor() {
 export function Security() {
   const t = useTranslations("Landing.security");
   const items: { key: "isolated" | "canada" | "mfa" | "audit"; icon: IconType }[] = [
-    { key: "isolated", icon: Lock },
-    { key: "canada", icon: MapleLeaf },
-    { key: "mfa", icon: KeyRound },
-    { key: "audit", icon: Ledger },
+    { key: "isolated", icon: LockSolid },
+    { key: "canada", icon: MapleLeafRed },
+    { key: "mfa", icon: KeySolid },
+    { key: "audit", icon: LedgerSolid },
   ];
   const row = "border-t border-ink lg:h-[164px]";
   return (
@@ -329,8 +331,8 @@ export function Closing() {
           {t("title2")}
         </SectionTitle>
         <div className="flex flex-wrap gap-3 lg:mr-[12%]">
-          <Pill variant="slate" size="lg">
-            {t("waitlist")}
+          <Pill variant="slate" size="lg" href="/signup">
+            {t("start")}
           </Pill>
           <Pill variant="outline-light" size="lg" className="bg-white/30">
             {t("demo")}

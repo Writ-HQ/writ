@@ -2,7 +2,9 @@ import { useTranslations } from "next-intl";
 import type React from "react";
 
 import { Pill } from "@/components/ui/pill";
+import { builtWith } from "@/lib/built-with";
 
+import { BrandLogo } from "./brand-logos";
 import { Container } from "./container";
 import { DashboardMock } from "./mocks";
 
@@ -35,7 +37,9 @@ export function Hero() {
           <HeroTitle />
           <p className="mt-6 max-w-[398px] text-base leading-[21px]">{t("subtitle")}</p>
           <div className="mt-11">
-            <Pill size="lg">{t("cta")}</Pill>
+            <Pill size="lg" href="/signup">
+              {t("cta")}
+            </Pill>
           </div>
         </div>
         <Band />
@@ -67,7 +71,12 @@ function HeroTitle() {
       <span aria-hidden="true" className="block">
         <span className="block whitespace-nowrap">
           {t("lead")}
-          <span className="mx-3 inline-grid h-[38px] w-[52px] translate-y-[2px] align-middle">{cycling(pictures.map((P, i) => <P key={i} />))}</span>
+          {/* Sized in em so it scales with the text, and set from just
+              below the baseline to the top of the capitals: the pictures
+              centre on the letters and never reach the next line. */}
+          <span className="mx-[0.28em] inline-grid h-[0.95em] w-[1.3em] align-[-0.08em] [&>span]:flex [&>span]:items-center [&>span]:justify-center">
+            {cycling(pictures.map((P, i) => <P key={i} />))}
+          </span>
           <span className="inline-grid align-baseline">{cycling(words)}</span>
         </span>
         <span className="block">{t("line2")}</span>
@@ -77,104 +86,138 @@ function HeroTitle() {
   );
 }
 
-// Small paper-like pictures that sit in the heading, tilted, with a soft
-// shadow. Drawn in CSS; decorative.
-function Paper({ children, tilt }: { children: React.ReactNode; tilt: string }) {
-  return (
-    <span className={`absolute top-1/2 left-1/2 flex h-[54px] w-[42px] -translate-x-1/2 -translate-y-1/2 flex-col gap-[3px] rounded-[4px] bg-white p-[6px] shadow-[0_1px_2px_rgb(0_0_0/0.08),0_8px_16px_-6px_rgb(0_0_0/0.25)] ring-1 ring-black/5 ${tilt}`}>
-      {children}
-    </span>
-  );
-}
-
-const Line = ({ w, dark = false }: { w: string; dark?: boolean }) => <span className={`block h-[2px] rounded-full ${dark ? "bg-ink/60" : "bg-ink/15"} ${w}`} />;
+// Small illustrations that sit in the heading, drawn in SVG: tilted, with
+// gradients and a soft shadow, like objects on a desk. Decorative. Each is
+// drawn once per page, so the gradient ids do not clash.
+// Upright pictures are 1.15em tall; the envelope, which is wide, is 0.85em
+// tall so that it is no wider than the 1.3em slot.
+const shadow = "w-auto drop-shadow-[0_6px_6px_rgb(0_0_0/0.22)]";
+const pictureStyle = `h-[1.15em] ${shadow}`;
 
 function ClipboardPicture() {
   return (
-    <span className="relative block h-full w-full">
-      <Paper tilt="-rotate-6">
-        <Line w="w-1/2" dark />
-        {["w-full", "w-5/6", "w-full", "w-2/3", "w-5/6"].map((w, i) => (
-          <span key={i} className="flex items-center gap-[3px]">
-            <span className={`h-[4px] w-[4px] shrink-0 rounded-[1px] ${i < 3 ? "bg-positive" : "ring-1 ring-ink/25"}`} />
-            <Line w={w} />
-          </span>
-        ))}
-      </Paper>
-    </span>
+    <svg viewBox="0 0 40 50" className={`${pictureStyle} -rotate-[7deg]`} aria-hidden="true">
+      <defs>
+        <linearGradient id="hp-board" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#ffffff" />
+          <stop offset="1" stopColor="#eeeeec" />
+        </linearGradient>
+        <linearGradient id="hp-clip" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#4a4a4a" />
+          <stop offset="1" stopColor="#141414" />
+        </linearGradient>
+      </defs>
+      <rect x="2" y="4" width="36" height="44" rx="4" fill="url(#hp-board)" stroke="#000" strokeOpacity="0.08" />
+      <rect x="12" y="1" width="16" height="7" rx="2.5" fill="url(#hp-clip)" />
+      <rect x="15" y="2.5" width="10" height="1.4" rx="0.7" fill="#fff" fillOpacity="0.35" />
+      {[14, 21, 28, 35, 42].map((y, i) => (
+        <g key={y}>
+          {i < 3 ? (
+            <>
+              <rect x="7" y={y - 2.5} width="5" height="5" rx="1.3" fill="#27a139" />
+              <path d={`M8.2 ${y} l1.3 1.3 2.3-2.6`} fill="none" stroke="#fff" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+            </>
+          ) : (
+            <rect x="7.5" y={y - 2} width="4" height="4" rx="1.1" fill="none" stroke="#000" strokeOpacity="0.25" />
+          )}
+          <rect x="15" y={y - 1} width={[16, 13, 17, 11, 14][i]} height="2" rx="1" fill="#000" fillOpacity={i < 3 ? 0.3 : 0.14} />
+        </g>
+      ))}
+    </svg>
   );
 }
 
 function EnvelopePicture() {
   return (
-    <span className="relative block h-full w-full">
-      <span className="absolute top-1/2 left-1/2 h-[34px] w-[50px] -translate-x-1/2 -translate-y-1/2 rotate-[5deg] overflow-hidden rounded-[4px] bg-white shadow-[0_1px_2px_rgb(0_0_0/0.08),0_8px_16px_-6px_rgb(0_0_0/0.25)] ring-1 ring-black/5">
-        <span className="absolute -top-[18px] left-1/2 h-[34px] w-[34px] -translate-x-1/2 rotate-45 border border-ink/15 bg-panel" />
-        <span className="absolute right-1.5 bottom-1.5 rounded-[2px] bg-ink px-[3px] text-[7px] leading-[10px] font-semibold tracking-normal text-white">FR</span>
-      </span>
-    </span>
+    <svg viewBox="0 0 52 36" className={`h-[0.85em] ${shadow} rotate-[6deg]`} aria-hidden="true">
+      <defs>
+        <linearGradient id="hp-env" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#ffffff" />
+          <stop offset="1" stopColor="#efefed" />
+        </linearGradient>
+        <linearGradient id="hp-stamp" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#afd7ed" />
+          <stop offset="1" stopColor="#9dcfeb" />
+        </linearGradient>
+      </defs>
+      <rect x="1" y="2" width="50" height="33" rx="3" fill="url(#hp-env)" stroke="#000" strokeOpacity="0.08" />
+      <path d="M2 4 26 21 50 4" fill="none" stroke="#000" strokeOpacity="0.14" strokeWidth="1.2" strokeLinejoin="round" />
+      <path d="M2 34 19 18M50 34 33 18" fill="none" stroke="#000" strokeOpacity="0.07" strokeWidth="1" />
+      <rect x="39" y="6" width="8" height="10" rx="1" fill="url(#hp-stamp)" stroke="#fff" strokeWidth="1.2" strokeDasharray="1 1" />
+      <rect x="5" y="27" width="11" height="5.5" rx="2.75" fill="#111" />
+      <text x="10.5" y="31.4" textAnchor="middle" fontSize="4.2" fontWeight="700" fill="#fff" fontFamily="system-ui, sans-serif">FR</text>
+    </svg>
   );
 }
 
 function BadgePicture() {
   return (
-    <span className="relative block h-full w-full">
-      <Paper tilt="rotate-[4deg]">
-        <span className="mx-auto mt-[2px] block h-[14px] w-[14px] rounded-full bg-[#c7d9b0]" />
-        <span className="mt-[3px] flex flex-col items-center gap-[3px]">
-          <Line w="w-3/4" dark />
-          <Line w="w-1/2" />
-        </span>
-        <span className="mt-auto block rounded-[2px] bg-sky py-[2px]" />
-      </Paper>
-    </span>
+    <svg viewBox="0 0 36 52" className={`${pictureStyle} rotate-[5deg]`} aria-hidden="true">
+      <defs>
+        <linearGradient id="hp-card" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#ffffff" />
+          <stop offset="1" stopColor="#f0f0ee" />
+        </linearGradient>
+        <linearGradient id="hp-strap" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#9dcfeb" />
+          <stop offset="1" stopColor="#c6e0ed" />
+        </linearGradient>
+      </defs>
+      <path d="M12 0h12l-2 9h-8z" fill="url(#hp-strap)" />
+      <rect x="2" y="8" width="32" height="42" rx="4" fill="url(#hp-card)" stroke="#000" strokeOpacity="0.08" />
+      <rect x="13" y="11" width="10" height="2" rx="1" fill="#000" fillOpacity="0.15" />
+      <circle cx="18" cy="23" r="6.5" fill="#cfdcc4" />
+      <circle cx="18" cy="21.5" r="2.4" fill="#fff" fillOpacity="0.9" />
+      <path d="M13.6 27.6a5 5 0 0 1 8.8 0" fill="#fff" fillOpacity="0.9" />
+      <rect x="9" y="33" width="18" height="2.4" rx="1.2" fill="#000" fillOpacity="0.45" />
+      <rect x="12" y="37.5" width="12" height="2" rx="1" fill="#000" fillOpacity="0.15" />
+      <rect x="2" y="43" width="32" height="7" rx="0" fill="url(#hp-strap)" />
+      <rect x="2" y="46" width="32" height="4" rx="4" fill="url(#hp-strap)" />
+    </svg>
   );
 }
 
 function PhonePicture() {
   return (
-    <span className="relative block h-full w-full">
-      <span className="absolute top-1/2 left-1/2 flex h-[54px] w-[30px] -translate-x-1/2 -translate-y-1/2 -rotate-[5deg] flex-col gap-[3px] rounded-[6px] bg-ink p-[3px] shadow-[0_8px_16px_-6px_rgb(0_0_0/0.35)]">
-        <span className="flex flex-1 flex-col justify-end gap-[3px] rounded-[4px] bg-white p-[3px]">
-          <span className="block h-[5px] w-3/4 rounded-full bg-panel ring-1 ring-ink/10" />
-          <span className="ml-auto block h-[5px] w-2/3 rounded-full bg-[#9dcfeb]" />
-          <span className="block h-[5px] w-1/2 rounded-full bg-panel ring-1 ring-ink/10" />
-        </span>
-      </span>
-    </span>
+    <svg viewBox="0 0 30 52" className={`${pictureStyle} -rotate-[6deg]`} aria-hidden="true">
+      <defs>
+        <linearGradient id="hp-phone" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#3a3a3a" />
+          <stop offset="1" stopColor="#0d0d0d" />
+        </linearGradient>
+      </defs>
+      <rect x="1" y="1" width="28" height="50" rx="6" fill="url(#hp-phone)" />
+      <rect x="3" y="3" width="24" height="46" rx="4.2" fill="#fbfbfa" />
+      <rect x="11" y="5" width="8" height="2.2" rx="1.1" fill="#111" />
+      <rect x="5.5" y="14" width="14" height="6" rx="3" fill="#ededeb" />
+      <rect x="10.5" y="23" width="14" height="6" rx="3" fill="#9dcfeb" />
+      <rect x="5.5" y="32" width="11" height="6" rx="3" fill="#ededeb" />
+      <rect x="13" y="41" width="11.5" height="5" rx="2.5" fill="#000" fillOpacity="0.08" />
+    </svg>
   );
 }
 
-// A slowly scrolling strip of the kinds of campaigns Writ is built for,
-// faded at both ends. (The reference shows customer logos here; Writ has
-// no customers yet, and none are invented.)
+// Where the reference shows customer logos: a full-width band of logos
+// and names that scrolls in a loop (src/lib/built-with.ts). No visible
+// label; screen readers hear "Built with" before the list. The list is
+// drawn twice and slid by half its width, so the loop has no seam; the
+// copy is hidden from screen readers. It stops on hover, and stands still
+// for people who ask for less motion. 64px below the hairline, 50px tall.
 function Band() {
   const t = useTranslations("Landing.band");
-  const items = (["i1", "i2", "i3", "i4", "i5", "i6", "i7", "i8"] as const).map((k) => t(k));
-
-  const list = (hidden: boolean) => (
-    <ul aria-hidden={hidden || undefined} className="flex shrink-0 items-center gap-14 pr-14">
-      {items.map((item) => (
-        <li key={item} className="flex items-center gap-2.5 text-[17px] font-medium tracking-[-0.02em] whitespace-nowrap text-ink/55">
-          <span aria-hidden="true" className="h-2 w-2 rotate-45 rounded-[1px] bg-ink/35" />
-          {item}
-        </li>
-      ))}
-    </ul>
-  );
-
+  const items = (hidden: boolean) =>
+    builtWith.map(({ name, logo }) => (
+      <li key={name} aria-hidden={hidden || undefined} className="flex shrink-0 items-center gap-2 pr-[100px] whitespace-nowrap text-ink">
+        {logo && <BrandLogo name={logo} className="size-5 shrink-0" />}
+        <span className="text-[17px] font-semibold tracking-[-0.02em]">{name}</span>
+      </li>
+    ));
   return (
-    <div
-      aria-label={t("label")}
-      role="region"
-      className="group mt-16 h-[50px] overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_84px,#000_calc(100%-84px),transparent)]"
-    >
-      {/* Two copies side by side: moving left by one copy's width loops
-          without a seam. */}
-      <div className="animate-marquee flex h-full w-max group-hover:[animation-play-state:paused]">
-        {list(false)}
-        {list(true)}
-      </div>
+    <div className="group mt-16 flex min-h-[50px] items-center overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+      <ul aria-label={t("label")} className="animate-marquee flex w-max [animation-duration:40s] group-hover:[animation-play-state:paused]">
+        {items(false)}
+        {items(true)}
+      </ul>
     </div>
   );
 }

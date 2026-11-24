@@ -58,3 +58,23 @@ and verified, with the date.
       See decisions/0002.
 - [ ] **Production uses one NAT gateway per zone and a multi-AZ
       database.** See decisions/0003.
+- [ ] **Google and Facebook sign-in are connected or removed.** The
+      buttons on /login and /signup are not wired. Connecting them means
+      adding Google and Facebook as identity providers in Zitadel,
+      checking that Zitadel's Force MFA policy still applies to people
+      who sign in through them (not only to local accounts), registering
+      apps with Google and Meta, and naming both in the privacy policy as
+      recipients of sign-in data. Meta then also leaves the "not a
+      subprocessor" note in web/src/lib/subprocessors.ts in doubt.
+
+- **Logos in the landing page band.** The Facebook, Instagram,
+  PostgreSQL and Next.js logos (web/src/components/landing/brand-logos.tsx,
+  shapes from Simple Icons, CC0) must be checked against each owner's
+  current brand guidelines: Meta's for Facebook and Instagram, the
+  PostgreSQL trademark policy, and Vercel's for Next.js. AWS may appear
+  only as the official "Powered by AWS" badge, under AWS's trademark terms.
+
+- **X (Twitter) in the landing page band.** X is named in the "Built
+  with" band (web/src/lib/built-with.ts) before Writ connects to it. By
+  launch, either build the X integration (API access and its cost, terms,
+  and naming X in the privacy policy) or take X out of the band.

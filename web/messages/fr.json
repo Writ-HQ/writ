@@ -11,7 +11,7 @@
   "Landing": {
     "announcement": {
       "text": "Writ ouvre un projet pilote pour les campagnes canadiennes.",
-      "cta": "S'inscrire à la liste d'attente"
+      "cta": "Voir une démo"
     },
     "nav": {
       "home": "Accueil de Writ",
@@ -20,7 +20,7 @@
       "company": "Entreprise",
       "login": "Se connecter",
       "demo": "Voir une démo",
-      "waitlist": "Liste d'attente",
+      "start": "Commencer",
       "menu": "Menu",
       "about": "À propos",
       "contact": "Nous joindre",
@@ -39,19 +39,18 @@
       "line2": "depuis un seul espace",
       "line3": "de campagne bilingue.",
       "subtitle": "Contacts, listes, courriels bilingues et messagerie sociale dans un CRM conçu pour les campagnes canadiennes. En français et en anglais, avec vos données conservées au Canada.",
-      "cta": "S'inscrire à la liste d'attente",
+      "cta": "Commencer",
       "visualLabel": "Un aperçu du tableau de bord de Writ, avec des données fictives"
     },
     "band": {
-      "label": "Conçu pour tous les types de campagnes",
-      "i1": "Campagnes municipales",
-      "i2": "Campagnes provinciales",
-      "i3": "Campagnes fédérales",
-      "i4": "Courses à l'investiture",
-      "i5": "Courses à la direction",
-      "i6": "Associations de circonscription",
-      "i7": "Groupes de défense d'intérêts",
-      "i8": "Organismes sans but lucratif"
+      "label": "Conçu avec",
+      "purposes": {
+        "hosting": "Hébergement et courriels, au Canada",
+        "signIn": "Connexion de l'équipe",
+        "social": "Messages et publications planifiées",
+        "database": "Base de données",
+        "web": "Application Web"
+      }
     },
     "stats": {
       "languages": {
@@ -217,14 +216,14 @@
       },
       "q7": {
         "q": "Quand pouvons-nous commencer?",
-        "a": "Nous ouvrons un projet pilote pour un petit nombre de campagnes. Inscrivez-vous à la liste d'attente et nous communiquerons avec vous."
+        "a": "Nous ouvrons un projet pilote pour un petit nombre de campagnes. Demandez une démo et nous communiquerons avec vous."
       }
     },
     "closing": {
       "title1": "Toute votre campagne.",
       "title2": "Un seul endroit.",
-      "waitlist": "S'inscrire à la liste d'attente",
-      "demo": "Voir une démo"
+      "demo": "Voir une démo",
+      "start": "Commencer"
     },
     "footer": {
       "product": "Produit",
@@ -325,6 +324,213 @@
       "optedOut": "Refusé",
       "noAnswer": "Non demandé",
       "consentNote": "Consigné avec la source et la date à chaque changement."
+    }
+  },
+  "Auth": {
+    "home": "Accueil de Writ",
+    "email": "Courriel",
+    "emailPlaceholder": "nom@exemple.ca",
+    "password": "Mot de passe",
+    "showPassword": "Afficher",
+    "hidePassword": "Masquer",
+    "notConnected": "Pas encore branché : rien n'a été envoyé.",
+    "panel": {
+      "title": "Votre équipe, vos contacts et vos messages, au même endroit.",
+      "points": {
+        "canada": "Hébergé au Canada",
+        "languages": "En français et en anglais, partout",
+        "mfa": "Vérification en deux étapes pour chaque compte"
+      }
+    },
+    "login": {
+      "metaTitle": "Se connecter",
+      "title": "Bon retour",
+      "subtitle": "Connectez-vous à votre compte Writ.",
+      "forgot": "Mot de passe oublié?",
+      "submit": "Se connecter",
+      "mfaNote": "Vous confirmerez ensuite avec votre deuxième étape.",
+      "noAccount": "Nouveau sur Writ?",
+      "signup": "Créer un compte"
+    },
+    "signup": {
+      "metaTitle": "Créer un compte",
+      "title": "Créez votre compte",
+      "subtitle": "Configurez Writ pour votre campagne ou votre bureau.",
+      "name": "Nom complet",
+      "email": "Courriel professionnel",
+      "organisation": "Campagne ou bureau",
+      "organisationHint": "Vous pourrez inviter votre équipe une fois la configuration terminée.",
+      "passwordHint": "Au moins 12 caractères.",
+      "terms": "J'accepte les conditions d'utilisation et la politique de confidentialité.",
+      "submit": "Créer le compte",
+      "hasAccount": "Vous avez déjà un compte?",
+      "login": "Se connecter"
+    },
+    "social": {
+      "google": "Continuer avec Google",
+      "facebook": "Continuer avec Facebook",
+      "or": "ou"
+    }
+  },
+  "Dashboard": {
+    "nav": {
+      "overview": "Vue d'ensemble",
+      "casework": "Dossiers",
+      "contacts": "Contacts",
+      "inbox": "Messagerie",
+      "posts": "Publications",
+      "replies": "Réponses automatiques",
+      "email": "Courriel",
+      "volunteers": "Bénévoles",
+      "settings": "Paramètres"
+    },
+    "shell": {
+      "home": "Accueil de Writ",
+      "sections": "Sections",
+      "openMenu": "Ouvrir le menu",
+      "closeMenu": "Fermer le menu",
+      "collapse": "Réduire la barre latérale",
+      "expand": "Agrandir la barre latérale",
+      "office": "Bureau",
+      "profile": "Profil et compte",
+      "signOut": "Se déconnecter",
+      "groups": {
+        "social": "Réseaux sociaux",
+        "outreach": "Rayonnement"
+      }
+    },
+    "soon": "Cette partie de Writ n'est pas encore construite.",
+    "about": {
+      "casework": "Suivez chaque demande des citoyens, du premier contact jusqu'au règlement.",
+      "contacts": "Toutes les personnes qui ont joint le bureau, avec leurs listes, leur consentement et leur historique.",
+      "inbox": "Tous les messages privés et commentaires de vos comptes sociaux, conservés et associés aux contacts.",
+      "posts": "Planifiez vos publications Facebook et Instagram, faites-les approuver et publiez-les à l'heure prévue.",
+      "replies": "Répondez automatiquement aux messages courants, en français et en anglais, et confiez le reste à l'équipe.",
+      "email": "Infolettres et mises à jour, avec le désabonnement et le consentement gérés pour vous.",
+      "volunteers": "Les personnes qui donnent un coup de main, et ce à quoi elles sont inscrites.",
+      "settings": "Le bureau, votre équipe, les comptes sociaux connectés et votre profil."
+    },
+    "overview": {
+      "eyebrow": "{date} · {office}",
+      "title": "Content de vous revoir, {name}",
+      "summary": "{cases, plural, one {# dossier attend} other {# dossiers attendent}} depuis plus de deux mois, {messages, plural, one {# message attend} other {# messages attendent}} une réponse, et {posts, plural, =0 {aucune publication ne sort} one {# publication sort} other {# publications sortent}} aujourd'hui.",
+      "showing": "Les derniers {range}, comparés à la période précédente",
+      "range": "Période",
+      "actions": {
+        "newCase": "Nouveau dossier",
+        "schedulePost": "Planifier une publication"
+      }
+    },
+    "queue": {
+      "title": "À faire",
+      "tabs": {
+        "messages": "Messages",
+        "cases": "Plus vieux dossiers"
+      },
+      "states": {
+        "new": "À répondre",
+        "auto": "Réponse auto envoyée",
+        "replied": "Répondu"
+      },
+      "openInbox": "Ouvrir la messagerie",
+      "allCases": "Tous les dossiers",
+      "dayUnit": "jours",
+      "daysOpen": "Ouvert depuis {days} jours"
+    },
+    "upNext": {
+      "title": "À venir",
+      "hint": "Publications planifiées",
+      "all": "Calendrier",
+      "today": "Aujourd'hui",
+      "tomorrow": "Demain",
+      "status": {
+        "approved": "Approuvée",
+        "approval": "En attente d'approbation",
+        "draft": "Brouillon"
+      }
+    },
+    "channels": {
+      "title": "Réseaux sociaux",
+      "manage": "Gérer",
+      "followers": "{count, plural, one {# abonné} other {# abonnés}}",
+      "unread": "{count} non lus",
+      "autoReplies": "réponses automatiques cette semaine"
+    },
+    "status": {
+      "title": "Dossiers ouverts",
+      "all": "Dossiers",
+      "total": "ouverts",
+      "new": "Nouveaux",
+      "progress": "En cours",
+      "agency": "En attente d'un organisme",
+      "constituent": "En attente de la personne"
+    },
+    "topIssues": {
+      "title": "Principaux enjeux",
+      "hint": "Dossiers ouverts pendant la période"
+    },
+    "platforms": {
+      "facebook": "Facebook",
+      "instagram": "Instagram"
+    },
+    "flow": {
+      "title": "Flux des dossiers",
+      "hint": {
+        "day": "Dossiers ouverts et réglés, par jour.",
+        "week": "Dossiers ouverts et réglés, par semaine.",
+        "month": "Dossiers ouverts et réglés, par mois."
+      },
+      "opened": "Ouverts",
+      "resolved": "Réglés",
+      "net": "Variation nette",
+      "label": "Dossiers ouverts et réglés, derniers {period}"
+    },
+    "metrics": {
+      "opened": "Dossiers ouverts",
+      "resolved": "Dossiers réglés",
+      "days": "Jours pour régler",
+      "contacts": "Nouveaux contacts"
+    },
+    "range": {
+      "presets": {
+        "7d": "7 jours",
+        "28d": "28 jours",
+        "3m": "3 mois",
+        "6m": "6 mois",
+        "12m": "12 mois"
+      }
+    },
+    "issues": {
+      "immigration": "Immigration",
+      "pensions": "Pensions",
+      "taxes": "Impôts",
+      "passports": "Passeports",
+      "housing": "Logement",
+      "ei": "Assurance-emploi",
+      "health": "Soins de santé",
+      "veterans": "Services aux vétérans"
+    },
+    "mock": {
+      "cases": {
+        "c3": "Demande de passeport perdue par la poste",
+        "c5": "Dossier de parrainage du conjoint bloqué",
+        "c6": "Pension de survivant non versée",
+        "c7": "Réparations refusées en logement social",
+        "c8": "Avis de nouvelle cotisation non expliqué"
+      },
+      "dms": {
+        "m1": "Bonjour, la pension de ma mère a cessé depuis qu'elle habite chez nous. Qui dois-je appeler?",
+        "m2": "Le bureau est-il ouvert samedi? J'ai besoin d'une lettre pour ma demande de passeport.",
+        "m3": "Merci pour l'assemblée publique de la semaine dernière. Les diapositives seront-elles publiées?",
+        "m4": "Le renouvellement de mon permis de travail est bloqué depuis quatre mois. Pouvez-vous m'aider?",
+        "m5": "J'ai reçu l'appel de votre agente aujourd'hui, merci beaucoup."
+      },
+      "posts": {
+        "p1": "Heures d'ouverture pendant les fêtes : ouvert les 22 et 23 décembre, fermé jusqu'au 2 janvier.",
+        "p2": "Besoin d'aide pour les frais de chauffage cet hiver? Voici ce qui existe et comment en faire la demande.",
+        "p3": "Merci à toutes les personnes venues au grand ménage du quartier samedi.",
+        "p4": "Assemblée publique sur le transport local : rejoignez-nous jeudi à la bibliothèque Riverside."
+      }
     }
   }
 }
