@@ -784,5 +784,57 @@
       "second": "faites moins de paperasse.",
       "action": "Rejoindre la liste"
     }
+  },
+  "Contact": {
+    "metaTitle": "Nous joindre",
+    "metaDescription": "Écrivez à l’équipe de Writ au sujet d’une démonstration, des tarifs, de la confidentialité ou pour les médias.",
+    "eyebrow": "Nous joindre",
+    "title": "Parlez aux personnes qui construisent Writ.",
+    "subtitle": "Une question sur Writ, une démonstration pour votre campagne ou votre bureau, ou une demande liée à la confidentialité : écrivez-nous et nous vous répondrons par courriel, en français ou en anglais.",
+    "reasons": {
+      "demo": {
+        "title": "Voir Writ en action",
+        "body": "Une présentation avec notre équipe, à partir de données fictives."
+      },
+      "privacy": {
+        "title": "Confidentialité et demandes de données",
+        "body": "Demandez quels renseignements nous détenons à votre sujet, ou faites-les corriger ou supprimer."
+      },
+      "press": {
+        "title": "Médias",
+        "body": "Entrevues, contexte et faits sur Writ."
+      }
+    },
+    "name": "Nom complet",
+    "email": "Courriel",
+    "emailPlaceholder": "nom@exemple.ca",
+    "organisation": "Organisation",
+    "optional": "Facultatif",
+    "topic": "Sujet",
+    "choose": "Choisir…",
+    "topics": {
+      "demo": "Une démonstration",
+      "sales": "Tarifs et forfaits",
+      "support": "Aide avec Writ",
+      "privacy": "Confidentialité ou demande de données",
+      "press": "Médias",
+      "other": "Autre chose"
+    },
+    "message": "Message",
+    "messagePlaceholder": "Comment pouvons-nous vous aider?",
+    "submit": "Envoyer le message",
+    "sending": "Envoi…",
+    "privacy": "Nous utilisons vos renseignements uniquement pour vous répondre. Nous ne les partageons ni ne les vendons jamais. Consultez notre <link>politique de confidentialité</link>.",
+    "done": {
+      "title": "Message envoyé",
+      "body": "Merci. Nous vous répondrons par courriel."
+    },
+    "errors": {
+      "required": "Veuillez remplir ce champ.",
+      "tooLong": "Ce texte est trop long.",
+      "invalidEmail": "Entrez une adresse courriel comme nom@exemple.ca.",
+      "invalidChoice": "Choisissez l’une des options.",
+      "server": "Un problème est survenu et votre message n’a pas été envoyé. Veuillez réessayer dans un instant."
+    }
   }
 }

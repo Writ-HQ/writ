@@ -93,7 +93,7 @@ export function Footer() {
                 links={[
                   { label: f("about") },
                   { label: f("manifesto"), href: "/manifesto" },
-                  { label: f("contact") },
+                  { label: f("contact"), href: "/contact" },
                   { label: f("privacy"), href: "/privacy" },
                   { label: f("terms"), href: "/terms" },
                 ]}
@@ -115,7 +115,7 @@ export function Footer() {
                   <Pill variant="solid-inverse" size="sm" href="/waitlist">
                     {t("nav.start")}
                   </Pill>
-                  <Pill variant="outline-inverse" size="sm">
+                  <Pill variant="outline-inverse" size="sm" href="/contact?topic=demo">
                     {t("nav.demo")}
                   </Pill>
                 </div>

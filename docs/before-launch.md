@@ -85,6 +85,14 @@ and verified, with the date.
   database host in the privacy policy. Move the waitlist into the API
   when it is deployed.
 
+- **Contact form.** Messages from /contact are saved to the
+  contact_messages table in the same database (web/db/contact.sql, run
+  it once there). Nobody is told when one arrives: before the page is
+  promoted, add an email notification to the team (through SES once it
+  is set up) or a routine to read the table, and decide who answers each
+  topic. The waitlist database checks above (Canada, rate limiting,
+  privacy policy) apply to it too.
+
 - **Dashboard picture in the landing page hero.** The hero shows the
   real dashboard by framing /app (web/src/components/landing/dashboard-preview.tsx).
   Once /app needs sign-in, the frame will show the sign-in page instead.

@@ -10,12 +10,18 @@ to a PostgreSQL database named by WAITLIST_DATABASE_URL. The table is in
 web/db/waitlist.sql. The log-in and sign-up pages stay in the code but
 are hidden (404, no links) until AUTH_PAGES_ENABLED is set.
 
+Update, 2026-11-24: the contact form (/contact) is saved the same way,
+by web/src/app/[locale]/contact/actions.ts into the contact_messages
+table (web/db/contact.sql) in the same database. Its rules are in
+web/src/lib/contact.ts, with tests. Everything below applies to it too,
+except that a message has no consent column: it is kept only to reply.
+
 ## Why
 
 The site needs to go live before the API and its infrastructure are
-deployed, and a waitlist is the only thing it needs to store. This is an
-exception to "all business logic lives in Go"; it covers only the
-waitlist.
+deployed, and the waitlist and contact messages are the only things it
+needs to store. This is an exception to "all business logic lives in
+Go"; it covers only those two forms.
 
 ## What still holds
 
