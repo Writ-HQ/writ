@@ -18,7 +18,7 @@ type Props = {
 
 // The layout shared by the waitlist, log-in and sign-up pages: on the left,
 // the full height of the window, a light panel with the Writ mark and one
-// line, over halftone dots in two corners; the form on the right. Below lg the sky is left out and the form fills
+// line, with soft colour in two corners; the form on the right. Below lg the sky is left out and the form fills
 // the screen.
 export function AuthShell({ path, title, subtitle, children, footer }: Props) {
   const t = useTranslations("Auth");
@@ -52,35 +52,21 @@ export function AuthShell({ path, title, subtitle, children, footer }: Props) {
   );
 }
 
-// The halftone in the panel's corners: a grid of small dots, tinted, shown
-// only where an elliptical mask lets it through, so it fades to nothing
-// towards the middle. Light-theme take on a dark reference.
-const dots = (color: string) => `radial-gradient(circle, ${color} 1.7px, transparent 2.3px)`;
-const corner = (at: string) => `radial-gradient(ellipse 85% 70% at ${at}, black 0%, rgb(0 0 0 / 0.7) 35%, transparent 75%)`;
-
 function Panel() {
   const t = useTranslations("Auth");
   return (
     <aside className="sticky top-0 hidden h-dvh w-1/2 shrink-0 overflow-hidden bg-[#fbfbfa] lg:block">
-      {/* Sky blue dots top left, warm sand bottom right, each with a soft wash behind. */}
+      {/* Soft gradients in two corners: sky blue top left, warm sand bottom right. */}
       <div
         aria-hidden="true"
         className="absolute inset-0"
         style={{
-          backgroundImage: `${dots("rgb(60 132 192 / 0.75)")}, radial-gradient(ellipse 70% 55% at 0% 0%, rgb(157 207 235 / 0.35), transparent 70%)`,
-          backgroundSize: "9px 9px, 100% 100%",
-          maskImage: corner("0% 0%"),
-          WebkitMaskImage: corner("0% 0%"),
-        }}
-      />
-      <div
-        aria-hidden="true"
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `${dots("rgb(200 136 70 / 0.75)")}, radial-gradient(ellipse 70% 55% at 100% 100%, rgb(236 204 168 / 0.4), transparent 70%)`,
-          backgroundSize: "9px 9px, 100% 100%",
-          maskImage: corner("100% 100%"),
-          WebkitMaskImage: corner("100% 100%"),
+          backgroundImage: [
+            "radial-gradient(ellipse 75% 60% at 0% 0%, rgb(157 207 235 / 0.85), rgb(157 207 235 / 0.35) 45%, transparent 75%)",
+            "radial-gradient(ellipse 45% 35% at 18% 12%, rgb(110 168 214 / 0.35), transparent 70%)",
+            "radial-gradient(ellipse 75% 60% at 100% 100%, rgb(240 206 166 / 0.85), rgb(240 206 166 / 0.35) 45%, transparent 75%)",
+            "radial-gradient(ellipse 45% 35% at 84% 88%, rgb(222 168 112 / 0.3), transparent 70%)",
+          ].join(","),
         }}
       />
 
