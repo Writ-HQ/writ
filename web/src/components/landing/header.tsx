@@ -1,7 +1,19 @@
 import { useTranslations } from "next-intl";
 import type { ComponentType, SVGProps } from "react";
 
-import { ArrowRight, Building, Chat, ChevronDown, Layers, ListIcon, Mail, Shield, Users } from "@/components/ui/icons";
+import {
+  ArrowRight,
+  BuildingSolid,
+  ChatSolid,
+  ChevronDown,
+  InfoSolid,
+  LayersSolid,
+  ListSolid,
+  LockSolid,
+  MailSolid,
+  ShieldSolid,
+  UsersSolid,
+} from "@/components/ui/icons";
 import { Logo } from "@/components/ui/logo";
 import { Pill } from "@/components/ui/pill";
 import { Link } from "@/i18n/navigation";
@@ -12,29 +24,25 @@ type MenuItem = {
   /** An anchor on this page. Items without one are not wired up yet. */
   href?: string;
   icon?: ComponentType<SVGProps<SVGSVGElement>>;
-  /** Background of the small icon tile. */
-  tint?: string;
 };
 
-// One entry in a menu: a 28px tinted icon tile and a 16px medium label,
-// in an 8px-padded row with 12px between them.
+// One entry in a menu: a 20px solid icon and a 17px medium label, 14px
+// apart, in a row that turns pale grey on hover.
 // Descriptions show only in the small-screen menu, where there is no card.
 function MenuEntry({ item, compact = true }: { item: MenuItem; compact?: boolean }) {
   const Icon = item.icon;
   const body = (
     <>
       {Icon && (
-        <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-[7px] ${item.tint ?? "bg-panel"}`}>
-          <Icon className="h-4 w-4 text-ink/80" />
-        </span>
+        <Icon className="h-5 w-5 shrink-0 text-ink" />
       )}
       <span>
-        <span className="block text-base leading-5 font-medium">{item.label}</span>
+        <span className="block text-[17px] leading-[22px] font-medium tracking-[-0.01em]">{item.label}</span>
         {!compact && item.desc && <span className="mt-0.5 block text-[12px] leading-snug text-muted">{item.desc}</span>}
       </span>
     </>
   );
-  const classes = "flex w-full items-center gap-3 rounded-[6px] p-2 text-left transition-colors hover:bg-panel";
+  const classes = "flex w-full items-center gap-3.5 rounded-[10px] px-3 py-2.5 text-left transition-colors hover:bg-[#f3f3f3]";
   return item.href ? (
     <a href={item.href} className={classes}>
       {body}
@@ -90,7 +98,7 @@ function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; ca
         <ChevronDown className="h-3 w-3 transition-transform group-focus-within:rotate-180 group-hover:rotate-180" />
       </button>
       <div className="invisible absolute top-full -left-2.5 -mt-3 translate-y-1 opacity-0 transition-all duration-150 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-        <div className="flex gap-4 rounded-[16px] bg-white p-4 shadow-[0_0_0_1px_rgb(0_0_0/0.04),0_24px_48px_-16px_rgb(0_0_0/0.18),0_8px_16px_-8px_rgb(0_0_0/0.08)]">
+        <div className="flex gap-4 rounded-[24px] bg-white p-3.5 shadow-[0_0_0_1px_rgb(0_0_0/0.04),0_24px_48px_-16px_rgb(0_0_0/0.18),0_8px_16px_-8px_rgb(0_0_0/0.08)]">
           <div className={`flex w-[250px] flex-col gap-0.5 ${card ? "justify-between" : "py-0.5"}`}>
             {items.map((item) => (
               <MenuEntry key={item.label} item={item} />
@@ -106,19 +114,23 @@ function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; ca
 function useMenus() {
   const t = useTranslations("Landing");
   const product: MenuItem[] = [
-    { label: t("overview.contacts.title"), desc: t("overview.contacts.desc"), href: "#contacts", icon: Users, tint: "bg-[#cfdcc4]" },
-    { label: t("overview.lists.title"), desc: t("overview.lists.desc"), href: "#overview", icon: ListIcon, tint: "bg-[#e9dcc4]" },
-    { label: t("overview.email.title"), desc: t("overview.email.desc"), href: "#email", icon: Mail, tint: "bg-sky" },
-    { label: t("overview.social.title"), desc: t("overview.social.desc"), href: "#social", icon: Chat, tint: "bg-[#d9d0ea]" },
-    { label: t("overview.volunteers.title"), desc: t("overview.volunteers.desc"), href: "#volunteers", icon: Layers, tint: "bg-[#e7d6d0]" },
-    { label: t("overview.consent.title"), desc: t("overview.consent.desc"), href: "#consent", icon: Shield, tint: "bg-mist" },
+    { label: t("overview.contacts.title"), desc: t("overview.contacts.desc"), href: "#contacts", icon: UsersSolid },
+    { label: t("overview.lists.title"), desc: t("overview.lists.desc"), href: "#overview", icon: ListSolid },
+    { label: t("overview.email.title"), desc: t("overview.email.desc"), href: "#email", icon: MailSolid },
+    { label: t("overview.social.title"), desc: t("overview.social.desc"), href: "#social", icon: ChatSolid },
+    { label: t("overview.volunteers.title"), desc: t("overview.volunteers.desc"), href: "#volunteers", icon: LayersSolid },
+    { label: t("overview.consent.title"), desc: t("overview.consent.desc"), href: "#consent", icon: ShieldSolid },
   ];
   const solutions: MenuItem[] = [
-    { label: t("builtFor.candidates.title"), href: "#built-for", icon: Users, tint: "bg-[#cfdcc4]" },
-    { label: t("builtFor.ridings.title"), href: "#built-for", icon: Building, tint: "bg-[#e9dcc4]" },
-    { label: t("builtFor.advocacy.title"), href: "#built-for", icon: Chat, tint: "bg-sky" },
+    { label: t("builtFor.candidates.title"), href: "#built-for", icon: UsersSolid },
+    { label: t("builtFor.ridings.title"), href: "#built-for", icon: BuildingSolid },
+    { label: t("builtFor.advocacy.title"), href: "#built-for", icon: ChatSolid },
   ];
-  const company: MenuItem[] = [{ label: t("nav.about") }, { label: t("nav.contact") }, { label: t("nav.privacy") }];
+  const company: MenuItem[] = [
+    { label: t("nav.about"), icon: InfoSolid },
+    { label: t("nav.contact"), icon: MailSolid },
+    { label: t("nav.privacy"), icon: LockSolid },
+  ];
   return { product, solutions, company };
 }
 
