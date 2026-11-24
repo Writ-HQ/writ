@@ -16,20 +16,20 @@ type MenuItem = {
   tint?: string;
 };
 
-// One entry in a menu: a small tinted icon tile and a 14px medium label,
-// in an 8px-padded row with 12px between them (from the reference).
+// One entry in a menu: a 28px tinted icon tile and a 16px medium label,
+// in an 8px-padded row with 12px between them.
 // Descriptions show only in the small-screen menu, where there is no card.
 function MenuEntry({ item, compact = true }: { item: MenuItem; compact?: boolean }) {
   const Icon = item.icon;
   const body = (
     <>
       {Icon && (
-        <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] ${item.tint ?? "bg-panel"}`}>
-          <Icon className="h-3 w-3 text-ink/75" />
+        <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-[7px] ${item.tint ?? "bg-panel"}`}>
+          <Icon className="h-4 w-4 text-ink/80" />
         </span>
       )}
       <span>
-        <span className="block text-sm leading-[18.2px] font-medium">{item.label}</span>
+        <span className="block text-base leading-5 font-medium">{item.label}</span>
         {!compact && item.desc && <span className="mt-0.5 block text-[12px] leading-snug text-muted">{item.desc}</span>}
       </span>
     </>
@@ -76,7 +76,8 @@ function FeatureCard({ caption }: { caption: string }) {
 }
 
 // A menu that opens on hover and on keyboard focus, without JavaScript: a
-// white panel with a 226px column of entries and, for Product, a card.
+// white panel with a 250px column of entries and, for Product, a card.
+// Beside the card the entries spread out to its full height.
 function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; card?: string }) {
   return (
     <div className="group relative">
@@ -90,7 +91,7 @@ function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; ca
       </button>
       <div className="invisible absolute top-full -left-2.5 -mt-3 translate-y-1 opacity-0 transition-all duration-150 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
         <div className="flex gap-4 rounded-[16px] bg-white p-4 shadow-[0_0_0_1px_rgb(0_0_0/0.04),0_24px_48px_-16px_rgb(0_0_0/0.18),0_8px_16px_-8px_rgb(0_0_0/0.08)]">
-          <div className="flex w-[226px] flex-col gap-0.5 py-0.5">
+          <div className={`flex w-[250px] flex-col gap-0.5 ${card ? "justify-between" : "py-0.5"}`}>
             {items.map((item) => (
               <MenuEntry key={item.label} item={item} />
             ))}
