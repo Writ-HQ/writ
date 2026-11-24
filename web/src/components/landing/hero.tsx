@@ -49,16 +49,13 @@ export function Hero() {
   );
 }
 
-// Three lines: the first is a small picture and a word that
-// change together every three seconds, as in the reference. Screen
+// Three lines: the first word or phrase changes every three seconds. Screen
 // readers get the whole sentence once, instead of the moving parts.
 function HeroTitle() {
   const t = useTranslations("Landing.hero");
   const words = (["w1", "w2", "w3", "w4"] as const).map((k) => t(`words.${k}`));
-  // Contacts, supporters, newsletters, social inbox.
-  const pictures = [BadgePicture, ClipboardPicture, EnvelopePicture, PhonePicture];
 
-  // All items share one grid cell, so the cell is as wide as the widest
+  // All words share one grid cell, so the cell is as wide as the widest
   // and nothing shifts as they change.
   const cycling = (items: ReactNode[]) =>
     items.map((item, i) => (
@@ -72,129 +69,12 @@ function HeroTitle() {
       <span className="sr-only">{t("title")}</span>
       <span aria-hidden="true" className="block">
         <span className="block whitespace-nowrap">
-          {/* Sized in em so it scales with the text, and set from just
-              below the baseline to the top of the capitals: the pictures
-              centre on the letters and never reach the next line. */}
-          <span className="mr-[0.28em] inline-grid h-[0.95em] w-[1.3em] align-[-0.08em] [&>span]:flex [&>span]:items-center [&>span]:justify-center">
-            {cycling(pictures.map((P, i) => <P key={i} />))}
-          </span>
           <span className="inline-grid align-baseline">{cycling(words)}</span>
         </span>
         <span className="block">{t("line2")}</span>
         <span className="block">{t("line3")}</span>
       </span>
     </h1>
-  );
-}
-
-// Small illustrations that sit in the heading, drawn in SVG: tilted, with
-// gradients and a soft shadow, like objects on a desk. Decorative. Each is
-// drawn once per page, so the gradient ids do not clash.
-// Upright pictures are 1.15em tall; the envelope, which is wide, is 0.85em
-// tall so that it is no wider than the 1.3em slot.
-const shadow = "w-auto drop-shadow-[0_6px_6px_rgb(0_0_0/0.22)]";
-const pictureStyle = `h-[1.15em] ${shadow}`;
-
-function ClipboardPicture() {
-  return (
-    <svg viewBox="0 0 40 50" className={`${pictureStyle} -rotate-[7deg]`} aria-hidden="true">
-      <defs>
-        <linearGradient id="hp-board" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#ffffff" />
-          <stop offset="1" stopColor="#eeeeec" />
-        </linearGradient>
-        <linearGradient id="hp-clip" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#4a4a4a" />
-          <stop offset="1" stopColor="#141414" />
-        </linearGradient>
-      </defs>
-      <rect x="2" y="4" width="36" height="44" rx="4" fill="url(#hp-board)" stroke="#000" strokeOpacity="0.08" />
-      <rect x="12" y="1" width="16" height="7" rx="2.5" fill="url(#hp-clip)" />
-      <rect x="15" y="2.5" width="10" height="1.4" rx="0.7" fill="#fff" fillOpacity="0.35" />
-      {[14, 21, 28, 35, 42].map((y, i) => (
-        <g key={y}>
-          {i < 3 ? (
-            <>
-              <rect x="7" y={y - 2.5} width="5" height="5" rx="1.3" fill="#27a139" />
-              <path d={`M8.2 ${y} l1.3 1.3 2.3-2.6`} fill="none" stroke="#fff" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-            </>
-          ) : (
-            <rect x="7.5" y={y - 2} width="4" height="4" rx="1.1" fill="none" stroke="#000" strokeOpacity="0.25" />
-          )}
-          <rect x="15" y={y - 1} width={[16, 13, 17, 11, 14][i]} height="2" rx="1" fill="#000" fillOpacity={i < 3 ? 0.3 : 0.14} />
-        </g>
-      ))}
-    </svg>
-  );
-}
-
-function EnvelopePicture() {
-  return (
-    <svg viewBox="0 0 52 36" className={`h-[0.85em] ${shadow} rotate-[6deg]`} aria-hidden="true">
-      <defs>
-        <linearGradient id="hp-env" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#ffffff" />
-          <stop offset="1" stopColor="#efefed" />
-        </linearGradient>
-        <linearGradient id="hp-stamp" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#afd7ed" />
-          <stop offset="1" stopColor="#9dcfeb" />
-        </linearGradient>
-      </defs>
-      <rect x="1" y="2" width="50" height="33" rx="3" fill="url(#hp-env)" stroke="#000" strokeOpacity="0.08" />
-      <path d="M2 4 26 21 50 4" fill="none" stroke="#000" strokeOpacity="0.14" strokeWidth="1.2" strokeLinejoin="round" />
-      <path d="M2 34 19 18M50 34 33 18" fill="none" stroke="#000" strokeOpacity="0.07" strokeWidth="1" />
-      <rect x="39" y="6" width="8" height="10" rx="1" fill="url(#hp-stamp)" stroke="#fff" strokeWidth="1.2" strokeDasharray="1 1" />
-      <rect x="5" y="27" width="11" height="5.5" rx="2.75" fill="#111" />
-      <text x="10.5" y="31.4" textAnchor="middle" fontSize="4.2" fontWeight="700" fill="#fff" fontFamily="system-ui, sans-serif">FR</text>
-    </svg>
-  );
-}
-
-function BadgePicture() {
-  return (
-    <svg viewBox="0 0 36 52" className={`${pictureStyle} rotate-[5deg]`} aria-hidden="true">
-      <defs>
-        <linearGradient id="hp-card" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#ffffff" />
-          <stop offset="1" stopColor="#f0f0ee" />
-        </linearGradient>
-        <linearGradient id="hp-strap" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#9dcfeb" />
-          <stop offset="1" stopColor="#c6e0ed" />
-        </linearGradient>
-      </defs>
-      <path d="M12 0h12l-2 9h-8z" fill="url(#hp-strap)" />
-      <rect x="2" y="8" width="32" height="42" rx="4" fill="url(#hp-card)" stroke="#000" strokeOpacity="0.08" />
-      <rect x="13" y="11" width="10" height="2" rx="1" fill="#000" fillOpacity="0.15" />
-      <circle cx="18" cy="23" r="6.5" fill="#cfdcc4" />
-      <circle cx="18" cy="21.5" r="2.4" fill="#fff" fillOpacity="0.9" />
-      <path d="M13.6 27.6a5 5 0 0 1 8.8 0" fill="#fff" fillOpacity="0.9" />
-      <rect x="9" y="33" width="18" height="2.4" rx="1.2" fill="#000" fillOpacity="0.45" />
-      <rect x="12" y="37.5" width="12" height="2" rx="1" fill="#000" fillOpacity="0.15" />
-      <rect x="2" y="43" width="32" height="7" rx="0" fill="url(#hp-strap)" />
-      <rect x="2" y="46" width="32" height="4" rx="4" fill="url(#hp-strap)" />
-    </svg>
-  );
-}
-
-function PhonePicture() {
-  return (
-    <svg viewBox="0 0 30 52" className={`${pictureStyle} -rotate-[6deg]`} aria-hidden="true">
-      <defs>
-        <linearGradient id="hp-phone" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#3a3a3a" />
-          <stop offset="1" stopColor="#0d0d0d" />
-        </linearGradient>
-      </defs>
-      <rect x="1" y="1" width="28" height="50" rx="6" fill="url(#hp-phone)" />
-      <rect x="3" y="3" width="24" height="46" rx="4.2" fill="#fbfbfa" />
-      <rect x="11" y="5" width="8" height="2.2" rx="1.1" fill="#111" />
-      <rect x="5.5" y="14" width="14" height="6" rx="3" fill="#ededeb" />
-      <rect x="10.5" y="23" width="14" height="6" rx="3" fill="#9dcfeb" />
-      <rect x="5.5" y="32" width="11" height="6" rx="3" fill="#ededeb" />
-      <rect x="13" y="41" width="11.5" height="5" rx="2.5" fill="#000" fillOpacity="0.08" />
-    </svg>
   );
 }
 
