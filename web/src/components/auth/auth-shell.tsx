@@ -1,10 +1,8 @@
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
-import { DashboardMock } from "@/components/landing/mocks";
 import { LocaleSwitcher } from "@/components/locale-switcher";
-import { Check } from "@/components/ui/icons";
-import { Logo } from "@/components/ui/logo";
+import { Logo, WritMark } from "@/components/ui/logo";
 import { Link } from "@/i18n/navigation";
 
 type Props = {
@@ -17,9 +15,9 @@ type Props = {
   footer: ReactNode;
 };
 
-// The layout shared by the waitlist, log-in and sign-up pages: the sky on the left,
-// the full height of the window, with the product running off its edge;
-// the form on the right. Below lg the sky is left out and the form fills
+// The layout shared by the waitlist, log-in and sign-up pages: on the left,
+// the full height of the window, a light panel with the Writ mark and one
+// line, over halftone dots in two corners; the form on the right. Below lg the sky is left out and the form fills
 // the screen.
 export function AuthShell({ path, title, subtitle, children, footer }: Props) {
   const t = useTranslations("Auth");
@@ -48,34 +46,43 @@ export function AuthShell({ path, title, subtitle, children, footer }: Props) {
   );
 }
 
+// The halftone in the panel's corners: a grid of small dots, tinted, shown
+// only where an elliptical mask lets it through, so it fades to nothing
+// towards the middle. Light-theme take on a dark reference.
+const dots = (color: string) => `radial-gradient(circle, ${color} 1.7px, transparent 2.3px)`;
+const corner = (at: string) => `radial-gradient(ellipse 85% 70% at ${at}, black 0%, rgb(0 0 0 / 0.7) 35%, transparent 75%)`;
+
 function Panel() {
   const t = useTranslations("Auth");
-  const points = (["canada", "mfa"] as const).map((k) => t(`panel.points.${k}`));
-
   return (
-    <aside className="bg-sky sticky top-0 hidden h-dvh w-1/2 shrink-0 overflow-hidden lg:block">
-      <Link href="/" aria-label={t("home")} className="absolute top-6 left-10 z-10">
-        <Logo />
-      </Link>
+    <aside className="sticky top-0 hidden h-dvh w-1/2 shrink-0 overflow-hidden bg-[#fbfbfa] lg:block">
+      {/* Sky blue dots top left, warm sand bottom right, each with a soft wash behind. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `${dots("rgb(60 132 192 / 0.75)")}, radial-gradient(ellipse 70% 55% at 0% 0%, rgb(157 207 235 / 0.35), transparent 70%)`,
+          backgroundSize: "9px 9px, 100% 100%",
+          maskImage: corner("0% 0%"),
+          WebkitMaskImage: corner("0% 0%"),
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `${dots("rgb(200 136 70 / 0.75)")}, radial-gradient(ellipse 70% 55% at 100% 100%, rgb(236 204 168 / 0.4), transparent 70%)`,
+          backgroundSize: "9px 9px, 100% 100%",
+          maskImage: corner("100% 100%"),
+          WebkitMaskImage: corner("100% 100%"),
+        }}
+      />
 
-      {/* The product, as on the landing page: starting below the logo and
-          running off the right edge, as if on a larger screen. */}
-      <div aria-hidden="true" className="absolute top-[112px] left-10 origin-top-left scale-[0.8] xl:scale-90">
-        <DashboardMock />
-      </div>
-
-      <div className="absolute inset-x-10 bottom-20 z-10 rounded-[14px] border border-white/60 bg-white/70 p-7 shadow-[0_12px_32px_-12px_rgb(0_0_0/0.18)] backdrop-blur-md">
-        <p className="max-w-[420px] text-[26px] leading-[30px] font-medium tracking-[-0.03em]">{t("panel.title")}</p>
-        <ul className="mt-5 grid gap-2.5">
-          {points.map((point) => (
-            <li key={point} className="flex items-center gap-2.5 text-sm">
-              <span className="flex size-5 items-center justify-center rounded-full bg-ink text-white">
-                <Check className="size-3" strokeWidth={2.25} />
-              </span>
-              {point}
-            </li>
-          ))}
-        </ul>
+      <div className="relative flex h-full flex-col items-center justify-center px-10 text-center">
+        <Link href="/" aria-label={t("home")} className="text-ink transition-opacity hover:opacity-70">
+          <WritMark withDot className="h-12 w-auto" />
+        </Link>
+        <p className="mt-8 max-w-[440px] text-[34px] leading-[38px] font-normal tracking-[-0.03em] text-balance text-ink">{t("panel.title")}</p>
       </div>
     </aside>
   );

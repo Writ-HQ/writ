@@ -377,11 +377,7 @@
     "hidePassword": "Hide",
     "notConnected": "Not connected yet: nothing was sent.",
     "panel": {
-      "title": "Your team, your contacts and your messages, in one place.",
-      "points": {
-        "canada": "Hosted in Canada",
-        "mfa": "Two-step verification on every account"
-      }
+      "title": "Bring your whole campaign together on Writ."
     },
     "login": {
       "metaTitle": "Log in",

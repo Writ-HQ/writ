@@ -377,11 +377,7 @@
     "hidePassword": "Masquer",
     "notConnected": "Pas encore branché : rien n'a été envoyé.",
     "panel": {
-      "title": "Votre équipe, vos contacts et vos messages, au même endroit.",
-      "points": {
-        "canada": "Hébergé au Canada",
-        "mfa": "Vérification en deux étapes pour chaque compte"
-      }
+      "title": "Rassemblez toute votre campagne sur Writ."
     },
     "login": {
       "metaTitle": "Se connecter",
