@@ -6,14 +6,14 @@ import {
   Building,
   Chat,
   Check,
-  Globe,
+  GlobeSolid,
   KeySolid,
   Layers,
+  LayersSolid,
   LedgerSolid,
   ListIcon,
   LockSolid,
   Mail,
-  MapleLeaf,
   MapleLeafRed,
   Plus,
   Shield,
@@ -30,16 +30,16 @@ type IconType = ComponentType<SVGProps<SVGSVGElement>>;
 export function Stats() {
   const t = useTranslations("Landing.stats");
   const stats: { key: "languages" | "canada" | "place"; icon: IconType }[] = [
-    { key: "languages", icon: Globe },
-    { key: "canada", icon: MapleLeaf },
-    { key: "place", icon: Layers },
+    { key: "languages", icon: GlobeSolid },
+    { key: "canada", icon: MapleLeafRed },
+    { key: "place", icon: LayersSolid },
   ];
   return (
     <Container>
       <dl className="grid border-y border-line sm:grid-cols-3">
         {stats.map(({ key, icon: Icon }) => (
           <div key={key} className="border-line py-10 not-first:border-t sm:px-8 sm:not-first:border-t-0 sm:not-first:border-l sm:first:pl-0">
-            <Icon className="h-5 w-5 text-ink/70" />
+            <Icon className="h-6 w-6 text-ink" />
             <dt className="sr-only">{t(`${key}.unit`)}</dt>
             <dd className="mt-6">
               <span className="text-[52px] leading-none tracking-[-0.04em] lg:text-[60px]">{t(`${key}.value`)}</span>{" "}

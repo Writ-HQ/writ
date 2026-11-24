@@ -105,6 +105,27 @@ export const LedgerSolid = (p: IconProps) => (
   </Solid>
 );
 
+/** A globe: white meridian, equator and latitudes on a solid ball. */
+export const GlobeSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <circle cx="12" cy="12" r="10" />
+    <path
+      d="M12 2.4c-2.5 2.6-3.8 5.8-3.8 9.6s1.3 7 3.8 9.6c2.5-2.6 3.8-5.8 3.8-9.6S14.5 5 12 2.4zM2.2 12h19.6M3.6 7.6h16.8M3.6 16.4h16.8"
+      fill="none"
+      stroke="#fff"
+      strokeWidth="1.4"
+    />
+  </Solid>
+);
+
+/** Three layers: a solid top sheet over two thick chevrons. */
+export const LayersSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M12 2.2l9.8 5.1L12 12.4 2.2 7.3z" strokeLinejoin="round" stroke="currentColor" strokeWidth="1.2" />
+    <path d="M3.2 12.1l8.8 4.6 8.8-4.6M3.2 16.6l8.8 4.6 8.8-4.6" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" />
+  </Solid>
+);
+
 export const Layers = (p: IconProps) => (
   <Icon {...p}>
     <path d="m12 3 9 5-9 5-9-5 9-5Z" />

@@ -4,6 +4,7 @@ import type React from "react";
 import { Pill } from "@/components/ui/pill";
 import { builtWith } from "@/lib/built-with";
 
+import { BrandLogo } from "./brand-logos";
 import { Container } from "./container";
 import { DashboardMock } from "./mocks";
 
@@ -205,9 +206,12 @@ function PhonePicture() {
 function Band() {
   const t = useTranslations("Landing.band");
   const items = (hidden: boolean) =>
-    builtWith.map(({ name, purpose }) => (
-      <li key={name} aria-hidden={hidden || undefined} className="flex shrink-0 items-baseline gap-3 pr-14 whitespace-nowrap">
-        <span className="text-[19px] font-semibold tracking-[-0.03em] text-ink/70">{name}</span>
+    builtWith.map(({ name, purpose, logo }) => (
+      <li key={name} aria-hidden={hidden || undefined} className="flex shrink-0 items-center gap-3 pr-14 whitespace-nowrap">
+        <span className="flex items-center gap-2 text-ink/70">
+          {logo && <BrandLogo name={logo} className="size-[22px] shrink-0" />}
+          <span className="text-[19px] font-semibold tracking-[-0.03em]">{name}</span>
+        </span>
         <span className="text-[13px] text-ink/45">{t(`purposes.${purpose}`)}</span>
       </li>
     ));

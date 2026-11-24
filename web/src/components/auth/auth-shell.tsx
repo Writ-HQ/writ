@@ -64,7 +64,7 @@ function Panel() {
         <DashboardMock />
       </div>
 
-      <div className="absolute inset-x-10 bottom-10 z-10 rounded-[14px] border border-white/60 bg-white/70 p-7 shadow-[0_12px_32px_-12px_rgb(0_0_0/0.18)] backdrop-blur-md">
+      <div className="absolute inset-x-10 bottom-20 z-10 rounded-[14px] border border-white/60 bg-white/70 p-7 shadow-[0_12px_32px_-12px_rgb(0_0_0/0.18)] backdrop-blur-md">
         <p className="max-w-[420px] text-[26px] leading-[30px] font-medium tracking-[-0.03em]">{t("panel.title")}</p>
         <ul className="mt-5 grid gap-2.5">
           {points.map((point) => (
