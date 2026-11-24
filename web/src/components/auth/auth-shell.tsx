@@ -17,7 +17,7 @@ type Props = {
   footer: ReactNode;
 };
 
-// The layout shared by the log-in and sign-up pages: the sky on the left,
+// The layout shared by the waitlist, log-in and sign-up pages: the sky on the left,
 // the full height of the window, with the product running off its edge;
 // the form on the right. Below lg the sky is left out and the form fills
 // the screen.
@@ -50,7 +50,7 @@ export function AuthShell({ path, title, subtitle, children, footer }: Props) {
 
 function Panel() {
   const t = useTranslations("Auth");
-  const points = (["canada", "languages", "mfa"] as const).map((k) => t(`panel.points.${k}`));
+  const points = (["canada", "mfa"] as const).map((k) => t(`panel.points.${k}`));
 
   return (
     <aside className="bg-sky sticky top-0 hidden h-dvh w-1/2 shrink-0 overflow-hidden lg:block">

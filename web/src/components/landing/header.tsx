@@ -21,6 +21,7 @@ import {
 import { Logo } from "@/components/ui/logo";
 import { Pill } from "@/components/ui/pill";
 import { Link } from "@/i18n/navigation";
+import { authPagesEnabled } from "@/lib/flags";
 
 type MenuItem = {
   label: string;
@@ -49,9 +50,9 @@ function MenuEntry({ item, compact = true }: { item: MenuItem; compact?: boolean
   );
   const classes = "flex w-full items-center gap-3 rounded-[8px] px-2.5 py-2 text-left transition-colors hover:bg-[#f3f3f3]";
   return item.href ? (
-    <a href={item.href} className={classes}>
+    <Link href={item.href} className={classes}>
       {body}
-    </a>
+    </Link>
   ) : (
     <button type="button" className={classes}>
       {body}
@@ -119,17 +120,17 @@ function Dropdown({ label, items, card }: { label: string; items: MenuItem[]; ca
 function useMenus() {
   const t = useTranslations("Landing");
   const product: MenuItem[] = [
-    { label: t("overview.contacts.title"), desc: t("overview.contacts.desc"), href: "#contacts", icon: Users },
-    { label: t("overview.lists.title"), desc: t("overview.lists.desc"), href: "#overview", icon: ListIcon },
-    { label: t("overview.email.title"), desc: t("overview.email.desc"), href: "#email", icon: Mail },
-    { label: t("overview.social.title"), desc: t("overview.social.desc"), href: "#social", icon: Chat },
-    { label: t("overview.volunteers.title"), desc: t("overview.volunteers.desc"), href: "#volunteers", icon: Layers },
-    { label: t("overview.consent.title"), desc: t("overview.consent.desc"), href: "#consent", icon: Shield },
+    { label: t("overview.contacts.title"), desc: t("overview.contacts.desc"), href: "/#contacts", icon: Users },
+    { label: t("overview.lists.title"), desc: t("overview.lists.desc"), href: "/#overview", icon: ListIcon },
+    { label: t("overview.email.title"), desc: t("overview.email.desc"), href: "/#email", icon: Mail },
+    { label: t("overview.social.title"), desc: t("overview.social.desc"), href: "/#social", icon: Chat },
+    { label: t("overview.volunteers.title"), desc: t("overview.volunteers.desc"), href: "/#volunteers", icon: Layers },
+    { label: t("overview.consent.title"), desc: t("overview.consent.desc"), href: "/#consent", icon: Shield },
   ];
   const solutions: MenuItem[] = [
-    { label: t("builtFor.candidates.title"), href: "#built-for", icon: Users },
-    { label: t("builtFor.ridings.title"), href: "#built-for", icon: Building },
-    { label: t("builtFor.advocacy.title"), href: "#built-for", icon: Chat },
+    { label: t("builtFor.candidates.title"), href: "/#built-for", icon: Users },
+    { label: t("builtFor.ridings.title"), href: "/#built-for", icon: Building },
+    { label: t("builtFor.advocacy.title"), href: "/#built-for", icon: Chat },
   ];
   const company: MenuItem[] = [
     { label: t("nav.about"), icon: Info },
@@ -138,7 +139,7 @@ function useMenus() {
     { label: t("nav.help"), icon: Lifebuoy },
     { label: t("nav.contact"), icon: ContactBook },
     { label: t("nav.security"), icon: Shield },
-    { label: t("nav.privacy"), icon: Lock },
+    { label: t("nav.privacy"), href: "/privacy", icon: Lock },
   ];
   return { product, solutions, company };
 }
@@ -210,13 +211,16 @@ export function Navbar() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <Link href="/login" className="hidden h-8 items-center rounded-full px-4 text-sm leading-[18px] font-medium hover:bg-ink/5 md:inline-flex">
-            {t("login")}
-          </Link>
+          {/* Log in returns with the auth pages (src/lib/flags.ts). */}
+          {authPagesEnabled && (
+            <Link href="/login" className="hidden h-8 items-center rounded-full px-4 text-sm leading-[18px] font-medium hover:bg-ink/5 md:inline-flex">
+              {t("login")}
+            </Link>
+          )}
           <Pill variant="outline" size="sm" className="hidden md:inline-flex">
             {t("demo")}
           </Pill>
-          <Pill size="sm" href="/signup">
+          <Pill size="sm" href="/waitlist">
             {t("start")}
           </Pill>
 
@@ -244,9 +248,11 @@ export function Navbar() {
               ))}
               <div className="flex items-center justify-end gap-3 pt-3">
                 <div className="flex gap-2">
-                  <Link href="/login" className="inline-flex items-center text-[13px] font-medium">
-                    {t("login")}
-                  </Link>
+                  {authPagesEnabled && (
+                    <Link href="/login" className="inline-flex items-center text-[13px] font-medium">
+                      {t("login")}
+                    </Link>
+                  )}
                   <Pill variant="outline" size="sm">
                     {t("demo")}
                   </Pill>

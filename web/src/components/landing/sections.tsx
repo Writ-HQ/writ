@@ -3,7 +3,11 @@ import type { ComponentType, SVGProps } from "react";
 
 import {
   ArrowRight,
+  BoltSolid,
+  BriefcaseSolid,
+  BrowserSolid,
   Building,
+  CalendarSolid,
   Chat,
   ChatSolid,
   Check,
@@ -15,8 +19,10 @@ import {
   LockSolid,
   MailSolid,
   MapleLeafRed,
+  PhoneSolid,
   Plus,
   ShieldSolid,
+  StarSolid,
   Users,
   UsersSolid,
 } from "@/components/ui/icons";
@@ -62,8 +68,21 @@ export function Stats() {
 // description, 8px apart, inside 16px of padding.
 export function Overview() {
   const t = useTranslations("Landing.overview");
-  type Key = "contacts" | "lists" | "email" | "social" | "volunteers" | "consent";
-  const rows: { key: Key; icon: IconType; href: string }[][] = [
+  type Key =
+    | "contacts"
+    | "lists"
+    | "email"
+    | "social"
+    | "volunteers"
+    | "consent"
+    | "texts"
+    | "appointments"
+    | "automations"
+    | "reviews"
+    | "websites"
+    | "casework";
+  // Items with a section further down link to it; the rest have none yet.
+  const rows: { key: Key; icon: IconType; href?: string }[][] = [
     [
       { key: "contacts", icon: UsersSolid, href: "#contacts" },
       { key: "lists", icon: ListSolid, href: "#contacts" },
@@ -73,6 +92,16 @@ export function Overview() {
       { key: "social", icon: ChatSolid, href: "#social" },
       { key: "volunteers", icon: LayersSolid, href: "#volunteers" },
       { key: "consent", icon: ShieldSolid, href: "#consent" },
+    ],
+    [
+      { key: "texts", icon: PhoneSolid },
+      { key: "appointments", icon: CalendarSolid },
+      { key: "automations", icon: BoltSolid },
+    ],
+    [
+      { key: "reviews", icon: StarSolid },
+      { key: "websites", icon: BrowserSolid },
+      { key: "casework", icon: BriefcaseSolid },
     ],
   ];
   return (
@@ -98,14 +127,25 @@ export function Overview() {
               <ul className="-mx-4 grid lg:grid-cols-3">
                 {row.map(({ key, icon: Icon, href }, c) => (
                   <li key={key} className={`border-black/[0.06] max-lg:not-first:border-t lg:px-[15.5px] lg:first:pl-0 lg:last:pr-0 ${c > 0 ? "lg:border-l" : ""}`}>
-                    <a href={href} className="group flex flex-col gap-2 p-4">
-                      <span className="flex items-center gap-2 text-xl leading-[23px]">
-                        <Icon className="h-5 w-5 shrink-0 text-ink" />
-                        {t(`${key}.title`)}
-                        <ArrowRight className="h-4 w-4 text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-ink" />
-                      </span>
-                      <span className="max-w-[380px] text-base leading-[21px]">{t(`${key}.desc`)}</span>
-                    </a>
+                    {(() => {
+                      const body = (
+                        <>
+                          <span className="flex items-center gap-2 text-xl leading-[23px]">
+                            <Icon className="h-5 w-5 shrink-0 text-ink" />
+                            {t(`${key}.title`)}
+                            {href && <ArrowRight className="h-4 w-4 text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-ink" />}
+                          </span>
+                          <span className="max-w-[380px] text-base leading-[21px]">{t(`${key}.desc`)}</span>
+                        </>
+                      );
+                      return href ? (
+                        <a href={href} className="group flex flex-col gap-2 p-4">
+                          {body}
+                        </a>
+                      ) : (
+                        <div className="flex flex-col gap-2 p-4">{body}</div>
+                      );
+                    })()}
                   </li>
                 ))}
               </ul>
@@ -313,7 +353,7 @@ export function Faq() {
           </div>
           <div>
             {questions.map((q) => (
-              <details key={q} className="group border-b border-ink last:border-0">
+              <details key={q} className="faq-item group border-b border-ink last:border-0">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-6 text-xl leading-[23px] font-medium [&::-webkit-details-marker]:hidden">
                   {t(`${q}.q`)}
                   <Plus className="h-3 w-3 shrink-0 transition-transform group-open:rotate-45" strokeWidth={2.5} />
@@ -339,7 +379,7 @@ export function Closing() {
           {t("title2")}
         </SectionTitle>
         <div className="flex flex-wrap gap-3 lg:mr-[12%]">
-          <Pill variant="slate" size="lg" href="/signup">
+          <Pill variant="slate" size="lg" href="/waitlist">
             {t("start")}
           </Pill>
           <Pill variant="outline-light" size="lg" className="bg-white/30">

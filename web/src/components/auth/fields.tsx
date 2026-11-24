@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useId, useState, type FormEvent, type InputHTMLAttributes, type ReactNode } from "react";
 
-const inputStyle =
+export const inputStyle =
   "h-11 w-full rounded-[10px] border border-line bg-white px-3.5 text-[15px] outline-none transition-shadow placeholder:text-faint focus:border-ink focus:ring-3 focus:ring-ink/10";
 
 type FieldProps = InputHTMLAttributes<HTMLInputElement> & {

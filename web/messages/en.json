@@ -20,7 +20,7 @@
       "company": "Company",
       "login": "Log in",
       "demo": "See a demo",
-      "start": "Get started",
+      "start": "Join the waitlist",
       "menu": "Menu",
       "about": "About",
       "blog": "Blog",
@@ -32,26 +32,36 @@
       "featureCard": "Read about the pilot"
     },
     "hero": {
-      "title": "Run canvassing, email, volunteers and outreach from one bilingual campaign workspace.",
-      "lead": "Run",
+      "title": "Contacts, supporters, newsletters and your social inbox in one CRM built for advocacy campaigns.",
       "words": {
-        "w1": "canvassing",
-        "w2": "email",
-        "w3": "volunteers",
-        "w4": "outreach"
+        "w1": "Contacts",
+        "w2": "Supporters",
+        "w3": "Newsletters",
+        "w4": "Your social inbox"
       },
-      "line2": "from one bilingual",
-      "line3": "campaign workspace.",
-      "subtitle": "Contacts, lists, bilingual email and your social inbox in one CRM built for Canadian campaigns. In English and French, with your data kept in Canada.",
-      "cta": "Get started",
+      "line2": "in one CRM built for",
+      "line3": "advocacy campaigns.",
+      "subtitle": "Built for advocacy groups and Canadian campaigns, with your data kept in Canada.",
+      "cta": "Join the waitlist",
       "visualLabel": "A preview of the Writ dashboard, with fictional data"
     },
     "band": {
-      "label": "Works with",
+      "label": "What Writ does",
       "purposes": {
         "hosting": "Hosting and email, in Canada",
         "signIn": "Team sign-in",
         "social": "Messages and scheduled posts"
+      },
+      "features": {
+        "newsletters": "Newsletters",
+        "sms": "SMS",
+        "surveys": "Surveys",
+        "websites": "Websites",
+        "appointments": "Appointments",
+        "calls": "Call tracking",
+        "reputation": "Reputation management",
+        "signing": "Document signing",
+        "casework": "Casework"
       }
     },
     "stats": {
@@ -88,7 +98,7 @@
       },
       "social": {
         "title": "Social inbox",
-        "desc": "Facebook and Instagram messages, matched to your contacts."
+        "desc": "Facebook, Instagram and WhatsApp messages in one inbox, matched to your contacts."
       },
       "volunteers": {
         "title": "Volunteers and roles",
@@ -97,6 +107,30 @@
       "consent": {
         "title": "Consent and privacy",
         "desc": "Consent and opt-outs tracked for every person, on every channel."
+      },
+      "texts": {
+        "title": "Texts and calls",
+        "desc": "Two-way texting, a record of every call, and an automatic text when you miss one."
+      },
+      "appointments": {
+        "title": "Appointments",
+        "desc": "Office hours and meetings people can book themselves, with reminders by email and text."
+      },
+      "automations": {
+        "title": "Automatic follow-ups",
+        "desc": "Thank-yous, birthday notes and reminders that send themselves. Switch each one on or off."
+      },
+      "reviews": {
+        "title": "Reviews and reputation",
+        "desc": "Ask for reviews, reply from one place, and see whether people are finding you."
+      },
+      "websites": {
+        "title": "Websites and forms",
+        "desc": "A simple website, signup forms and surveys, set up from a template."
+      },
+      "casework": {
+        "title": "Casework",
+        "desc": "Every request tracked from first contact to resolution, with nothing left waiting."
       }
     },
     "features": {
@@ -122,8 +156,8 @@
       },
       "social": {
         "eyebrow": "Social inbox",
-        "title": "Every Facebook and Instagram message, matched to the right person.",
-        "b1": "One inbox for messages and comments from both platforms.",
+        "title": "Every Facebook, Instagram and WhatsApp message, matched to the right person.",
+        "b1": "One inbox for messages and comments from every platform.",
         "b2": "Each conversation linked to the contact it came from.",
         "b3": "Schedule posts in both languages.",
         "b4": "Nothing goes out without the approvals you set.",
@@ -225,7 +259,7 @@
       "title1": "Your whole campaign.",
       "title2": "One place.",
       "demo": "See a demo",
-      "start": "Get started"
+      "start": "Join the waitlist"
     },
     "footer": {
       "product": "Product",
@@ -252,7 +286,10 @@
       "n8": "Email is delivered through Amazon Web Services in Canada. Facebook and Instagram features use Meta's platforms, require each campaign to connect its own accounts, and are subject to Meta's terms.",
       "n9": "Every team member signs in with multi-factor authentication. Exports, role changes, sends and other sensitive actions are recorded in a log that cannot be edited or deleted.",
       "n10": "Facebook and Instagram are trademarks of Meta Platforms, Inc.; Writ is not affiliated with or endorsed by Meta. Names, places and figures in product images are fictional. For more information, see the <terms>Terms of service</terms> and the <privacy>Privacy policy</privacy>.",
-      "copyright": "© {year} Writ"
+      "copyright": "© {year} Writ",
+      "closingLine": "Built in Canada, for the people who show up.",
+      "cookies": "Cookie policy",
+      "subprocessors": "Subprocessors"
     },
     "mock": {
       "campaign": "Example Riding Association",
@@ -340,7 +377,6 @@
       "title": "Your team, your contacts and your messages, in one place.",
       "points": {
         "canada": "Hosted in Canada",
-        "languages": "English and French throughout",
         "mfa": "Two-step verification on every account"
       }
     },
@@ -533,6 +569,71 @@
         "p3": "Thanks to everyone who came out to the community clean-up on Saturday.",
         "p4": "Town hall on local transit: join us Thursday at the Riverside library."
       }
+    }
+  },
+  "Waitlist": {
+    "metaTitle": "Join the waitlist",
+    "title": "Join the waitlist",
+    "subtitle": "Writ opens to a small group of campaigns, riding associations and constituency offices first. Leave your details and we'll be in touch.",
+    "name": "Full name",
+    "email": "Work email",
+    "emailPlaceholder": "name@example.ca",
+    "organisation": "Organisation",
+    "optional": "Optional",
+    "orgType": "You are",
+    "province": "Province or territory",
+    "choose": "Choose…",
+    "orgTypes": {
+      "candidate": "Candidate or campaign",
+      "riding": "Riding association",
+      "office": "Constituency office",
+      "advocacy": "Advocacy group",
+      "other": "Something else"
+    },
+    "provinces": {
+      "AB": "Alberta",
+      "BC": "British Columbia",
+      "MB": "Manitoba",
+      "NB": "New Brunswick",
+      "NL": "Newfoundland and Labrador",
+      "NS": "Nova Scotia",
+      "NT": "Northwest Territories",
+      "NU": "Nunavut",
+      "ON": "Ontario",
+      "PE": "Prince Edward Island",
+      "QC": "Quebec",
+      "SK": "Saskatchewan",
+      "YT": "Yukon"
+    },
+    "consent": "Writ may email me about the waitlist and its launch. I can unsubscribe at any time.",
+    "submit": "Join the waitlist",
+    "sending": "Sending…",
+    "privacy": "We use your details only to contact you about Writ. We never share or sell them. See our <link>privacy policy</link>.",
+    "done": {
+      "title": "You're on the list",
+      "body": "Thank you. We'll email you when there's a place for you."
+    },
+    "errors": {
+      "required": "Please fill this in.",
+      "tooLong": "This is too long.",
+      "invalidEmail": "Enter an email address like name@example.ca.",
+      "invalidChoice": "Choose one of the options.",
+      "consent": "Tick the box so we can email you about the waitlist.",
+      "server": "Something went wrong and your details weren't saved. Please try again in a moment."
+    }
+  },
+  "Legal": {
+    "related": "Related",
+    "updated": "Last updated on {date}",
+    "shortTitle": "The short version",
+    "missing": {
+      "entity": "company legal name",
+      "address": "company address",
+      "privacyEmail": "privacy email",
+      "contactEmail": "contact email",
+      "province": "province",
+      "siteHost": "website host and location",
+      "waitlistHost": "waitlist database host and location"
     }
   }
 }

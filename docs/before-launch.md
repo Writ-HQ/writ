@@ -76,3 +76,31 @@ and verified, with the date.
 - **X (Twitter) in the landing page band.** X is named in the band (web/src/lib/built-with.ts) before Writ connects to it. By
   launch, either build the X integration (API access and its cost, terms,
   and naming X in the privacy policy) or take X out of the band.
+
+- **Waitlist database.** Signups (names, email addresses, organisations)
+  are saved to the database in WAITLIST_DATABASE_URL by the web app
+  (docs/decisions/0006). Before the waitlist is promoted: confirm that
+  database is in Canada (ca-central-1) or move it there, add rate
+  limiting to the form beyond its hidden bot field, and name the
+  database host in the privacy policy. Move the waitlist into the API
+  when it is deployed.
+
+- **Features named on the landing page.** The band
+  (web/src/lib/built-with.ts) and the feature grid (Overview in
+  web/src/components/landing/sections.tsx) name SMS and calls, WhatsApp,
+  surveys, websites, appointments, automatic follow-ups, reviews and
+  reputation, and document signing. None of these are built, and some
+  are not on the roadmap yet (docs/product-plan.md). Before promoting the
+  site beyond the waitlist, build them, mark them as coming, or take them
+  out, so the page does not promise what Writ cannot do.
+
+- **Legal pages.** /privacy, /terms, /dpa, /acceptable-use, /cookies and
+  /subprocessors (web/src/content/legal) are drafts written from what Writ
+  does today. Before they are relied on:
+  - fill in every fact in web/src/content/legal/facts.ts (legal name,
+    address, contact emails, governing province, website and waitlist
+    hosts and locations); until then the pages show highlighted blanks;
+  - have a lawyer review both languages, especially the terms, the data
+    processing addendum, and the commitments on retention (24 months
+    after launch), breach notice (72 hours) and deletion (90 days);
+  - name a privacy officer.
