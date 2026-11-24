@@ -43,10 +43,13 @@
       "visualLabel": "Un aperçu du tableau de bord de Writ, avec des données fictives"
     },
     "band": {
-      "label": "Propulsé par",
+      "label": "Conçu avec",
       "purposes": {
         "hosting": "Hébergement et courriels, au Canada",
-        "signIn": "Connexion de l'équipe"
+        "signIn": "Connexion de l'équipe",
+        "social": "Messages et publications planifiées",
+        "database": "Base de données",
+        "web": "Application Web"
       }
     },
     "stats": {

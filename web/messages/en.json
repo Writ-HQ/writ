@@ -43,10 +43,13 @@
       "visualLabel": "A preview of the Writ dashboard, with fictional data"
     },
     "band": {
-      "label": "Built on",
+      "label": "Built with",
       "purposes": {
         "hosting": "Hosting and email, in Canada",
-        "signIn": "Team sign-in"
+        "signIn": "Team sign-in",
+        "social": "Messages and scheduled posts",
+        "database": "Database",
+        "web": "Web app"
       }
     },
     "stats": {

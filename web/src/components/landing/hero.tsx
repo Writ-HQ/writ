@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import type React from "react";
 
 import { Pill } from "@/components/ui/pill";
-import { subprocessors } from "@/lib/subprocessors";
+import { builtWith } from "@/lib/built-with";
 
 import { Container } from "./container";
 import { DashboardMock } from "./mocks";
@@ -196,24 +196,30 @@ function PhonePicture() {
   );
 }
 
-// The companies Writ is built on, where the reference shows customer
-// logos: a "Built on" label and, for each subprocessor in use, its name
-// and what it does for Writ. Names rather than logos (see
-// src/lib/subprocessors.ts). Same place and height as before: 64px below
-// the hairline, 50px tall.
+// Where the reference shows customer logos: a "Built with" label and a
+// band that scrolls in a loop, each name with what it does for Writ
+// (src/lib/built-with.ts). The list is drawn twice and slid by half its
+// width, so the loop has no seam; the copy is hidden from screen readers.
+// It stops on hover, and stands still for people who ask for less motion.
+// Same place and height as before: 64px below the hairline, 50px tall.
 function Band() {
   const t = useTranslations("Landing.band");
+  const items = (hidden: boolean) =>
+    builtWith.map(({ name, purpose }) => (
+      <li key={name} aria-hidden={hidden || undefined} className="flex shrink-0 items-baseline gap-3 pr-14 whitespace-nowrap">
+        <span className="text-[19px] font-semibold tracking-[-0.03em] text-ink/70">{name}</span>
+        <span className="text-[13px] text-ink/45">{t(`purposes.${purpose}`)}</span>
+      </li>
+    ));
   return (
-    <div className="mt-16 flex min-h-[50px] flex-wrap items-center gap-x-14 gap-y-4">
-      <p className="text-sm leading-[18px] font-medium text-ink/45">{t("label")}</p>
-      <ul className="flex flex-wrap items-center gap-x-14 gap-y-4">
-        {subprocessors.map(({ name, purpose }) => (
-          <li key={name} className="flex items-baseline gap-3 whitespace-nowrap">
-            <span className="text-[19px] font-semibold tracking-[-0.03em] text-ink/70">{name}</span>
-            <span className="text-[13px] text-ink/45">{t(`purposes.${purpose}`)}</span>
-          </li>
-        ))}
-      </ul>
+    <div className="mt-16 flex min-h-[50px] items-center gap-x-10">
+      <p className="shrink-0 text-sm leading-[18px] font-medium text-ink/45">{t("label")}</p>
+      <div className="group min-w-0 flex-1 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+        <ul className="animate-marquee flex w-max [animation-duration:40s] group-hover:[animation-play-state:paused]">
+          {items(false)}
+          {items(true)}
+        </ul>
+      </div>
     </div>
   );
 }
