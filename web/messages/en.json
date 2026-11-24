@@ -133,7 +133,8 @@
       "casework": {
         "title": "Casework",
         "desc": "Every request tracked from first contact to resolution, with nothing left waiting."
-      }
+      },
+      "pictureTag": "Volunteer"
     },
     "features": {
       "contacts": {
