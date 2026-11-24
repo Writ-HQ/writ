@@ -1,12 +1,12 @@
 "use client";
 
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 
 import { WritMark } from "@/components/ui/logo";
 import { Link, usePathname } from "@/i18n/navigation";
 
-import { account, LAST_DATE, offices, recentCases } from "./data";
+import { account, offices } from "./data";
 import { Glyph } from "./kit";
 import { sections } from "./sections";
 import { useStored } from "./use-stored";
@@ -76,42 +76,8 @@ function AccountRow({ slim }: { slim: boolean }) {
   );
 }
 
-/** Recent cases, between the sections and Settings. */
-function RecentCases() {
-  const t = useTranslations("Dashboard");
-  const format = useFormatter();
-  const now = new Date(LAST_DATE + "T12:00:00Z");
-  return (
-    <div className="mt-4 flex min-h-0 flex-1 flex-col border-t border-ink/[0.07] pt-4">
-      <div className="flex items-center justify-between px-2.5 pb-1.5">
-        <p className="text-[12px] font-medium text-faint">{t("shell.recentCases")}</p>
-        <Link
-          href="/app/casework"
-          title={t("shell.newCase")}
-          aria-label={t("shell.newCase")}
-          className="flex size-6 items-center justify-center rounded-md text-faint transition-colors hover:bg-ink/[0.04] hover:text-ink"
-        >
-          <Glyph d="M8 3.5v9M3.5 8h9" />
-        </Link>
-      </div>
-      <ul className="-mx-1 min-h-0 flex-1 overflow-y-auto px-1 [scrollbar-width:thin]">
-        {recentCases.map((c) => (
-          <li key={c.key}>
-            <Link href="/app/casework" className="block rounded-lg py-1.5 pr-2 pl-2.5 transition-colors hover:bg-ink/[0.04]">
-              <span className="block truncate text-[13px] text-ink/70">{t(`mock.cases.${c.key}`)}</span>
-              <span className="block text-[11.5px] text-faint">
-                {format.relativeTime(new Date(c.at + "T12:00:00Z"), { now, unit: "day" })}
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
 /**
- * The signed-in shell: a sidebar with the sections, recent cases and the
+ * The signed-in shell: a sidebar with the sections in groups and the
  * account; a top bar with the office switcher. Below lg the sidebar is a
  * drawer opened from a menu button. On large screens it can shrink to its
  * icons, remembered per viewer.
@@ -193,13 +159,24 @@ export function DashboardShell({ children }: { children: ReactNode }) {
           </div>
 
           <nav aria-label={t("shell.sections")} className="mt-7 flex min-h-0 flex-1 flex-col gap-0.5">
-            {sections.map((s) => {
+            {sections.map((s, i) => {
+              const group = "group" in s ? s.group : null;
+              const prev = sections[i - 1];
+              const starts = group && (!prev || !("group" in prev) || prev.group !== group);
               const on = s.href === "/app" ? pathname === "/app" : pathname.startsWith(s.href);
               const last = s.key === "settings";
               const label = t(`nav.${s.key}`);
               return (
                 <Fragment key={s.key}>
-                  {last && !slim && <RecentCases />}
+                  {starts &&
+                    (slim ? (
+                      <>
+                        <p className="mt-5 px-2.5 pb-1 text-[11.5px] font-medium text-faint lg:hidden">{t(`shell.groups.${group}`)}</p>
+                        <span aria-hidden="true" className="mx-3 my-2.5 hidden h-px bg-ink/[0.08] lg:block" />
+                      </>
+                    ) : (
+                      <p className="mt-5 px-2.5 pb-1 text-[11.5px] font-medium text-faint">{t(`shell.groups.${group}`)}</p>
+                    ))}
                   <Link
                     href={s.href}
                     aria-current={on ? "page" : undefined}

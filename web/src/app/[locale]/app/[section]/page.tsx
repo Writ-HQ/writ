@@ -38,7 +38,7 @@ function Placeholder({ section }: { section: Key }) {
   const t = useTranslations("Dashboard");
   return (
     <div>
-      <PageTitle title={t(`nav.${section}`)} description={t("soon")} />
+      <PageTitle title={t(`nav.${section}`)} description={t(`about.${section}`)} />
       <div className="mt-6 flex h-64 items-center justify-center rounded-2xl border border-dashed border-line text-[13.5px] text-faint">
         {t("soon")}
       </div>

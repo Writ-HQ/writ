@@ -374,9 +374,10 @@
       "overview": "Vue d'ensemble",
       "casework": "Dossiers",
       "contacts": "Contacts",
-      "lists": "Listes",
+      "inbox": "Messagerie",
+      "posts": "Publications",
+      "replies": "Réponses automatiques",
       "email": "Courriel",
-      "inbox": "Messagerie sociale",
       "volunteers": "Bénévoles",
       "settings": "Paramètres"
     },
@@ -388,16 +389,86 @@
       "collapse": "Réduire la barre latérale",
       "expand": "Agrandir la barre latérale",
       "office": "Bureau",
-      "recentCases": "Dossiers récents",
-      "newCase": "Nouveau dossier",
       "profile": "Profil et compte",
-      "signOut": "Se déconnecter"
+      "signOut": "Se déconnecter",
+      "groups": {
+        "social": "Réseaux sociaux",
+        "outreach": "Rayonnement"
+      }
     },
     "soon": "Cette partie de Writ n'est pas encore construite.",
+    "about": {
+      "casework": "Suivez chaque demande des citoyens, du premier contact jusqu'au règlement.",
+      "contacts": "Toutes les personnes qui ont joint le bureau, avec leurs listes, leur consentement et leur historique.",
+      "inbox": "Tous les messages privés et commentaires de vos comptes sociaux, conservés et associés aux contacts.",
+      "posts": "Planifiez vos publications Facebook et Instagram, faites-les approuver et publiez-les à l'heure prévue.",
+      "replies": "Répondez automatiquement aux messages courants, en français et en anglais, et confiez le reste à l'équipe.",
+      "email": "Infolettres et mises à jour, avec le désabonnement et le consentement gérés pour vous.",
+      "volunteers": "Les personnes qui donnent un coup de main, et ce à quoi elles sont inscrites.",
+      "settings": "Le bureau, votre équipe, les comptes sociaux connectés et votre profil."
+    },
     "overview": {
-      "title": "Vue d'ensemble",
-      "description": "Comment se porte {office}, par rapport à la période précédente.",
-      "metric": "Indicateur"
+      "eyebrow": "{date} · {office}",
+      "title": "Bon retour, {name}",
+      "showing": "Les derniers {range}, comparés à la période précédente.",
+      "range": "Période",
+      "vsBefore": "par rapport à la période précédente",
+      "actions": {
+        "newCase": "Nouveau dossier",
+        "addContact": "Ajouter un contact",
+        "writeEmail": "Rédiger un courriel"
+      }
+    },
+    "flow": {
+      "title": "Flux des dossiers",
+      "hint": {
+        "day": "Dossiers ouverts et réglés, par jour.",
+        "week": "Dossiers ouverts et réglés, par semaine.",
+        "month": "Dossiers ouverts et réglés, par mois."
+      },
+      "opened": "Ouverts",
+      "resolved": "Réglés",
+      "net": "Variation nette",
+      "label": "Dossiers ouverts et réglés, derniers {period}"
+    },
+    "status": {
+      "title": "Dossiers ouverts",
+      "hint": "Où en est chaque dossier ouvert aujourd'hui.",
+      "all": "Dossiers",
+      "total": "ouverts",
+      "new": "Nouveaux",
+      "progress": "En cours",
+      "agency": "En attente d'un organisme",
+      "constituent": "En attente de la personne"
+    },
+    "attention": {
+      "title": "À traiter en priorité",
+      "hint": "Les dossiers ouverts qui attendent depuis le plus longtemps.",
+      "all": "Tous les dossiers",
+      "dayUnit": "jours",
+      "daysOpen": "Ouvert depuis {days} jours"
+    },
+    "topIssues": {
+      "title": "Principaux enjeux",
+      "hint": "Dossiers ouverts pendant la période, par enjeu."
+    },
+    "emails": {
+      "title": "Courriels récents",
+      "hint": "Infolettres et mises à jour envoyées par ce bureau.",
+      "all": "Courriel",
+      "openRate": "Part des destinataires qui l'ont ouvert",
+      "line": "Envoyé le {date} · {recipients} destinataires"
+    },
+    "activity": {
+      "title": "Activité",
+      "hint": "Les dernières nouvelles de votre équipe.",
+      "items": {
+        "resolved": "{who} a réglé le dossier no {number}",
+        "opened": "{who} a ouvert le dossier no {number}",
+        "note": "{who} a ajouté une note au dossier no {number}",
+        "signup": "Un formulaire d'inscription a ajouté {count, plural, one {# contact} other {# contacts}}",
+        "email": "Une infolettre a été envoyée à {count, number} personnes"
+      }
     },
     "metrics": {
       "opened": "Dossiers ouverts",
@@ -412,44 +483,6 @@
         "3m": "3 mois",
         "6m": "6 mois",
         "12m": "12 mois"
-      },
-      "grains": {
-        "day": "Jour",
-        "week": "Semaine",
-        "month": "Mois"
-      },
-      "by": {
-        "day": "par jour",
-        "week": "par semaine",
-        "month": "par mois"
-      }
-    },
-    "chart": {
-      "label": "{metric}, {period}",
-      "thisPeriod": "Cette période",
-      "periodBefore": "Période précédente",
-      "newsletter": "Infolettre envoyée",
-      "newsletterOn": "Infolettre envoyée le {date}",
-      "saveImage": "Enregistrer le graphique en image"
-    },
-    "breakdown": {
-      "show": "Afficher",
-      "all": "Tout",
-      "growing": "En hausse",
-      "falling": "En baisse",
-      "hasItems": "Contient des éléments",
-      "nothingGrowing": "Rien en hausse sur cette période.",
-      "nothingFalling": "Rien en baisse sur cette période.",
-      "star": "Ajouter {name} aux favoris",
-      "unstar": "Retirer {name} des favoris",
-      "issuesTitle": "Dossiers par sujet",
-      "issuesNote": "Mettez en favori les sujets que vous suivez le plus.",
-      "sourcesTitle": "Contacts par provenance",
-      "metrics": {
-        "opened": "Ouverts",
-        "resolved": "Réglés",
-        "days": "Jours",
-        "contacts": "Nouveaux contacts"
       }
     },
     "issues": {
@@ -462,34 +495,9 @@
       "health": "Soins de santé",
       "veterans": "Services aux vétérans"
     },
-    "sources": {
-      "signup": "Formulaires d'inscription",
-      "casework": "Dossiers",
-      "events": "Événements",
-      "facebook": "Facebook",
-      "import": "Importations",
-      "instagram": "Instagram"
-    },
-    "oldest": {
-      "title": "Plus anciens dossiers ouverts",
-      "hint": "Les dossiers ouverts depuis le plus longtemps, du plus ancien au plus récent.",
-      "open": "Ouvrir les dossiers",
-      "case": "Dossier",
-      "issue": "Sujet",
-      "days": "Jours ouverts",
-      "owner": "Attribué à"
-    },
-    "emails": {
-      "title": "Courriels récents",
-      "hint": "Infolettres et mises à jour envoyées par ce bureau.",
-      "line": "Envoyé le {date} à {recipients} · {opened} ouverts"
-    },
     "mock": {
       "cases": {
-        "c1": "Passeport requis avant un voyage en famille",
-        "c2": "Versements de pension interrompus après un déménagement",
         "c3": "Demande de passeport perdue par la poste",
-        "c4": "Renouvellement du permis de travail retardé",
         "c5": "Dossier de parrainage du conjoint bloqué",
         "c6": "Pension de survivant non versée",
         "c7": "Réparations refusées en logement social",

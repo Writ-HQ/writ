@@ -93,26 +93,25 @@ export const issues = [
 ] as const satisfies readonly BreakdownDef[];
 export type IssueKey = (typeof issues)[number]["key"];
 
-export const sources = [
-  { key: "signup", share: 0.31, growth: 1.08 },
-  { key: "casework", share: 0.22, growth: 1.14 },
-  { key: "events", share: 0.17, growth: 0.79 },
-  { key: "facebook", share: 0.12, growth: 1.25 },
-  { key: "import", share: 0.1, growth: 0.6 },
-  { key: "instagram", share: 0.08, growth: 1.4 },
-] as const satisfies readonly BreakdownDef[];
-export type SourceKey = (typeof sources)[number]["key"];
+/** Open cases by where they stand. They add up to the count in the sidebar. */
+export const statuses = [
+  { key: "new", count: 6 },
+  { key: "progress", count: 9 },
+  { key: "agency", count: 5 },
+  { key: "constituent", count: 3 },
+] as const;
+export type StatusKey = (typeof statuses)[number]["key"];
 
-/** Issues and sources starred out of the box. */
-export const starredIssues: IssueKey[] = ["immigration", "housing"];
-export const starredSources: SourceKey[] = ["casework"];
+/** The moment the activity feed is measured from. */
+export const NOW = "2026-11-23T17:00:00Z";
 
-/** Recent cases in the sidebar. Subjects are messages (mock.cases.*). */
-export const recentCases = [
-  { key: "c1", at: "2026-11-23" },
-  { key: "c2", at: "2026-11-22" },
-  { key: "c3", at: "2026-11-20" },
-  { key: "c4", at: "2026-11-17" },
+/** What happened lately in the office. Names and numbers are made up. */
+export const activity = [
+  { key: "resolved", who: "Priya S.", number: "2026-0398", count: 0, at: "2026-11-23T15:40:00Z" },
+  { key: "signup", who: "", number: "", count: 14, at: "2026-11-23T13:05:00Z" },
+  { key: "opened", who: "Marc T.", number: "2026-0533", count: 0, at: "2026-11-23T10:20:00Z" },
+  { key: "note", who: "Dana K.", number: "2026-0471", count: 0, at: "2026-11-22T16:10:00Z" },
+  { key: "email", who: "", number: "", count: 4218, at: "2026-11-17T14:00:00Z" },
 ] as const;
 
 /** The oldest open cases, with fictional case numbers and staff. */

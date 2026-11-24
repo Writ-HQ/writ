@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
 
-// The dashboard's building blocks: page title, framed cards, deltas, a
-// segmented control and a ruled table. Quiet greys, one accent blue for
-// data and the selected state, green and red only for change.
+import { Link } from "@/i18n/navigation";
+
+// The dashboard's building blocks: page title, soft cards, change pills, a
+// segmented control and small helpers. White cards on a hairline ring,
+// the accent blue for data, green and red only for change.
 
 export function PageTitle({ title, description, action }: { title: string; description?: string; action?: ReactNode }) {
   return (
@@ -21,41 +23,57 @@ export function Card({
   hint,
   action,
   children,
-  flush = false,
   className = "",
 }: {
   title?: string;
   hint?: string;
   action?: ReactNode;
   children: ReactNode;
-  /** No inner padding: for tables that run edge to edge. */
-  flush?: boolean;
   className?: string;
 }) {
   return (
-    <section className={`min-w-0 overflow-hidden rounded-2xl border border-line bg-white shadow-[0_1px_2px_rgb(15_23_42/0.04)] ${className}`}>
+    <section
+      className={`flex min-w-0 flex-col rounded-[20px] bg-white p-5 ring-1 ring-line/80 shadow-[0_1px_0_rgb(15_23_42/0.02),0_10px_30px_-18px_rgb(15_23_42/0.14)] ${className}`}
+    >
       {title && (
-        <div className="flex flex-wrap items-start justify-between gap-3 px-5 pt-4 pb-3">
+        <header className="mb-4 flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="text-[15px] font-semibold">{title}</h2>
+            <h2 className="text-[14.5px] font-semibold tracking-[-0.005em]">{title}</h2>
             {hint && <p className="mt-0.5 text-[12.5px] leading-[1.5] text-muted">{hint}</p>}
           </div>
           {action}
-        </div>
+        </header>
       )}
-      <div className={flush ? "" : `px-5 ${title ? "pb-5" : "py-5"}`}>{children}</div>
+      {children}
     </section>
   );
 }
 
-/** A change against the period before. Up is good unless `invert`. */
+/** A quiet "see all" link for a card's corner. */
+export function CardLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className="group flex shrink-0 items-center gap-1 rounded-full px-2 py-1 text-[12.5px] font-medium text-accent hover:bg-accent-soft"
+    >
+      {children}
+      <Glyph className="size-3 transition-transform group-hover:translate-x-0.5" d="M6 3.5L10.5 8 6 12.5" />
+    </Link>
+  );
+}
+
+/** A change against the period before, as a pill. Up is good unless `invert`. */
 export function Delta({ value, invert = false, percent = true }: { value: number | null; invert?: boolean; percent?: boolean }) {
   if (value == null || !isFinite(value)) return null;
+  const flat = percent ? Math.abs(value) < 0.005 : Math.abs(value) < 0.05;
   const good = invert ? value < 0 : value >= 0;
   const shown = percent ? `${Math.abs(Math.round(value * 100))}%` : Math.abs(Math.round(value * 10) / 10).toString();
+  const tone = flat ? "bg-panel text-muted" : good ? "bg-good/10 text-good" : "bg-bad/10 text-bad";
   return (
-    <span className={`inline-flex items-center gap-0.5 text-[12.5px] font-medium tabular-nums ${good ? "text-good" : "text-bad"}`}>
-      {value >= 0 ? "↑" : "↓"}
+    <span className={`inline-flex h-[22px] items-center gap-0.5 rounded-full px-2 text-[12px] font-medium tabular-nums ${tone}`}>
+      {!flat && (
+        <Glyph className="size-3" d={value >= 0 ? "M4 10l4-4 4 4" : "M4 6l4 4 4-4"} />
+      )}
       {shown}
     </span>
   );
@@ -66,19 +84,14 @@ export function Segmented<T extends string>({
   options,
   onChange,
   label,
-  dots = [],
-  dotLabel,
 }: {
   value: T;
   options: { key: T; label: string }[];
   onChange: (v: T) => void;
   label: string;
-  /** Options to mark with a dot: there is something under them. */
-  dots?: T[];
-  dotLabel?: string;
 }) {
   return (
-    <div role="radiogroup" aria-label={label} className="flex rounded-lg bg-panel p-0.5 ring-1 ring-line/70">
+    <div role="radiogroup" aria-label={label} className="flex rounded-full bg-chrome p-1">
       {options.map((o) => (
         <button
           key={o.key}
@@ -86,60 +99,32 @@ export function Segmented<T extends string>({
           role="radio"
           aria-checked={o.key === value}
           onClick={() => onChange(o.key)}
-          className={`relative h-7 rounded-md px-2.5 text-[12.5px] transition-colors ${
-            o.key === value ? "bg-white font-medium shadow-sm" : "text-muted hover:text-ink"
+          className={`h-7 rounded-full px-3 text-[12.5px] transition-colors ${
+            o.key === value ? "bg-white font-medium text-ink shadow-[0_1px_3px_rgb(15_23_42/0.12)]" : "text-muted hover:text-ink"
           }`}
         >
           {o.label}
-          {dots.includes(o.key) && o.key !== value && (
-            <span className="absolute top-1 right-1 size-1.5 rounded-full bg-accent-bright" aria-label={dotLabel} />
-          )}
         </button>
       ))}
     </div>
   );
 }
 
-/** A ruled table; scrolls sideways inside its card on narrow screens. */
-export function DataTable({
-  head,
-  rows,
-  align,
-  minWidth = 520,
-}: {
-  head: string[];
-  rows: ReactNode[][];
-  align?: ("left" | "right")[];
-  minWidth?: number;
-}) {
+/** Initials in a tinted circle, for the person a case is assigned to. */
+export function Initials({ name }: { name: string }) {
+  const letters = name
+    .split(/\s+/)
+    .map((w) => w[0])
+    .join("")
+    .replace(/[^\p{L}]/gu, "")
+    .slice(0, 2);
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse text-left" style={{ minWidth }}>
-        <thead>
-          <tr>
-            {head.map((h, i) => (
-              <th
-                key={h}
-                className={`border-y border-line/70 bg-panel px-5 py-2.5 text-[12.5px] font-medium text-muted ${align?.[i] === "right" ? "text-right" : ""}`}
-              >
-                {h}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r, i) => (
-            <tr key={i} className="border-b border-line/70 last:border-b-0 hover:bg-panel">
-              {r.map((c, j) => (
-                <td key={j} className={`px-5 py-3 text-[13.5px] text-ink/80 ${align?.[j] === "right" ? "text-right tabular-nums" : ""}`}>
-                  {c}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <span
+      title={name}
+      className="flex size-7 shrink-0 items-center justify-center rounded-full bg-accent-soft text-[11px] font-semibold text-accent-deep ring-2 ring-white"
+    >
+      {letters}
+    </span>
   );
 }
 

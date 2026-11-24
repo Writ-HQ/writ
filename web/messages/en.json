@@ -374,9 +374,10 @@
       "overview": "Overview",
       "casework": "Casework",
       "contacts": "Contacts",
-      "lists": "Lists",
+      "inbox": "Inbox",
+      "posts": "Scheduled posts",
+      "replies": "Auto-replies",
       "email": "Email",
-      "inbox": "Social inbox",
       "volunteers": "Volunteers",
       "settings": "Settings"
     },
@@ -388,16 +389,86 @@
       "collapse": "Collapse sidebar",
       "expand": "Expand sidebar",
       "office": "Office",
-      "recentCases": "Recent cases",
-      "newCase": "New case",
       "profile": "Profile and account",
-      "signOut": "Sign out"
+      "signOut": "Sign out",
+      "groups": {
+        "social": "Social",
+        "outreach": "Outreach"
+      }
     },
     "soon": "This part of Writ is not built yet.",
+    "about": {
+      "casework": "Track every request from constituents, from first contact to resolution.",
+      "contacts": "Everyone the office has heard from, with their lists, consent and history.",
+      "inbox": "Every direct message and comment from your social accounts, kept on record and matched to contacts.",
+      "posts": "Plan posts for Facebook and Instagram, send them for approval and publish on schedule.",
+      "replies": "Answer common messages automatically, in English and French, and hand the rest to staff.",
+      "email": "Newsletters and updates, with unsubscribe and consent handled for you.",
+      "volunteers": "The people who help out, and what they are signed up for.",
+      "settings": "The office, your team, connected social accounts and your profile."
+    },
     "overview": {
-      "title": "Overview",
-      "description": "How {office} is doing, compared with the period before.",
-      "metric": "Metric"
+      "eyebrow": "{date} · {office}",
+      "title": "Welcome back, {name}",
+      "showing": "Showing the last {range}, compared with the period before.",
+      "range": "Range",
+      "vsBefore": "vs. period before",
+      "actions": {
+        "newCase": "New case",
+        "addContact": "Add contact",
+        "writeEmail": "Write email"
+      }
+    },
+    "flow": {
+      "title": "Casework flow",
+      "hint": {
+        "day": "Cases opened and resolved, by day.",
+        "week": "Cases opened and resolved, by week.",
+        "month": "Cases opened and resolved, by month."
+      },
+      "opened": "Opened",
+      "resolved": "Resolved",
+      "net": "Net change",
+      "label": "Cases opened and resolved, last {period}"
+    },
+    "status": {
+      "title": "Open cases",
+      "hint": "Where every open case stands today.",
+      "all": "Casework",
+      "total": "open",
+      "new": "New",
+      "progress": "In progress",
+      "agency": "Waiting on an agency",
+      "constituent": "Waiting on the constituent"
+    },
+    "attention": {
+      "title": "Needs attention",
+      "hint": "Open cases that have waited longest.",
+      "all": "All cases",
+      "dayUnit": "days",
+      "daysOpen": "Open for {days} days"
+    },
+    "topIssues": {
+      "title": "Top issues",
+      "hint": "Cases opened in this range, by issue."
+    },
+    "emails": {
+      "title": "Recent emails",
+      "hint": "Newsletters and updates sent from this office.",
+      "all": "Email",
+      "openRate": "Share of recipients who opened it",
+      "line": "Sent {date} · {recipients} recipients"
+    },
+    "activity": {
+      "title": "Activity",
+      "hint": "The latest from your team.",
+      "items": {
+        "resolved": "{who} resolved case #{number}",
+        "opened": "{who} opened case #{number}",
+        "note": "{who} added a note to case #{number}",
+        "signup": "A signup form added {count, plural, one {# contact} other {# contacts}}",
+        "email": "A newsletter went to {count, number} people"
+      }
     },
     "metrics": {
       "opened": "Cases opened",
@@ -412,44 +483,6 @@
         "3m": "3 months",
         "6m": "6 months",
         "12m": "12 months"
-      },
-      "grains": {
-        "day": "Day",
-        "week": "Week",
-        "month": "Month"
-      },
-      "by": {
-        "day": "by day",
-        "week": "by week",
-        "month": "by month"
-      }
-    },
-    "chart": {
-      "label": "{metric}, {period}",
-      "thisPeriod": "This period",
-      "periodBefore": "Period before",
-      "newsletter": "Newsletter sent",
-      "newsletterOn": "Newsletter sent {date}",
-      "saveImage": "Save chart as image"
-    },
-    "breakdown": {
-      "show": "Show",
-      "all": "All",
-      "growing": "Growing",
-      "falling": "Falling",
-      "hasItems": "Has items",
-      "nothingGrowing": "Nothing growing in this range.",
-      "nothingFalling": "Nothing falling in this range.",
-      "star": "Star {name}",
-      "unstar": "Unstar {name}",
-      "issuesTitle": "Cases by issue",
-      "issuesNote": "Star the issues you follow most.",
-      "sourcesTitle": "Contacts by source",
-      "metrics": {
-        "opened": "Opened",
-        "resolved": "Resolved",
-        "days": "Days",
-        "contacts": "New contacts"
       }
     },
     "issues": {
@@ -462,34 +495,9 @@
       "health": "Health care",
       "veterans": "Veterans' services"
     },
-    "sources": {
-      "signup": "Signup forms",
-      "casework": "Casework",
-      "events": "Events",
-      "facebook": "Facebook",
-      "import": "Imports",
-      "instagram": "Instagram"
-    },
-    "oldest": {
-      "title": "Oldest open cases",
-      "hint": "The cases open the longest, oldest first.",
-      "open": "Open casework",
-      "case": "Case",
-      "issue": "Issue",
-      "days": "Days open",
-      "owner": "Assigned to"
-    },
-    "emails": {
-      "title": "Recent emails",
-      "hint": "Newsletters and updates sent from this office.",
-      "line": "Sent {date} to {recipients} · {opened} opened"
-    },
     "mock": {
       "cases": {
-        "c1": "Passport needed before family travel",
-        "c2": "Pension payments stopped after move",
         "c3": "Passport application lost in the mail",
-        "c4": "Work permit renewal delayed",
         "c5": "Spousal sponsorship file stalled",
         "c6": "Survivor's pension not started",
         "c7": "Repairs refused in social housing",
