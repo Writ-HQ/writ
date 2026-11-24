@@ -20,7 +20,7 @@
       "company": "Entreprise",
       "login": "Se connecter",
       "demo": "Voir une démo",
-      "start": "Commencer",
+      "start": "Rejoindre la liste",
       "menu": "Menu",
       "about": "À propos",
       "blog": "Blogue",
@@ -42,8 +42,8 @@
       },
       "line2": "depuis un seul espace",
       "line3": "de campagne bilingue.",
-      "subtitle": "Contacts, listes, courriels bilingues et messagerie sociale dans un CRM conçu pour les campagnes canadiennes. En français et en anglais, avec vos données conservées au Canada.",
-      "cta": "Commencer",
+      "subtitle": "Contacts, sympathisants, infolettres et messagerie sociale dans un seul CRM conçu pour les campagnes de défense des intérêts.",
+      "cta": "Rejoindre la liste",
       "visualLabel": "Un aperçu du tableau de bord de Writ, avec des données fictives"
     },
     "band": {
@@ -225,7 +225,7 @@
       "title1": "Toute votre campagne.",
       "title2": "Un seul endroit.",
       "demo": "Voir une démo",
-      "start": "Commencer"
+      "start": "Rejoindre la liste"
     },
     "footer": {
       "product": "Produit",
@@ -340,7 +340,6 @@
       "title": "Votre équipe, vos contacts et vos messages, au même endroit.",
       "points": {
         "canada": "Hébergé au Canada",
-        "languages": "En français et en anglais, partout",
         "mfa": "Vérification en deux étapes pour chaque compte"
       }
     },
@@ -533,6 +532,57 @@
         "p3": "Merci à toutes les personnes venues au grand ménage du quartier samedi.",
         "p4": "Assemblée publique sur le transport local : rejoignez-nous jeudi à la bibliothèque Riverside."
       }
+    }
+  },
+  "Waitlist": {
+    "metaTitle": "Rejoindre la liste d'attente",
+    "title": "Rejoindre la liste d'attente",
+    "subtitle": "Writ ouvre d'abord à un petit groupe de campagnes, d'associations de circonscription et de bureaux de circonscription. Laissez vos coordonnées et nous vous écrirons.",
+    "name": "Nom complet",
+    "email": "Courriel professionnel",
+    "emailPlaceholder": "nom@exemple.ca",
+    "organisation": "Organisation",
+    "optional": "Facultatif",
+    "orgType": "Vous êtes",
+    "province": "Province ou territoire",
+    "choose": "Choisir…",
+    "orgTypes": {
+      "candidate": "Candidat ou campagne",
+      "riding": "Association de circonscription",
+      "office": "Bureau de circonscription",
+      "advocacy": "Groupe de défense des intérêts",
+      "other": "Autre"
+    },
+    "provinces": {
+      "AB": "Alberta",
+      "BC": "Colombie-Britannique",
+      "MB": "Manitoba",
+      "NB": "Nouveau-Brunswick",
+      "NL": "Terre-Neuve-et-Labrador",
+      "NS": "Nouvelle-Écosse",
+      "NT": "Territoires du Nord-Ouest",
+      "NU": "Nunavut",
+      "ON": "Ontario",
+      "PE": "Île-du-Prince-Édouard",
+      "QC": "Québec",
+      "SK": "Saskatchewan",
+      "YT": "Yukon"
+    },
+    "consent": "Writ peut m'envoyer des courriels au sujet de la liste d'attente et de son lancement. Je peux me désabonner en tout temps.",
+    "submit": "Rejoindre la liste",
+    "sending": "Envoi…",
+    "privacy": "Nous utilisons vos coordonnées uniquement pour vous écrire au sujet de Writ. Nous ne les partageons ni ne les vendons jamais.",
+    "done": {
+      "title": "Vous êtes sur la liste",
+      "body": "Merci. Nous vous écrirons dès qu'une place se libère pour vous."
+    },
+    "errors": {
+      "required": "Veuillez remplir ce champ.",
+      "tooLong": "C'est trop long.",
+      "invalidEmail": "Entrez une adresse comme nom@exemple.ca.",
+      "invalidChoice": "Choisissez l'une des options.",
+      "consent": "Cochez la case pour que nous puissions vous écrire au sujet de la liste d'attente.",
+      "server": "Un problème est survenu et vos coordonnées n'ont pas été enregistrées. Veuillez réessayer dans un instant."
     }
   }
 }

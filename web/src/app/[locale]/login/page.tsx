@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
+import { notFound } from "next/navigation";
 
 import { AuthShell } from "@/components/auth/auth-shell";
 import { AuthForm, PasswordField, SocialLogin, TextField } from "@/components/auth/fields";
 import { Link } from "@/i18n/navigation";
+import { authPagesEnabled } from "@/lib/flags";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Auth.login");
@@ -16,6 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function LoginPage() {
   const t = useTranslations("Auth.login");
   const auth = useTranslations("Auth");
+  // Hidden while Writ takes waitlist signups (src/lib/flags.ts).
+  if (!authPagesEnabled) notFound();
 
   return (
     <AuthShell

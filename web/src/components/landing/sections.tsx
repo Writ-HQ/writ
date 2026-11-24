@@ -339,7 +339,7 @@ export function Closing() {
           {t("title2")}
         </SectionTitle>
         <div className="flex flex-wrap gap-3 lg:mr-[12%]">
-          <Pill variant="slate" size="lg" href="/signup">
+          <Pill variant="slate" size="lg" href="/waitlist">
             {t("start")}
           </Pill>
           <Pill variant="outline-light" size="lg" className="bg-white/30">

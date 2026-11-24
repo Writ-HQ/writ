@@ -21,6 +21,7 @@ import {
 import { Logo } from "@/components/ui/logo";
 import { Pill } from "@/components/ui/pill";
 import { Link } from "@/i18n/navigation";
+import { authPagesEnabled } from "@/lib/flags";
 
 type MenuItem = {
   label: string;
@@ -210,13 +211,16 @@ export function Navbar() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <Link href="/login" className="hidden h-8 items-center rounded-full px-4 text-sm leading-[18px] font-medium hover:bg-ink/5 md:inline-flex">
-            {t("login")}
-          </Link>
+          {/* Log in returns with the auth pages (src/lib/flags.ts). */}
+          {authPagesEnabled && (
+            <Link href="/login" className="hidden h-8 items-center rounded-full px-4 text-sm leading-[18px] font-medium hover:bg-ink/5 md:inline-flex">
+              {t("login")}
+            </Link>
+          )}
           <Pill variant="outline" size="sm" className="hidden md:inline-flex">
             {t("demo")}
           </Pill>
-          <Pill size="sm" href="/signup">
+          <Pill size="sm" href="/waitlist">
             {t("start")}
           </Pill>
 
@@ -244,9 +248,11 @@ export function Navbar() {
               ))}
               <div className="flex items-center justify-end gap-3 pt-3">
                 <div className="flex gap-2">
-                  <Link href="/login" className="inline-flex items-center text-[13px] font-medium">
-                    {t("login")}
-                  </Link>
+                  {authPagesEnabled && (
+                    <Link href="/login" className="inline-flex items-center text-[13px] font-medium">
+                      {t("login")}
+                    </Link>
+                  )}
                   <Pill variant="outline" size="sm">
                     {t("demo")}
                   </Pill>

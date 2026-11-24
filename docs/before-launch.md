@@ -76,3 +76,11 @@ and verified, with the date.
 - **X (Twitter) in the landing page band.** X is named in the band (web/src/lib/built-with.ts) before Writ connects to it. By
   launch, either build the X integration (API access and its cost, terms,
   and naming X in the privacy policy) or take X out of the band.
+
+- **Waitlist database.** Signups (names, email addresses, organisations)
+  are saved to the database in WAITLIST_DATABASE_URL by the web app
+  (docs/decisions/0006). Before the waitlist is promoted: confirm that
+  database is in Canada (ca-central-1) or move it there, add rate
+  limiting to the form beyond its hidden bot field, and name the
+  database host in the privacy policy. Move the waitlist into the API
+  when it is deployed.

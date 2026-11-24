@@ -20,7 +20,7 @@
       "company": "Company",
       "login": "Log in",
       "demo": "See a demo",
-      "start": "Get started",
+      "start": "Join the waitlist",
       "menu": "Menu",
       "about": "About",
       "blog": "Blog",
@@ -42,8 +42,8 @@
       },
       "line2": "from one bilingual",
       "line3": "campaign workspace.",
-      "subtitle": "Contacts, lists, bilingual email and your social inbox in one CRM built for Canadian campaigns. In English and French, with your data kept in Canada.",
-      "cta": "Get started",
+      "subtitle": "Contacts, supporters, newsletters and your social inbox in one CRM built for advocacy campaigns.",
+      "cta": "Join the waitlist",
       "visualLabel": "A preview of the Writ dashboard, with fictional data"
     },
     "band": {
@@ -225,7 +225,7 @@
       "title1": "Your whole campaign.",
       "title2": "One place.",
       "demo": "See a demo",
-      "start": "Get started"
+      "start": "Join the waitlist"
     },
     "footer": {
       "product": "Product",
@@ -340,7 +340,6 @@
       "title": "Your team, your contacts and your messages, in one place.",
       "points": {
         "canada": "Hosted in Canada",
-        "languages": "English and French throughout",
         "mfa": "Two-step verification on every account"
       }
     },
@@ -533,6 +532,57 @@
         "p3": "Thanks to everyone who came out to the community clean-up on Saturday.",
         "p4": "Town hall on local transit: join us Thursday at the Riverside library."
       }
+    }
+  },
+  "Waitlist": {
+    "metaTitle": "Join the waitlist",
+    "title": "Join the waitlist",
+    "subtitle": "Writ opens to a small group of campaigns, riding associations and constituency offices first. Leave your details and we'll be in touch.",
+    "name": "Full name",
+    "email": "Work email",
+    "emailPlaceholder": "name@example.ca",
+    "organisation": "Organisation",
+    "optional": "Optional",
+    "orgType": "You are",
+    "province": "Province or territory",
+    "choose": "Choose…",
+    "orgTypes": {
+      "candidate": "Candidate or campaign",
+      "riding": "Riding association",
+      "office": "Constituency office",
+      "advocacy": "Advocacy group",
+      "other": "Something else"
+    },
+    "provinces": {
+      "AB": "Alberta",
+      "BC": "British Columbia",
+      "MB": "Manitoba",
+      "NB": "New Brunswick",
+      "NL": "Newfoundland and Labrador",
+      "NS": "Nova Scotia",
+      "NT": "Northwest Territories",
+      "NU": "Nunavut",
+      "ON": "Ontario",
+      "PE": "Prince Edward Island",
+      "QC": "Quebec",
+      "SK": "Saskatchewan",
+      "YT": "Yukon"
+    },
+    "consent": "Writ may email me about the waitlist and its launch. I can unsubscribe at any time.",
+    "submit": "Join the waitlist",
+    "sending": "Sending…",
+    "privacy": "We use your details only to contact you about Writ. We never share or sell them.",
+    "done": {
+      "title": "You're on the list",
+      "body": "Thank you. We'll email you when there's a place for you."
+    },
+    "errors": {
+      "required": "Please fill this in.",
+      "tooLong": "This is too long.",
+      "invalidEmail": "Enter an email address like name@example.ca.",
+      "invalidChoice": "Choose one of the options.",
+      "consent": "Tick the box so we can email you about the waitlist.",
+      "server": "Something went wrong and your details weren't saved. Please try again in a moment."
     }
   }
 }
