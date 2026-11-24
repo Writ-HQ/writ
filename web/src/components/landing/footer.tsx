@@ -1,9 +1,8 @@
 import { useTranslations } from "next-intl";
-import type { ComponentType, ReactNode, SVGProps } from "react";
+import type { ReactNode } from "react";
 
 import { LocaleSwitcher } from "@/components/locale-switcher";
-import { Chat, Globe, Home, Ledger, Mail, MapleLeaf, Users } from "@/components/ui/icons";
-import { Logo, WritMark } from "@/components/ui/logo";
+import { Logo } from "@/components/ui/logo";
 import { Pill } from "@/components/ui/pill";
 
 import { Container } from "./container";
@@ -11,7 +10,7 @@ import { Container } from "./container";
 // Measurements from the reference footer at 1470px wide: 46px of top
 // padding; the logo top-left and the copyright bottom-left; five 153px
 // link columns starting 417px in, 32px apart; notes 56px below them in two
-// columns; then a strip of stamps, cut off by the bottom of the page.
+// columns; then a closing line in large type.
 
 type FooterLink = { label: string; href?: string };
 
@@ -137,7 +136,12 @@ export function Footer() {
         </div>
       </Container>
 
-      <Stamps />
+      {/* A closing line, large, across the foot of the page. */}
+      <Container>
+        <p className="border-t border-white/15 pt-10 pb-14 text-[44px] leading-[0.95] font-medium tracking-[-0.045em] text-balance text-white sm:text-[64px] lg:pt-14 lg:pb-20 lg:text-[96px]">
+          {f("closingLine")}
+        </p>
+      </Container>
     </footer>
   );
 }
@@ -152,47 +156,3 @@ function NoteLink({ children }: { children: ReactNode }) {
   );
 }
 
-type IconType = ComponentType<SVGProps<SVGSVGElement>>;
-
-// Muted colours only: none of them is a party colour at full strength.
-const stamps: { icon: IconType; className: string }[] = [
-  { icon: MapleLeaf, className: "bg-sky" },
-  { icon: Mail, className: "bg-[#e9dcc4]" },
-  { icon: Users, className: "bg-[#d9d0ea]" },
-  { icon: Ledger, className: "bg-[#cfdcc4]" },
-  { icon: Chat, className: "bg-mist" },
-  { icon: Globe, className: "bg-[#d6d3cd]" },
-  { icon: Home, className: "bg-[#e7d6d0]" },
-  { icon: WritMark, className: "bg-[#c9dbe3]" },
-  { icon: MapleLeaf, className: "bg-[#e9dcc4]" },
-  { icon: Mail, className: "bg-sky" },
-];
-
-// A strip of postage stamps along the bottom edge, drawn in CSS: white
-// paper with a perforated edge (black half-circles bitten out of each
-// side) around a printed panel with a fine halftone. Decorative.
-function Stamps() {
-  const perforation = (at: string) => `radial-gradient(circle at ${at}, #000 4px, transparent 4.5px)`;
-  return (
-    <div aria-hidden="true" className="mt-14 flex h-[192px] justify-center overflow-hidden pt-16">
-      {stamps.map(({ icon: Icon, className }, i) => (
-        <span key={i} className="shrink-0 px-4">
-          <span
-            className="block h-[184px] w-[145px] bg-white p-[11px]"
-            style={{
-              backgroundImage: [perforation("6px 0"), perforation("6px 12px"), perforation("0 6px"), perforation("12px 6px")].join(","),
-              backgroundSize: "12px 12px",
-              backgroundPosition: "0 0, 0 100%, 0 0, 100% 0",
-              backgroundRepeat: "repeat-x, repeat-x, repeat-y, repeat-y",
-            }}
-          >
-            <span className={`relative flex h-full w-full items-center justify-center overflow-hidden ${className}`}>
-              <span className="absolute inset-0 bg-[radial-gradient(rgb(0_0_0/0.13)_0.7px,transparent_0.9px)] bg-[length:4px_4px]" />
-              <Icon className="relative h-16 w-16 text-ink/55" />
-            </span>
-          </span>
-        </span>
-      ))}
-    </div>
-  );
-}

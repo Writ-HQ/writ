@@ -262,7 +262,8 @@
       "n8": "Les courriels sont transmis par Amazon Web Services au Canada. Les fonctionnalités Facebook et Instagram utilisent les plateformes de Meta, exigent que chaque campagne connecte ses propres comptes et sont assujetties aux conditions de Meta.",
       "n9": "Chaque membre de l'équipe se connecte avec l'authentification multifacteur. Les exportations, changements de rôle, envois et autres actions sensibles sont consignés dans un registre qui ne peut être ni modifié ni supprimé.",
       "n10": "Facebook et Instagram sont des marques de commerce de Meta Platforms, Inc.; Writ n'est ni affilié à Meta ni approuvé par celle-ci. Les noms, lieux et chiffres présentés dans les images du produit sont fictifs. Pour en savoir plus, consultez les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>.",
-      "copyright": "© {year} Writ"
+      "copyright": "© {year} Writ",
+      "closingLine": "Conçu au Canada, pour celles et ceux qui s'engagent."
     },
     "mock": {
       "campaign": "Association de circonscription exemple",

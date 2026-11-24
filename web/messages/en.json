@@ -262,7 +262,8 @@
       "n8": "Email is delivered through Amazon Web Services in Canada. Facebook and Instagram features use Meta's platforms, require each campaign to connect its own accounts, and are subject to Meta's terms.",
       "n9": "Every team member signs in with multi-factor authentication. Exports, role changes, sends and other sensitive actions are recorded in a log that cannot be edited or deleted.",
       "n10": "Facebook and Instagram are trademarks of Meta Platforms, Inc.; Writ is not affiliated with or endorsed by Meta. Names, places and figures in product images are fictional. For more information, see the <terms>Terms of service</terms> and the <privacy>Privacy policy</privacy>.",
-      "copyright": "© {year} Writ"
+      "copyright": "© {year} Writ",
+      "closingLine": "Built in Canada, for the people who show up."
     },
     "mock": {
       "campaign": "Example Riding Association",
