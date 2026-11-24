@@ -27,6 +27,17 @@
 
   --radius-card: 6px;
 
+  /* The signed-in app: a cool grey chrome around white content, and one
+     accent from the landing page's sky for data and the selected state. */
+  --color-chrome: #f3f5f7;
+  --color-accent-bright: #9dcfeb;
+  --color-accent: #2c6a8f;
+  --color-accent-deep: #1d4f6d;
+  --color-accent-soft: #ebf4fa;
+  --color-good: #1f7a3d;
+  --color-bad: #b42318;
+  --color-star: #c27a12;
+
   --animate-marquee: marquee 60s linear infinite;
 
   @keyframes marquee {

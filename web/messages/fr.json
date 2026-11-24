@@ -368,5 +368,138 @@
       "facebook": "Continuer avec Facebook",
       "or": "ou"
     }
+  },
+  "Dashboard": {
+    "nav": {
+      "overview": "Vue d'ensemble",
+      "casework": "Dossiers",
+      "contacts": "Contacts",
+      "lists": "Listes",
+      "email": "Courriel",
+      "inbox": "Messagerie sociale",
+      "volunteers": "Bénévoles",
+      "settings": "Paramètres"
+    },
+    "shell": {
+      "home": "Accueil de Writ",
+      "sections": "Sections",
+      "openMenu": "Ouvrir le menu",
+      "closeMenu": "Fermer le menu",
+      "collapse": "Réduire la barre latérale",
+      "expand": "Agrandir la barre latérale",
+      "office": "Bureau",
+      "recentCases": "Dossiers récents",
+      "newCase": "Nouveau dossier",
+      "profile": "Profil et compte",
+      "signOut": "Se déconnecter"
+    },
+    "soon": "Cette partie de Writ n'est pas encore construite.",
+    "overview": {
+      "title": "Vue d'ensemble",
+      "description": "Comment se porte {office}, par rapport à la période précédente.",
+      "metric": "Indicateur"
+    },
+    "metrics": {
+      "opened": "Dossiers ouverts",
+      "resolved": "Dossiers réglés",
+      "days": "Jours pour régler",
+      "contacts": "Nouveaux contacts"
+    },
+    "range": {
+      "presets": {
+        "7d": "7 jours",
+        "28d": "28 jours",
+        "3m": "3 mois",
+        "6m": "6 mois",
+        "12m": "12 mois"
+      },
+      "grains": {
+        "day": "Jour",
+        "week": "Semaine",
+        "month": "Mois"
+      },
+      "by": {
+        "day": "par jour",
+        "week": "par semaine",
+        "month": "par mois"
+      }
+    },
+    "chart": {
+      "label": "{metric}, {period}",
+      "thisPeriod": "Cette période",
+      "periodBefore": "Période précédente",
+      "newsletter": "Infolettre envoyée",
+      "newsletterOn": "Infolettre envoyée le {date}",
+      "saveImage": "Enregistrer le graphique en image"
+    },
+    "breakdown": {
+      "show": "Afficher",
+      "all": "Tout",
+      "growing": "En hausse",
+      "falling": "En baisse",
+      "hasItems": "Contient des éléments",
+      "nothingGrowing": "Rien en hausse sur cette période.",
+      "nothingFalling": "Rien en baisse sur cette période.",
+      "star": "Ajouter {name} aux favoris",
+      "unstar": "Retirer {name} des favoris",
+      "issuesTitle": "Dossiers par sujet",
+      "issuesNote": "Mettez en favori les sujets que vous suivez le plus.",
+      "sourcesTitle": "Contacts par provenance",
+      "metrics": {
+        "opened": "Ouverts",
+        "resolved": "Réglés",
+        "days": "Jours",
+        "contacts": "Nouveaux contacts"
+      }
+    },
+    "issues": {
+      "immigration": "Immigration",
+      "pensions": "Pensions",
+      "taxes": "Impôts",
+      "passports": "Passeports",
+      "housing": "Logement",
+      "ei": "Assurance-emploi",
+      "health": "Soins de santé",
+      "veterans": "Services aux vétérans"
+    },
+    "sources": {
+      "signup": "Formulaires d'inscription",
+      "casework": "Dossiers",
+      "events": "Événements",
+      "facebook": "Facebook",
+      "import": "Importations",
+      "instagram": "Instagram"
+    },
+    "oldest": {
+      "title": "Plus anciens dossiers ouverts",
+      "hint": "Les dossiers ouverts depuis le plus longtemps, du plus ancien au plus récent.",
+      "open": "Ouvrir les dossiers",
+      "case": "Dossier",
+      "issue": "Sujet",
+      "days": "Jours ouverts",
+      "owner": "Attribué à"
+    },
+    "emails": {
+      "title": "Courriels récents",
+      "hint": "Infolettres et mises à jour envoyées par ce bureau.",
+      "line": "Envoyé le {date} à {recipients} · {opened} ouverts"
+    },
+    "mock": {
+      "cases": {
+        "c1": "Passeport requis avant un voyage en famille",
+        "c2": "Versements de pension interrompus après un déménagement",
+        "c3": "Demande de passeport perdue par la poste",
+        "c4": "Renouvellement du permis de travail retardé",
+        "c5": "Dossier de parrainage du conjoint bloqué",
+        "c6": "Pension de survivant non versée",
+        "c7": "Réparations refusées en logement social",
+        "c8": "Avis de nouvelle cotisation non expliqué"
+      },
+      "emails": {
+        "e1": "Mise à jour de novembre : heures d'ouverture pendant les fêtes",
+        "e2": "De l'aide pour les frais de chauffage cet hiver",
+        "e3": "Assemblée publique sur le transport local, résumé"
+      }
+    }
   }
 }

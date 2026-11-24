@@ -368,5 +368,138 @@
       "facebook": "Continue with Facebook",
       "or": "or"
     }
+  },
+  "Dashboard": {
+    "nav": {
+      "overview": "Overview",
+      "casework": "Casework",
+      "contacts": "Contacts",
+      "lists": "Lists",
+      "email": "Email",
+      "inbox": "Social inbox",
+      "volunteers": "Volunteers",
+      "settings": "Settings"
+    },
+    "shell": {
+      "home": "Writ home",
+      "sections": "Sections",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "collapse": "Collapse sidebar",
+      "expand": "Expand sidebar",
+      "office": "Office",
+      "recentCases": "Recent cases",
+      "newCase": "New case",
+      "profile": "Profile and account",
+      "signOut": "Sign out"
+    },
+    "soon": "This part of Writ is not built yet.",
+    "overview": {
+      "title": "Overview",
+      "description": "How {office} is doing, compared with the period before.",
+      "metric": "Metric"
+    },
+    "metrics": {
+      "opened": "Cases opened",
+      "resolved": "Cases resolved",
+      "days": "Days to resolve",
+      "contacts": "New contacts"
+    },
+    "range": {
+      "presets": {
+        "7d": "7 days",
+        "28d": "28 days",
+        "3m": "3 months",
+        "6m": "6 months",
+        "12m": "12 months"
+      },
+      "grains": {
+        "day": "Day",
+        "week": "Week",
+        "month": "Month"
+      },
+      "by": {
+        "day": "by day",
+        "week": "by week",
+        "month": "by month"
+      }
+    },
+    "chart": {
+      "label": "{metric}, {period}",
+      "thisPeriod": "This period",
+      "periodBefore": "Period before",
+      "newsletter": "Newsletter sent",
+      "newsletterOn": "Newsletter sent {date}",
+      "saveImage": "Save chart as image"
+    },
+    "breakdown": {
+      "show": "Show",
+      "all": "All",
+      "growing": "Growing",
+      "falling": "Falling",
+      "hasItems": "Has items",
+      "nothingGrowing": "Nothing growing in this range.",
+      "nothingFalling": "Nothing falling in this range.",
+      "star": "Star {name}",
+      "unstar": "Unstar {name}",
+      "issuesTitle": "Cases by issue",
+      "issuesNote": "Star the issues you follow most.",
+      "sourcesTitle": "Contacts by source",
+      "metrics": {
+        "opened": "Opened",
+        "resolved": "Resolved",
+        "days": "Days",
+        "contacts": "New contacts"
+      }
+    },
+    "issues": {
+      "immigration": "Immigration",
+      "pensions": "Pensions",
+      "taxes": "Taxes",
+      "passports": "Passports",
+      "housing": "Housing",
+      "ei": "Employment insurance",
+      "health": "Health care",
+      "veterans": "Veterans' services"
+    },
+    "sources": {
+      "signup": "Signup forms",
+      "casework": "Casework",
+      "events": "Events",
+      "facebook": "Facebook",
+      "import": "Imports",
+      "instagram": "Instagram"
+    },
+    "oldest": {
+      "title": "Oldest open cases",
+      "hint": "The cases open the longest, oldest first.",
+      "open": "Open casework",
+      "case": "Case",
+      "issue": "Issue",
+      "days": "Days open",
+      "owner": "Assigned to"
+    },
+    "emails": {
+      "title": "Recent emails",
+      "hint": "Newsletters and updates sent from this office.",
+      "line": "Sent {date} to {recipients} · {opened} opened"
+    },
+    "mock": {
+      "cases": {
+        "c1": "Passport needed before family travel",
+        "c2": "Pension payments stopped after move",
+        "c3": "Passport application lost in the mail",
+        "c4": "Work permit renewal delayed",
+        "c5": "Spousal sponsorship file stalled",
+        "c6": "Survivor's pension not started",
+        "c7": "Repairs refused in social housing",
+        "c8": "Tax reassessment letter not explained"
+      },
+      "emails": {
+        "e1": "November update: office hours over the holidays",
+        "e2": "Help with winter heating costs",
+        "e3": "Town hall on local transit, recap"
+      }
+    }
   }
 }
