@@ -222,7 +222,7 @@ function Feature({
               </div>
             </div>
           </div>
-          <div aria-hidden="true" className={`${sky} relative flex h-[340px] items-center justify-center overflow-hidden rounded-[6px] sm:h-[440px] lg:h-[544px]`}>
+          <div aria-hidden="true" className={`${sky} relative flex h-[340px] items-center justify-center overflow-hidden sm:h-[440px] lg:h-[544px]`}>
             <div className="scale-[0.8] sm:scale-100 lg:scale-110">
               <MockReveal>
                 <Mock />
