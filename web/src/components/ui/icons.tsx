@@ -308,6 +308,13 @@ export const BoltSolid = (p: IconProps) => (
   </Solid>
 );
 
+/** A solid building with its windows and door cut out. */
+export const BuildingSolid = (p: IconProps) => (
+  <Solid {...p}>
+    <path d="M5.5 2.5h8a1.5 1.5 0 0 1 1.5 1.5v4.5h3.5A1.5 1.5 0 0 1 20 10v11.5H4V4a1.5 1.5 0 0 1 1.5-1.5zM7.3 6h1.8v1.8H7.3zM10.4 6h1.8v1.8h-1.8zM7.3 9.6h1.8v1.8H7.3zM10.4 9.6h1.8v1.8h-1.8zM7.3 13.2h1.8V15H7.3zM10.4 13.2h1.8V15h-1.8zM16.2 11.6H18v1.8h-1.8zM16.2 15.2H18V17h-1.8zM8.6 21.5v-3.3h3.2v3.3z" />
+  </Solid>
+);
+
 export const Layers = (p: IconProps) => (
   <Icon {...p}>
     <path d="m12 3 9 5-9 5-9-5 9-5Z" />

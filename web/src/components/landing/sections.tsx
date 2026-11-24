@@ -6,9 +6,8 @@ import {
   BoltSolid,
   BriefcaseSolid,
   BrowserSolid,
-  Building,
+  BuildingSolid,
   CalendarSolid,
-  Chat,
   ChatSolid,
   Check,
   GlobeSolid,
@@ -23,7 +22,6 @@ import {
   Plus,
   ShieldSolid,
   StarSolid,
-  Users,
   UsersSolid,
 } from "@/components/ui/icons";
 import { Pill } from "@/components/ui/pill";
@@ -237,12 +235,12 @@ export function BuiltFor() {
   const cards: { key: "candidates" | "ridings" | "advocacy"; icon: IconType; className: string; inverse?: boolean }[] = [
     {
       key: "candidates",
-      icon: Users,
+      icon: UsersSolid,
       className: "bg-ink-soft text-white bg-[radial-gradient(ellipse_80%_60%_at_80%_100%,rgb(255_255_255/0.14),transparent_70%)]",
       inverse: true,
     },
-    { key: "ridings", icon: Building, className: "bg-mist" },
-    { key: "advocacy", icon: Chat, className: "bg-sky" },
+    { key: "ridings", icon: BuildingSolid, className: "bg-mist" },
+    { key: "advocacy", icon: ChatSolid, className: "bg-sky" },
   ];
   return (
     <section id="built-for" className="py-28 sm:py-36">
@@ -256,7 +254,7 @@ export function BuiltFor() {
           {cards.map(({ key, icon: Icon, className, inverse }) => (
             <article key={key} className={`flex min-h-[380px] flex-col justify-between rounded-[6px] p-7 lg:min-h-[440px] ${className}`}>
               <div>
-                <Icon className="h-6 w-6 opacity-80" />
+                <Icon className="h-6 w-6" />
                 <h3 className="mt-6 text-[28px] leading-none tracking-[-0.03em]">{t(`${key}.title`)}</h3>
                 <p className={`mt-4 max-w-[340px] text-[14px] leading-snug ${inverse ? "text-white/80" : "text-ink/80"}`}>{t(`${key}.desc`)}</p>
               </div>
