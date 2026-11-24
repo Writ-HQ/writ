@@ -3,6 +3,7 @@
 import { useFormatter, useTranslations, type DateTimeFormatOptions } from "next-intl";
 import { useMemo, useState, type ReactNode } from "react";
 
+import { BrandLogo } from "@/components/landing/brand-logos";
 import { Link } from "@/i18n/navigation";
 
 import {
@@ -37,28 +38,28 @@ const ZONE = "America/Toronto";
 const change = (cur: number, prev: number | undefined) => (prev ? (cur - prev) / prev : null);
 const localDay = (iso: string) => new Intl.DateTimeFormat("en-CA", { timeZone: ZONE }).format(new Date(iso));
 
-/** A platform's mark in its colour: Facebook blue, Instagram's gradient. */
+/**
+ * A platform's mark in its colour: Facebook's blue disc, Instagram's
+ * glyph on its gradient tile. Shapes from Simple Icons
+ * (src/components/landing/brand-logos.tsx).
+ */
 function PlatformBadge({ platform, size = "md" }: { platform: Platform; size?: "sm" | "md" }) {
   const t = useTranslations("Dashboard.platforms");
-  const box = size === "sm" ? "size-5 rounded-md" : "size-8 rounded-[10px]";
-  const icon = size === "sm" ? "size-3" : "size-4";
+  const box = size === "sm" ? "size-5" : "size-8";
+  if (platform === "facebook") {
+    return (
+      <span title={t(platform)} className={`flex shrink-0 ${box}`}>
+        <BrandLogo name="facebook" className="size-full text-[#0866FF]" />
+      </span>
+    );
+  }
   return (
     <span
       title={t(platform)}
-      className={`flex shrink-0 items-center justify-center text-white ${box}`}
-      style={{ background: platform === "facebook" ? "#0866FF" : "linear-gradient(135deg,#F58529,#DD2A7B 55%,#8134AF)" }}
+      className={`flex shrink-0 items-center justify-center text-white ${box} ${size === "sm" ? "rounded-md" : "rounded-[10px]"}`}
+      style={{ background: "radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%)" }}
     >
-      {platform === "facebook" ? (
-        <svg viewBox="0 0 16 16" className={icon} fill="currentColor" aria-hidden="true">
-          <path d="M9.2 15V8.9h2l.3-2.4H9.2V5c0-.7.2-1.2 1.2-1.2h1.3V1.7c-.2 0-1-.1-1.9-.1-1.9 0-3.2 1.2-3.2 3.3v1.6H4.5v2.4h2.1V15z" />
-        </svg>
-      ) : (
-        <svg viewBox="0 0 16 16" className={icon} fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-          <rect x="2" y="2" width="12" height="12" rx="3.5" />
-          <circle cx="8" cy="8" r="2.8" />
-          <circle cx="11.6" cy="4.4" r=".6" fill="currentColor" stroke="none" />
-        </svg>
-      )}
+      <BrandLogo name={platform} className={size === "sm" ? "size-3" : "size-[18px]"} />
     </span>
   );
 }
