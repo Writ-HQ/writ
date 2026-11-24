@@ -24,13 +24,14 @@
       "menu": "Menu",
       "about": "About",
       "blog": "Blog",
-      "careers": "Careers",
       "contact": "Contact",
       "help": "Help centre",
       "privacy": "Privacy",
       "security": "Security",
       "featureCard": "Read about the pilot",
-      "manifesto": "Manifesto"
+      "manifesto": "Manifesto",
+      "solutionsCard": "See who Writ is for",
+      "companyCard": "Read our manifesto"
     },
     "hero": {
       "title": "Contacts, supporters, newsletters and your social inbox in one CRM built for advocacy campaigns.",

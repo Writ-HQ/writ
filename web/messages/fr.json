@@ -24,13 +24,14 @@
       "menu": "Menu",
       "about": "À propos",
       "blog": "Blogue",
-      "careers": "Carrières",
       "contact": "Nous joindre",
       "help": "Centre d'aide",
       "privacy": "Confidentialité",
       "security": "Sécurité",
       "featureCard": "En savoir plus sur le projet pilote",
-      "manifesto": "Manifeste"
+      "manifesto": "Manifeste",
+      "solutionsCard": "Voir à qui s’adresse Writ",
+      "companyCard": "Lire notre manifeste"
     },
     "hero": {
       "title": "Vos contacts, vos sympathisants, vos infolettres et votre messagerie sociale dans un seul CRM conçu pour les campagnes de défense des intérêts.",
