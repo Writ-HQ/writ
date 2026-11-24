@@ -2,7 +2,6 @@ import { useTranslations } from "next-intl";
 import type { ComponentType, SVGProps } from "react";
 
 import {
-  ArrowRight,
   BoltSolid,
   BriefcaseSolid,
   BrowserSolid,
@@ -149,7 +148,6 @@ export function Overview() {
                           <span className="flex items-center gap-2 text-xl leading-[23px]">
                             <Icon className="h-5 w-5 shrink-0 text-ink" />
                             {t(`${key}.title`)}
-                            {href && <ArrowRight className="h-4 w-4 text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-ink" />}
                           </span>
                           <span className="max-w-[380px] text-base leading-[21px]">{t(`${key}.desc`)}</span>
                         </>
