@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
 import { LocaleSwitcher } from "@/components/locale-switcher";
-import { Home } from "@/components/ui/icons";
+import { ArrowRight } from "@/components/ui/icons";
 import { Logo, WritMark } from "@/components/ui/logo";
 import { Link } from "@/i18n/navigation";
 
@@ -29,16 +29,13 @@ export function AuthShell({ path, title, subtitle, children, footer }: Props) {
 
       <main className="flex min-h-dvh flex-1 flex-col px-6 py-6 sm:px-10">
         <div className="flex items-center justify-between">
-          {/* Large screens: a small Home button (the logo is in the panel).
+          {/* Large screens: an arrow back home (the logo is in the panel).
               Small screens: the logo, which also leads home. */}
           <Link href="/" aria-label={t("home")} className="lg:hidden">
             <Logo />
           </Link>
-          <Link
-            href="/"
-            className="hidden h-8 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium text-ink/70 ring-1 ring-line transition-colors hover:bg-panel hover:text-ink lg:inline-flex"
-          >
-            <Home className="size-3.5" strokeWidth={1.8} />
+          <Link href="/" className="group hidden items-center gap-2.5 text-[15px] font-semibold text-ink lg:inline-flex">
+            <ArrowRight className="size-[18px] rotate-180 transition-transform group-hover:-translate-x-0.5" />
             {t("backHome")}
           </Link>
           <LocaleSwitcher compact href={path} />
