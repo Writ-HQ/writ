@@ -91,3 +91,14 @@ and verified, with the date.
   which are built, and most are not on the roadmap. Before promoting the
   site beyond the waitlist, build them, mark them as coming, or take them
   out, so the page does not promise what Writ cannot do.
+
+- **Legal pages.** /privacy, /terms, /dpa, /acceptable-use, /cookies and
+  /subprocessors (web/src/content/legal) are drafts written from what Writ
+  does today. Before they are relied on:
+  - fill in every fact in web/src/content/legal/facts.ts (legal name,
+    address, contact emails, governing province, website and waitlist
+    hosts and locations); until then the pages show highlighted blanks;
+  - have a lawyer review both languages, especially the terms, the data
+    processing addendum, and the commitments on retention (24 months
+    after launch), breach notice (72 hours) and deletion (90 days);
+  - name a privacy officer.

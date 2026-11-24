@@ -263,7 +263,9 @@
       "n9": "Chaque membre de l'équipe se connecte avec l'authentification multifacteur. Les exportations, changements de rôle, envois et autres actions sensibles sont consignés dans un registre qui ne peut être ni modifié ni supprimé.",
       "n10": "Facebook et Instagram sont des marques de commerce de Meta Platforms, Inc.; Writ n'est ni affilié à Meta ni approuvé par celle-ci. Les noms, lieux et chiffres présentés dans les images du produit sont fictifs. Pour en savoir plus, consultez les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>.",
       "copyright": "© {year} Writ",
-      "closingLine": "Conçu au Canada, pour celles et ceux qui s'engagent."
+      "closingLine": "Conçu au Canada, pour celles et ceux qui s'engagent.",
+      "cookies": "Politique relative aux témoins",
+      "subprocessors": "Sous-traitants"
     },
     "mock": {
       "campaign": "Association de circonscription exemple",
@@ -582,7 +584,7 @@
     "consent": "Writ peut m'envoyer des courriels au sujet de la liste d'attente et de son lancement. Je peux me désabonner en tout temps.",
     "submit": "Rejoindre la liste",
     "sending": "Envoi…",
-    "privacy": "Nous utilisons vos coordonnées uniquement pour vous écrire au sujet de Writ. Nous ne les partageons ni ne les vendons jamais.",
+    "privacy": "Nous utilisons vos coordonnées uniquement pour vous écrire au sujet de Writ. Nous ne les partageons ni ne les vendons jamais. Consultez notre <link>politique de confidentialité</link>.",
     "done": {
       "title": "Vous êtes sur la liste",
       "body": "Merci. Nous vous écrirons dès qu'une place se libère pour vous."
@@ -594,6 +596,20 @@
       "invalidChoice": "Choisissez l'une des options.",
       "consent": "Cochez la case pour que nous puissions vous écrire au sujet de la liste d'attente.",
       "server": "Un problème est survenu et vos coordonnées n'ont pas été enregistrées. Veuillez réessayer dans un instant."
+    }
+  },
+  "Legal": {
+    "related": "Voir aussi",
+    "updated": "Dernière mise à jour : {date}",
+    "shortTitle": "En bref",
+    "missing": {
+      "entity": "raison sociale de l’entreprise",
+      "address": "adresse de l’entreprise",
+      "privacyEmail": "courriel pour la confidentialité",
+      "contactEmail": "courriel de contact",
+      "province": "province",
+      "siteHost": "hébergeur du site et emplacement",
+      "waitlistHost": "hébergeur de la liste d’attente et emplacement"
     }
   }
 }

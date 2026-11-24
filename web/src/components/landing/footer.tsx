@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Logo } from "@/components/ui/logo";
 import { Pill } from "@/components/ui/pill";
+import { Link } from "@/i18n/navigation";
 
 import { Container } from "./container";
 
@@ -22,9 +23,9 @@ function LinkColumn({ title, links }: { title: string; links: FooterLink[] }) {
         {links.map(({ label, href }) => (
           <li key={label}>
             {href ? (
-              <a href={href} className="inline-block text-base leading-[21px] font-medium text-white hover:text-white/70">
+              <Link href={href} className="inline-block text-base leading-[21px] font-medium text-white hover:text-white/70">
                 {label}
-              </a>
+              </Link>
             ) : (
               <button type="button" className="inline-block text-left text-base leading-[21px] font-medium text-white hover:text-white/70">
                 {label}
@@ -53,12 +54,12 @@ export function Footer() {
             <div className="space-y-1">
               <p className="text-xs leading-4 font-medium">{f("copyright", { year })}</p>
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs leading-4 font-medium text-faint">
-                <button type="button" className="underline underline-offset-2 hover:text-white">
+                <Link href="/terms" className="underline underline-offset-2 hover:text-white">
                   {f("terms")}
-                </button>
-                <button type="button" className="underline underline-offset-2 hover:text-white">
+                </Link>
+                <Link href="/privacy" className="underline underline-offset-2 hover:text-white">
                   {f("privacy")}
-                </button>
+                </Link>
                 <span aria-hidden="true">·</span>
                 <LocaleSwitcher inverse className="text-xs" />
               </div>
@@ -71,26 +72,36 @@ export function Footer() {
               <LinkColumn
                 title={f("product")}
                 links={[
-                  { label: t("overview.contacts.title"), href: "#contacts" },
-                  { label: t("overview.lists.title"), href: "#overview" },
-                  { label: t("overview.email.title"), href: "#email" },
-                  { label: t("overview.social.title"), href: "#social" },
-                  { label: t("overview.volunteers.title"), href: "#volunteers" },
-                  { label: t("overview.consent.title"), href: "#consent" },
+                  { label: t("overview.contacts.title"), href: "/#contacts" },
+                  { label: t("overview.lists.title"), href: "/#overview" },
+                  { label: t("overview.email.title"), href: "/#email" },
+                  { label: t("overview.social.title"), href: "/#social" },
+                  { label: t("overview.volunteers.title"), href: "/#volunteers" },
+                  { label: t("overview.consent.title"), href: "/#consent" },
                 ]}
               />
               <LinkColumn
                 title={f("solutions")}
                 links={[
-                  { label: t("builtFor.candidates.title"), href: "#built-for" },
-                  { label: t("builtFor.ridings.title"), href: "#built-for" },
-                  { label: t("builtFor.advocacy.title"), href: "#built-for" },
+                  { label: t("builtFor.candidates.title"), href: "/#built-for" },
+                  { label: t("builtFor.ridings.title"), href: "/#built-for" },
+                  { label: t("builtFor.advocacy.title"), href: "/#built-for" },
                 ]}
               />
-              <LinkColumn title={f("company")} links={[{ label: f("about") }, { label: f("contact") }, { label: f("privacy") }, { label: f("terms") }]} />
+              <LinkColumn
+                title={f("company")}
+                links={[{ label: f("about") }, { label: f("contact") }, { label: f("privacy"), href: "/privacy" }, { label: f("terms"), href: "/terms" }]}
+              />
               <LinkColumn
                 title={f("resources")}
-                links={[{ label: f("help") }, { label: f("security"), href: "#security" }, { label: f("accessibility") }, { label: f("status") }]}
+                links={[
+                  { label: f("help") },
+                  { label: f("security"), href: "/#security" },
+                  { label: f("accessibility") },
+                  { label: f("status") },
+                  { label: f("cookies"), href: "/cookies" },
+                  { label: f("subprocessors"), href: "/subprocessors" },
+                ]}
               />
               <div className="flex flex-col gap-4">
                 <h2 className="text-sm leading-[18px] font-medium text-white/60">{f("getStarted")}</h2>
@@ -121,8 +132,8 @@ export function Footer() {
                         <span>
                           {n === "n10"
                             ? f.rich("n10", {
-                                terms: (chunks) => <NoteLink>{chunks}</NoteLink>,
-                                privacy: (chunks) => <NoteLink>{chunks}</NoteLink>,
+                                terms: (chunks) => <NoteLink href="/terms">{chunks}</NoteLink>,
+                                privacy: (chunks) => <NoteLink href="/privacy">{chunks}</NoteLink>,
                               })
                             : f(n)}
                         </span>
@@ -146,13 +157,12 @@ export function Footer() {
   );
 }
 
-// A link inside a note: white and underlined, as in the reference. Not
-// wired to a page yet.
-function NoteLink({ children }: { children: ReactNode }) {
+// A link inside a note: white and underlined, as in the reference.
+function NoteLink({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <button type="button" className="text-white underline decoration-white/40 underline-offset-2 hover:decoration-white">
+    <Link href={href} className="text-white underline decoration-white/40 underline-offset-2 hover:decoration-white">
       {children}
-    </button>
+    </Link>
   );
 }
 

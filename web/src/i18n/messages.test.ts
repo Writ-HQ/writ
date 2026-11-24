@@ -61,6 +61,7 @@ describe("messages", () => {
     "Dashboard.issues.pensions",
     "Dashboard.overview.eyebrow",
     "Waitlist.organisation",
+    "Legal.missing.province",
     "Waitlist.provinces.AB",
     "Waitlist.provinces.MB",
     "Waitlist.provinces.NU",

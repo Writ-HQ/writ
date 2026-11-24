@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 
 import { AuthShell } from "@/components/auth/auth-shell";
 import { WaitlistForm } from "@/components/waitlist/waitlist-form";
+import { Link } from "@/i18n/navigation";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Waitlist");
@@ -16,7 +17,14 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function WaitlistPage() {
   const t = useTranslations("Waitlist");
   return (
-    <AuthShell path="/waitlist" title={t("title")} subtitle={t("subtitle")} footer={t("privacy")}>
+    <AuthShell path="/waitlist" title={t("title")} subtitle={t("subtitle")} footer={t.rich("privacy", {
+        link: (chunks) => (
+          <Link href="/privacy" className="font-medium text-ink underline-offset-4 hover:underline">
+            {chunks}
+          </Link>
+        ),
+      })}
+    >
       <WaitlistForm />
     </AuthShell>
   );

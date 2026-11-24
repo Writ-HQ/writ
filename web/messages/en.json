@@ -263,7 +263,9 @@
       "n9": "Every team member signs in with multi-factor authentication. Exports, role changes, sends and other sensitive actions are recorded in a log that cannot be edited or deleted.",
       "n10": "Facebook and Instagram are trademarks of Meta Platforms, Inc.; Writ is not affiliated with or endorsed by Meta. Names, places and figures in product images are fictional. For more information, see the <terms>Terms of service</terms> and the <privacy>Privacy policy</privacy>.",
       "copyright": "© {year} Writ",
-      "closingLine": "Built in Canada, for the people who show up."
+      "closingLine": "Built in Canada, for the people who show up.",
+      "cookies": "Cookie policy",
+      "subprocessors": "Subprocessors"
     },
     "mock": {
       "campaign": "Example Riding Association",
@@ -582,7 +584,7 @@
     "consent": "Writ may email me about the waitlist and its launch. I can unsubscribe at any time.",
     "submit": "Join the waitlist",
     "sending": "Sending…",
-    "privacy": "We use your details only to contact you about Writ. We never share or sell them.",
+    "privacy": "We use your details only to contact you about Writ. We never share or sell them. See our <link>privacy policy</link>.",
     "done": {
       "title": "You're on the list",
       "body": "Thank you. We'll email you when there's a place for you."
@@ -594,6 +596,20 @@
       "invalidChoice": "Choose one of the options.",
       "consent": "Tick the box so we can email you about the waitlist.",
       "server": "Something went wrong and your details weren't saved. Please try again in a moment."
+    }
+  },
+  "Legal": {
+    "related": "Related",
+    "updated": "Last updated on {date}",
+    "shortTitle": "The short version",
+    "missing": {
+      "entity": "company legal name",
+      "address": "company address",
+      "privacyEmail": "privacy email",
+      "contactEmail": "contact email",
+      "province": "province",
+      "siteHost": "website host and location",
+      "waitlistHost": "waitlist database host and location"
     }
   }
 }
